@@ -2,8 +2,13 @@ package com.akobusinska.letsplay.data.repository
 
 import com.akobusinska.letsplay.data.entities.MyGame
 import com.akobusinska.letsplay.data.json.GamesList
+import com.akobusinska.letsplay.data.local.GameDao
+import com.akobusinska.letsplay.data.remote.GameRemoteDataSource
 
-class GameRepository {
+class GameRepository(
+    private val remoteDataSource: GameRemoteDataSource,
+    private val localDataSource: GameDao
+) {
 
     private fun formatData(data: GamesList): List<MyGame> {
 
