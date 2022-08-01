@@ -1,5 +1,6 @@
 package com.akobusinska.letsplay.data.repository
 
+import com.akobusinska.letsplay.data.entities.GameType
 import com.akobusinska.letsplay.data.entities.MyGame
 import com.akobusinska.letsplay.data.json.GamesList
 import com.akobusinska.letsplay.data.local.GameDao
@@ -23,7 +24,8 @@ class GameRepository(
                 minPlaytime = game.minPlaytime ?: 0,
                 maxPlaytime = game.maxPlaytime ?: 480,
                 minAge = game.minAge ?: 8,
-                thumbURL = game.thumbUrl ?: game.imageUrl ?: ""
+                thumbURL = game.thumbUrl ?: game.imageUrl ?: "",
+                gameType = if (game.type == "game") GameType.GAME else GameType.EXPANSION
             )
 
             listOfGames.add(newGame)

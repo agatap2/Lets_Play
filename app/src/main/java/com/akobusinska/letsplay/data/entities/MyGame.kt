@@ -14,5 +14,10 @@ data class MyGame(
     var minPlaytime: Int,
     var maxPlaytime: Int,
     var minAge: Int,
-    var thumbURL: String
+    var thumbURL: String,
+    var gameType: GameType
 )
+
+enum class GameType(type: String) {
+    GAME("game"), EXPANSION("expansion")
+}

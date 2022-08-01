@@ -8,4 +8,9 @@
     <color name="secondaryDarkColor">#c8a600</color>
     <color name="primaryTextColor">#000000</color>
     <color name="secondaryTextColor">#000000</color>
+
+    <color name="editTextBackgroundColor">#FEFFF3</color>
+    <color name="editTextStrokeColor">#4E7A18</color>
+
+    <color name="mtrl_textinput_default_box_stroke_color">#4E7A18</color>
 </resources>
