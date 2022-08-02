@@ -5,11 +5,27 @@ import com.akobusinska.letsplay.data.entities.MyGame
 import com.akobusinska.letsplay.data.json.GamesList
 import com.akobusinska.letsplay.data.local.GameDao
 import com.akobusinska.letsplay.data.remote.GameRemoteDataSource
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class GameRepository(
     private val remoteDataSource: GameRemoteDataSource,
     private val localDataSource: GameDao
 ) {
+
+    enum class RequestStatus { LOADING, ERROR, DONE }
+
+    fun getFullCollection() = localDataSource.getCollection()
+
+    fun getOnlyGames() = localDataSource.getFilteredCollection(GameType.GAME)
+
+    fun getOnlyExpansions() = localDataSource.getFilteredCollection(GameType.EXPANSION)
+
+    suspend fun downloadGamesList(name: String): GamesList {
+        return withContext(Dispatchers.IO) {
+            remoteDataSource.searchForGames(name)
+        }
+    }
 
     private fun formatData(data: GamesList): List<MyGame> {
 

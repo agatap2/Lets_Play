@@ -6,7 +6,7 @@
     app:startDestination="@id/gamesListFragment">
     <fragment
         android:id="@+id/gamesListFragment"
-        android:name="com.akobusinska.letsplay.ui.GamesListFragment"
+        android:name="com.akobusinska.letsplay.ui.gamesList.GamesListFragment"
         android:label="GamesListFragment"
         tools:layout="@layout/fragment_games_list" />
 </navigation>
