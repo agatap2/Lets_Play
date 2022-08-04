@@ -8,5 +8,34 @@
         android:id="@+id/gamesListFragment"
         android:name="com.akobusinska.letsplay.ui.gamesList.GamesListFragment"
         android:label="GamesListFragment"
-        tools:layout="@layout/fragment_games_list" />
+        tools:layout="@layout/fragment_games_list">
+        <action
+            android:id="@+id/searchForGame"
+            app:destination="@id/webSearchResultFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/webSearchResultFragment"
+        android:name="com.akobusinska.letsplay.ui.addGame.WebSearchResultFragment"
+        android:label="fragment_web_search_result"
+        tools:layout="@layout/fragment_web_search_result">
+        <argument
+            android:name="gameName"
+            app:argType="string" />
+        <action
+            android:id="@+id/navigateToNewGameForm"
+            app:destination="@id/addNewGameFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addNewGameFragment"
+        android:name="com.akobusinska.letsplay.ui.addGame.AddNewGameFragment"
+        android:label="fragment_add_new_game"
+        tools:layout="@layout/fragment_add_new_game">
+        <argument
+            android:name="game"
+            app:argType="com.akobusinska.letsplay.data.entities.MyGame"
+            app:nullable="true" />
+        <argument
+            android:name="gameName"
+            app:argType="string" />
+    </fragment>
 </navigation>

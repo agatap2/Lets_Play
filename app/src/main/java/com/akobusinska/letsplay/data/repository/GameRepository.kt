@@ -21,9 +21,9 @@ class GameRepository(
 
     fun getOnlyExpansions() = localDataSource.getFilteredCollection(GameType.EXPANSION)
 
-    suspend fun downloadGamesList(name: String): GamesList {
+    suspend fun downloadGamesList(name: String): List<MyGame> {
         return withContext(Dispatchers.IO) {
-            remoteDataSource.searchForGames(name)
+            formatData(remoteDataSource.searchForGames(name))
         }
     }
 

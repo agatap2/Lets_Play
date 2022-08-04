@@ -12,43 +12,36 @@
 
         <variable
             name="clickListener"
-            type="com.akobusinska.letsplay.ui.gamesList.GamesListAdapter.GamesListListener" />
+            type="com.akobusinska.letsplay.ui.gamesList.BasicGamesListAdapter.GamesListListener" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:background="@color/editTextBackgroundColor"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/editTextBackgroundColor"
         android:onClick="@{() -> clickListener.onClick(game)}">
 
         <ImageView
             android:id="@+id/cover"
-            android:layout_width="24dp"
-            android:layout_height="wrap_content"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
             android:contentDescription="@string/game_cover"
             app:imageUrl="@{game.thumbURL}"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/name"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:ignore="ImageContrastCheck"
             tools:src="@drawable/ic_launcher_background" />
 
         <TextView
             android:id="@+id/name"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="8dp"
             android:text="@{game.name}"
             android:textColor="@color/primaryTextColor"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/cover"
-            app:layout_constraintTop_toTopOf="parent"
             tools:text="Na Skrzydłach" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.appcompat.widget.LinearLayoutCompat>
 </layout>

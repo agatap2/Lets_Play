@@ -8,8 +8,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.akobusinska.letsplay.data.entities.MyGame
 import com.akobusinska.letsplay.databinding.BasicListItemBinding
 
-class GamesListAdapter(private val clickListener: GamesListListener) :
-    ListAdapter<MyGame, GamesListAdapter.ViewHolder>(DiffCallback) {
+class BasicGamesListAdapter(private val clickListener: GamesListListener) :
+    ListAdapter<MyGame, BasicGamesListAdapter.ViewHolder>(DiffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder.from(parent)
@@ -29,7 +29,7 @@ class GamesListAdapter(private val clickListener: GamesListListener) :
         }
     }
 
-    class ViewHolder private constructor(private val binding: BasicListItemBinding) :
+    class ViewHolder constructor(private val binding: BasicListItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(clickListener: GamesListListener, item: MyGame) {
@@ -41,14 +41,14 @@ class GamesListAdapter(private val clickListener: GamesListListener) :
         companion object {
             fun from(parent: ViewGroup): ViewHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
-                val binding = BasicListItemBinding.inflate(layoutInflater, parent, false)
+                val binding = BasicListItemBinding.inflate(layoutInflater)
 
                 return ViewHolder(binding)
             }
         }
     }
 
-    class GamesListListener(val clickListener: (gameId: Int) -> Unit) {
-        fun onClick(game: MyGame) = clickListener(game.id)
+    class GamesListListener(val clickListener: (game: MyGame) -> Unit) {
+        fun onClick(game: MyGame) = clickListener(game)
     }
 }

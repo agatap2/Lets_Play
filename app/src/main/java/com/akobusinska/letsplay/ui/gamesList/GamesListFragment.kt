@@ -7,11 +7,15 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.akobusinska.letsplay.R
 import com.akobusinska.letsplay.data.entities.GameType
 import com.akobusinska.letsplay.databinding.FragmentGamesListBinding
-import com.akobusinska.letsplay.ui.gamesList.GamesListAdapter.GamesListListener
+import com.akobusinska.letsplay.ui.gamesList.BasicGamesListAdapter.GamesListListener
 import com.akobusinska.letsplay.utils.afterTextChanged
+import com.akobusinska.letsplay.utils.showInput
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.textfield.TextInputLayout
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -32,8 +36,8 @@ class GamesListFragment : Fragment() {
             inflater, R.layout.fragment_games_list, container, false
         )
 
-        val adapter = GamesListAdapter(GamesListListener { gameId ->
-            viewModel.navigateToGameDetails(gameId)
+        val adapter = BasicGamesListAdapter(GamesListListener { game ->
+            viewModel.navigateToGameDetails(game.id)
         })
 
         binding.lifecycleOwner = this
@@ -62,7 +66,26 @@ class GamesListFragment : Fragment() {
         }
 
         binding.addGameButton.setOnClickListener {
-            // Navigate to add new game fragment
+
+            val dialogView =
+                LayoutInflater.from(requireContext()).inflate(R.layout.dialog_text_input, null)
+
+            MaterialAlertDialogBuilder(requireContext())
+                .setView(dialogView)
+                .setTitle(R.string.provide_game_name)
+                .setPositiveButton(R.string.ok) { _, _ ->
+                    this.findNavController().navigate(
+                        GamesListFragmentDirections.searchForGame(
+                            dialogView.findViewById<TextInputLayout>
+                                (R.id.dialog_text_input_layout)?.editText?.text.toString()
+                        )
+                    )
+                }
+                .setNegativeButton(R.string.cancel, null)
+                .showInput(
+                    R.id.dialog_text_input_layout,
+                    R.string.game_name
+                )
         }
 
         binding.searchBar.afterTextChanged {
