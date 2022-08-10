@@ -3,14 +3,13 @@
     <color name="primaryColor">#8bc34a</color>
     <color name="primaryLightColor">#bef67a</color>
     <color name="primaryDarkColor">#5a9216</color>
-    <color name="secondaryColor">#ffd740</color>
-    <color name="secondaryLightColor">#ffff74</color>
-    <color name="secondaryDarkColor">#c8a600</color>
     <color name="primaryTextColor">#000000</color>
-    <color name="secondaryTextColor">#000000</color>
+    <color name="secondaryTextColor">#7C7C7C</color>
 
-    <color name="editTextBackgroundColor">#FEFFF3</color>
-    <color name="editTextStrokeColor">#4E7A18</color>
+    <color name="light_green">#FEFFF3</color>
+    <color name="medium_green">#8bc34a</color>
 
-    <color name="mtrl_textinput_default_box_stroke_color">#4E7A18</color>
+    <color name="gray">#929292</color>
+
+    <color name="mtrl_textinput_default_box_stroke_color">#8bc34a</color>
 </resources>

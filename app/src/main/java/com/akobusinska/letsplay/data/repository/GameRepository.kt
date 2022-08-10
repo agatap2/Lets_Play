@@ -35,13 +35,13 @@ class GameRepository(
             val newGame = MyGame(
                 name = game.name ?: "",
                 minPlayers = game.minPlayers ?: 1,
-                maxPlayers = game.maxPlayers ?: 100,
+                maxPlayers = game.maxPlayers ?: 20,
                 recommendedForMorePlayers = false,
-                minPlaytime = game.minPlaytime ?: 0,
+                minPlaytime = game.minPlaytime ?: 5,
                 maxPlaytime = game.maxPlaytime ?: 480,
-                minAge = game.minAge ?: 8,
+                minAge = game.minAge ?: 3,
                 thumbURL = game.thumbUrl ?: game.imageUrl ?: "",
-                gameType = if (game.type == "game") GameType.GAME else GameType.EXPANSION
+                gameType = if (game.type == "game" && !game.name?.contains("expansion", true)!!) GameType.GAME else GameType.EXPANSION
             )
 
             listOfGames.add(newGame)

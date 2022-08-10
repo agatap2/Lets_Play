@@ -34,8 +34,11 @@
             android:name="game"
             app:argType="com.akobusinska.letsplay.data.entities.MyGame"
             app:nullable="true" />
-        <argument
-            android:name="gameName"
-            app:argType="string" />
+        <action
+            android:id="@+id/navigateToCollectionList"
+            app:destination="@id/gamesListFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/navigation"
+            app:popUpToInclusive="true" />
     </fragment>
 </navigation>

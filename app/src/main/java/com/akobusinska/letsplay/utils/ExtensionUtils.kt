@@ -1,10 +1,13 @@
 package com.akobusinska.letsplay.utils
 
 import android.app.AlertDialog
+import android.app.Application
 import android.app.Dialog
 import android.text.Editable
 import android.text.TextWatcher
+import android.widget.ImageButton
 import androidx.core.widget.doOnTextChanged
+import com.akobusinska.letsplay.R
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
@@ -40,4 +43,11 @@ fun MaterialAlertDialogBuilder.showInput(
         }
     }
     return dialog
+}
+
+fun ImageButton.changeButtonColor(application: Application, block: Boolean) {
+    if (block)
+        this.setColorFilter(application.resources.getColor(R.color.gray))
+    else
+        this.setColorFilter(application.resources.getColor(R.color.primaryColor))
 }

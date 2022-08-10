@@ -11,6 +11,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.akobusinska.letsplay.R
 import com.akobusinska.letsplay.data.entities.MyGame
+import com.akobusinska.letsplay.data.repository.GameRepository.RequestStatus.DONE
+import com.akobusinska.letsplay.data.repository.GameRepository.RequestStatus.ERROR
 import com.akobusinska.letsplay.databinding.FragmentWebSearchResultBinding
 import com.akobusinska.letsplay.ui.gamesList.BasicGamesListAdapter
 import com.akobusinska.letsplay.ui.gamesList.BasicGamesListAdapter.GamesListListener
@@ -46,8 +48,18 @@ class WebSearchResultFragment : Fragment() {
         }
         binding.viewModel = viewModel
 
+        val newGame = MyGame(name = gameName)
+
         binding.skip.setOnClickListener {
-            navigateToNewGameForm(null)
+            navigateToNewGameForm(newGame)
+            viewModel.doneNavigating()
+        }
+
+        viewModel.status.observe(viewLifecycleOwner) { status ->
+            if ((status == DONE || status == ERROR) && viewModel.foundGamesList.value.isNullOrEmpty()) {
+                navigateToNewGameForm(newGame)
+                viewModel.doneNavigating()
+            }
         }
 
         viewModel.navigateToNewGameForm.observe(viewLifecycleOwner) { game ->
@@ -62,7 +74,9 @@ class WebSearchResultFragment : Fragment() {
 
     private fun navigateToNewGameForm(game: MyGame?) {
         this.findNavController()
-            .navigate(WebSearchResultFragmentDirections.navigateToNewGameForm(game, gameName))
+            .navigate(
+                WebSearchResultFragmentDirections.navigateToNewGameForm(game)
+            )
     }
 
 }

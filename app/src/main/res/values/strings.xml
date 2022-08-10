@@ -1,17 +1,29 @@
 <resources>
     <string name="app_name">Lets Play</string>
-    <string name="game_cover">Game cover</string>
-    <string name="game_name">Name</string>
+
     <string name="games">Games</string>
     <string name="expansions">Expansions</string>
+    <string name="game">Game</string>
+    <string name="expansion">Expansion</string>
     <string name="all">All</string>
-    <string name="game_time">%d min - %d min</string>
-    <string name="numberOfPlayers">%d - %d</string>
+    <string name="game_time">Game time (in minutes):</string>
+    <string name="number_of_players">Number of players:</string>
+    <string name="recommended_for_more_players">Recommended for more players</string>
+    <string name="min_age">Minimal age: </string>
+    <string name="over_20">20+</string>
+
+    <string name="game_cover">Game cover</string>
+    <string name="game_name">Name</string>
+    <string name="loading_icon">Loading icon</string>
+    <string name="increase_minimal_age">Increase minimal age</string>
+    <string name="decrease_minimal_age">Decrease minimal age</string>
+    <string name="title">Title</string>
+
     <string name="add_game">Add game</string>
     <string name="provide_game_name">Provide game name</string>
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
     <string name="select_game">Select game</string>
     <string name="skip">Skip</string>
-    <string name="loading_icon">Loading icon</string>
 </resources>

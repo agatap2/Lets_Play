@@ -3,23 +3,23 @@ package com.akobusinska.letsplay.data.entities
 import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 @Parcelize
 @Entity(tableName = "my_game_table")
 data class MyGame(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
-    var name: String,
-    var minPlayers: Int,
-    var maxPlayers: Int,
+    var name: String = "",
+    var minPlayers: Int = 1,
+    var maxPlayers: Int = 20,
     var recommendedForMorePlayers: Boolean = false,
-    var minPlaytime: Int,
-    var maxPlaytime: Int,
-    var minAge: Int,
-    var thumbURL: String,
-    var gameType: GameType
-): Parcelable
+    var minPlaytime: Int = 5,
+    var maxPlaytime: Int = 480,
+    var minAge: Int = 3,
+    var thumbURL: String = "",
+    var gameType: GameType = GameType.GAME
+) : Parcelable
 
 enum class GameType(type: String) {
     GAME("game"), EXPANSION("expansion")
