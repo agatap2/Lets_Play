@@ -16,7 +16,11 @@ import com.akobusinska.letsplay.R
 import com.akobusinska.letsplay.data.entities.GameType
 import com.akobusinska.letsplay.databinding.FragmentAddNewGameBinding
 import com.akobusinska.letsplay.utils.changeButtonColor
+import com.akobusinska.letsplay.utils.setGameCover
+import com.akobusinska.letsplay.utils.showInput
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.slider.RangeSlider
+import com.google.android.material.textfield.TextInputLayout
 
 
 class AddNewGameFragment : Fragment() {
@@ -24,6 +28,7 @@ class AddNewGameFragment : Fragment() {
     private lateinit var maxNumberOfPlayers: TextView
     private lateinit var numberOfPlayersSlider: RangeSlider
     private lateinit var application: Application
+    private lateinit var pictureUrl: String
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -31,7 +36,6 @@ class AddNewGameFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        application = requireNotNull(activity).application
         val binding: FragmentAddNewGameBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_add_new_game, container, false)
 
@@ -43,6 +47,8 @@ class AddNewGameFragment : Fragment() {
         binding.lifecycleOwner = this
         binding.viewModel = viewModel
 
+        application = requireNotNull(activity).application
+        pictureUrl = game?.thumbURL.toString()
         maxNumberOfPlayers = binding.maxNumOfPlayers
         numberOfPlayersSlider = binding.numOfPlayersSlider
 
@@ -140,6 +146,27 @@ class AddNewGameFragment : Fragment() {
                     )
                 )
             }
+        }
+
+        binding.editUrlButton.setOnClickListener {
+
+            val dialogView =
+                LayoutInflater.from(requireContext()).inflate(R.layout.dialog_text_input, null)
+
+            MaterialAlertDialogBuilder(requireContext())
+                .setView(dialogView)
+                .setTitle(R.string.provide_cover_picture_url)
+                .setPositiveButton(R.string.ok) { _, _ ->
+                    pictureUrl =
+                        dialogView.findViewById<TextInputLayout>(R.id.dialog_text_input_layout)?.editText?.text.toString()
+                    binding.cover.setGameCover(pictureUrl)
+                }
+                .setNegativeButton(R.string.cancel, null)
+                .showInput(
+                    R.id.dialog_text_input_layout,
+                    R.string.picture_url,
+                    pictureUrl
+                )
         }
 
         requireActivity().onBackPressedDispatcher.addCallback(

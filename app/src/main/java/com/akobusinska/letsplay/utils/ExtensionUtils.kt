@@ -29,14 +29,17 @@ fun TextInputEditText.afterTextChanged(afterTextChanged: (String) -> Unit) {
 
 fun MaterialAlertDialogBuilder.showInput(
     textInputId: Int,
-    hintResId: Int
+    hintResId: Int,
+    defaultText: String = ""
 ): Dialog {
 
     val dialog = this.show()
     val til = dialog.findViewById<TextInputLayout>(textInputId)
-    dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = false
+    if (defaultText.isBlank())
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = false
     til?.let {
         til.hint = context.getString(hintResId)
+        til.editText?.setText(defaultText)
         til.editText?.doOnTextChanged { text, _, _, _ ->
             dialog.getButton(AlertDialog.BUTTON_POSITIVE)
                 .isEnabled = !text.isNullOrBlank()
