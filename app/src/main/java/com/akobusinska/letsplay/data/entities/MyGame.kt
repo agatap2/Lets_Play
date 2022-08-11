@@ -15,7 +15,7 @@ data class MyGame(
     var maxPlayers: Int = 20,
     var recommendedForMorePlayers: Boolean = false,
     var minPlaytime: Int = 5,
-    var maxPlaytime: Int = 480,
+    var maxPlaytime: Int = 120,
     var minAge: Int = 3,
     var thumbURL: String = "",
     var gameType: GameType = GameType.GAME

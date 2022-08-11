@@ -23,9 +23,8 @@ class AddNewGameViewModel(game: MyGame?) : ViewModel() {
     val maxNumberOfPlayers = Transformations.map(newGame) { game ->
         if (game.maxPlayers > 20)
             "20+"
-        else {
+        else
             game.maxPlayers.toString()
-        }
     }
 
     val minPlaytime = Transformations.map(newGame) { game ->
@@ -33,7 +32,10 @@ class AddNewGameViewModel(game: MyGame?) : ViewModel() {
     }
 
     val maxPlaytime = Transformations.map(newGame) { game ->
-        game.maxPlaytime.toString()
+        if (game.maxPlaytime > 120)
+            "2h+"
+        else
+            game.maxPlaytime.toString()
     }
 
     val minAge = Transformations.map(newGame) { game ->
@@ -43,13 +45,14 @@ class AddNewGameViewModel(game: MyGame?) : ViewModel() {
     val numberOfPlayersRange = MutableLiveData<List<Float>>().apply {
         value = if (newGame.value?.maxPlayers!! > 20)
             listOf(newGame.value!!.minPlayers.toFloat(), 20F)
-        else {
+        else
             listOf(newGame.value!!.minPlayers.toFloat(), newGame.value!!.maxPlayers.toFloat())
-        }
     }
 
     val playtimeRange = MutableLiveData<List<Float>>().apply {
-        value =
+        value = if (newGame.value?.maxPlaytime!! > 120)
+            listOf(newGame.value!!.minPlaytime.toFloat(), 120F)
+        else
             listOf(newGame.value?.minPlaytime!!.toFloat(), newGame.value?.maxPlaytime!!.toFloat())
     }
 

@@ -27,6 +27,8 @@ class AddNewGameFragment : Fragment() {
 
     private lateinit var maxNumberOfPlayers: TextView
     private lateinit var numberOfPlayersSlider: RangeSlider
+    private lateinit var maxPlaytime: TextView
+    private lateinit var playtimeSlider: RangeSlider
     private lateinit var application: Application
     private lateinit var pictureUrl: String
 
@@ -51,17 +53,27 @@ class AddNewGameFragment : Fragment() {
         pictureUrl = game?.thumbURL.toString()
         maxNumberOfPlayers = binding.maxNumOfPlayers
         numberOfPlayersSlider = binding.numOfPlayersSlider
+        maxPlaytime = binding.maxPlaytime
+        playtimeSlider = binding.playtimeSlider
 
-        val moreThan20 = binding.moreThan100
+        val moreThan20 = binding.moreThan20
 
         if (game?.maxPlayers!! > 20) moreThan20.isChecked = true
 
         moreThan20.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked)
-                onOver20PlayersCheckboxClick("20+", R.drawable.gray_square, 20.0F)
+                onOutOfRangeCheckboxClick(
+                    "20+",
+                    maxNumberOfPlayers,
+                    numberOfPlayersSlider,
+                    R.drawable.gray_square,
+                    20.0F
+                )
             else
-                onOver20PlayersCheckboxClick(
+                onOutOfRangeCheckboxClick(
                     numberOfPlayersSlider.values[1].toInt().toString(),
+                    maxNumberOfPlayers,
+                    numberOfPlayersSlider,
                     R.drawable.green_square,
                     numberOfPlayersSlider.values[1]
                 )
@@ -82,15 +94,42 @@ class AddNewGameFragment : Fragment() {
                 moreThan20.isChecked = false
         }
 
-        val playTimeSlider = binding.playtimeSlider
+        val over2Hours = binding.moreThan2Hours
 
-        playTimeSlider.setLabelFormatter { value ->
-            value.toInt().toString() + "min"
+        if (game.maxPlaytime > 120) over2Hours.isChecked = true
+
+        over2Hours.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked)
+                onOutOfRangeCheckboxClick(
+                    "2h+",
+                    maxPlaytime,
+                    playtimeSlider,
+                    R.drawable.gray_square,
+                    120.0F
+                )
+            else
+                onOutOfRangeCheckboxClick(
+                    playtimeSlider.values[1].toInt().toString(),
+                    maxPlaytime,
+                    playtimeSlider,
+                    R.drawable.green_square,
+                    playtimeSlider.values[1]
+                )
         }
 
-        playTimeSlider.addOnChangeListener { slider, _, _ ->
+        playtimeSlider.setLabelFormatter { value ->
+            if (value == 120.0F && over2Hours.isChecked) application.resources.getString(R.string.over_2h) else value.toInt()
+                .toString() + "min"
+        }
+
+        playtimeSlider.addOnChangeListener { slider, _, _ ->
             binding.minPlaytime.text = slider.values[0].toInt().toString()
-            binding.maxPlaytime.text = slider.values[1].toInt().toString()
+
+            if (!over2Hours.isChecked)
+                maxPlaytime.text = slider.values[1].toInt().toString()
+
+            if (slider.values[1] < 120)
+                over2Hours.isChecked = false
         }
 
         if (game.gameType == GameType.EXPANSION)
@@ -181,14 +220,16 @@ class AddNewGameFragment : Fragment() {
         return binding.root
     }
 
-    private fun onOver20PlayersCheckboxClick(
+    private fun onOutOfRangeCheckboxClick(
         text: String,
+        textBox: TextView,
+        slider: RangeSlider,
         background: Int,
         maxNumber: Float
     ) {
-        maxNumberOfPlayers.text = text
-        maxNumberOfPlayers.background = application.resources.getDrawable(background)
-        numberOfPlayersSlider.values =
-            listOf(numberOfPlayersSlider.values[0], maxNumber)
+        textBox.text = text
+        textBox.background = application.resources.getDrawable(background)
+        slider.values =
+            listOf(slider.values[0], maxNumber)
     }
 }

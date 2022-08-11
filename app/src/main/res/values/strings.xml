@@ -11,6 +11,7 @@
     <string name="recommended_for_more_players">Recommended for more players</string>
     <string name="min_age">Minimal age: </string>
     <string name="over_20">20+</string>
+    <string name="over_2h">2h+</string>
 
     <string name="game_cover">Game cover</string>
     <string name="game_name">Name</string>

@@ -38,7 +38,7 @@ class GameRepository(
                 maxPlayers = game.maxPlayers ?: 20,
                 recommendedForMorePlayers = false,
                 minPlaytime = game.minPlaytime ?: 5,
-                maxPlaytime = game.maxPlaytime ?: 480,
+                maxPlaytime = game.maxPlaytime ?: 120,
                 minAge = game.minAge ?: 3,
                 thumbURL = game.thumbUrl ?: game.imageUrl ?: "",
                 gameType = if (game.type == "game" && !game.name?.contains("expansion", true)!!) GameType.GAME else GameType.EXPANSION

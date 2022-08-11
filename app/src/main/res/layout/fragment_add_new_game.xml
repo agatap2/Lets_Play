@@ -185,12 +185,12 @@
             android:text="@{viewModel.maxNumberOfPlayers}"
             android:textAlignment="center"
             app:layout_constraintBottom_toBottomOf="@+id/num_of_players_slider"
-            app:layout_constraintEnd_toStartOf="@id/more_than_100"
+            app:layout_constraintEnd_toStartOf="@id/more_than_20"
             app:layout_constraintStart_toEndOf="@+id/num_of_players_slider"
             app:layout_constraintTop_toTopOf="@+id/num_of_players_slider" />
 
         <CheckBox
-            android:id="@+id/more_than_100"
+            android:id="@+id/more_than_20"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
@@ -263,7 +263,7 @@
             android:contentDescription="@string/game_time"
             android:stepSize="5"
             android:valueFrom="5"
-            android:valueTo="480"
+            android:valueTo="120"
             app:labelBehavior="floating"
             app:labelStyle="@style/Widget.App.Tooltip"
             app:layout_constraintBottom_toBottomOf="@+id/min_playtime"
@@ -277,15 +277,27 @@
             android:layout_width="40dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginEnd="8dp"
             android:background="@drawable/green_square"
             android:text="@{viewModel.maxPlaytime}"
             android:textAlignment="center"
             app:layout_constraintBottom_toBottomOf="@+id/playtime_slider"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/more_than_2_hours"
             app:layout_constraintStart_toEndOf="@+id/playtime_slider"
             app:layout_constraintTop_toTopOf="@+id/playtime_slider"
             app:layout_constraintVertical_bias="0.5" />
+
+        <CheckBox
+            android:id="@+id/more_than_2_hours"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:buttonTint="@color/primaryDarkColor"
+            android:text="@string/over_2h"
+            app:layout_constraintBottom_toBottomOf="@id/max_playtime"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/max_playtime"
+            app:layout_constraintTop_toTopOf="@id/max_playtime" />
 
         <TextView
             android:id="@+id/min_age"
@@ -343,21 +355,20 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
-            android:layout_marginBottom="16dp"
             android:text="@string/cancel"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintBottom_toBottomOf="@+id/save"
+            app:layout_constraintEnd_toStartOf="@+id/save"
+            app:layout_constraintTop_toTopOf="@+id/save" />
 
         <Button
             android:id="@+id/save"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
             android:text="@string/save"
-            app:layout_constraintBottom_toBottomOf="@+id/cancel"
-            app:layout_constraintEnd_toStartOf="@+id/cancel"
-            app:layout_constraintTop_toTopOf="@+id/cancel"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
