@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.akobusinska.letsplay.R
 import com.akobusinska.letsplay.data.entities.MyGame
 import com.akobusinska.letsplay.data.repository.GameRepository
+import com.akobusinska.letsplay.ui.addGame.DialogGamesListAdapter
 import com.akobusinska.letsplay.ui.gamesList.BasicGamesListAdapter
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -31,6 +32,12 @@ fun ImageView.setGameCover(imgUrl: String?) {
 @BindingAdapter("listData")
 fun RecyclerView.bindRecyclerView(data: List<MyGame>?) {
     val adapter = this.adapter as BasicGamesListAdapter
+    adapter.submitList(data)
+}
+
+@BindingAdapter("dialogListData")
+fun RecyclerView.bindDialogRecyclerView(data: List<MyGame>?) {
+    val adapter = this.adapter as DialogGamesListAdapter
     adapter.submitList(data)
 }
 

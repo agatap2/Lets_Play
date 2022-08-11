@@ -18,7 +18,9 @@ data class MyGame(
     var maxPlaytime: Int = 120,
     var minAge: Int = 3,
     var thumbURL: String = "",
-    var gameType: GameType = GameType.GAME
+    var gameType: GameType = GameType.GAME,
+    var parentGame: Int = id,
+    var expansions: MutableList<Int> = mutableListOf()
 ) : Parcelable
 
 enum class GameType(type: String) {

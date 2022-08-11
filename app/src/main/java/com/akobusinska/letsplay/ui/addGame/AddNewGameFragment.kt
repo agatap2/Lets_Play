@@ -8,21 +8,27 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
+import androidx.core.view.get
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.RecyclerView
 import com.akobusinska.letsplay.R
 import com.akobusinska.letsplay.data.entities.GameType
+import com.akobusinska.letsplay.data.entities.MyGame
 import com.akobusinska.letsplay.databinding.FragmentAddNewGameBinding
+import com.akobusinska.letsplay.ui.addGame.DialogGamesListAdapter.GamesListListener
 import com.akobusinska.letsplay.utils.changeButtonColor
 import com.akobusinska.letsplay.utils.setGameCover
 import com.akobusinska.letsplay.utils.showInput
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.slider.RangeSlider
 import com.google.android.material.textfield.TextInputLayout
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class AddNewGameFragment : Fragment() {
 
     private lateinit var maxNumberOfPlayers: TextView
@@ -31,6 +37,9 @@ class AddNewGameFragment : Fragment() {
     private lateinit var playtimeSlider: RangeSlider
     private lateinit var application: Application
     private lateinit var pictureUrl: String
+
+    val viewModel: AddNewGameViewModel by viewModels()
+    private val args: AddNewGameFragmentArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -41,13 +50,12 @@ class AddNewGameFragment : Fragment() {
         val binding: FragmentAddNewGameBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_add_new_game, container, false)
 
-        val game = AddNewGameFragmentArgs.fromBundle(arguments!!).game
-
-        val viewModelFactory = AddNewGameViewModelFactory(game)
-        val viewModel = ViewModelProvider(this, viewModelFactory)[AddNewGameViewModel::class.java]
+        val game = args.game
 
         binding.lifecycleOwner = this
         binding.viewModel = viewModel
+
+        viewModel.getSearchResult()
 
         application = requireNotNull(activity).application
         pictureUrl = game?.thumbURL.toString()
@@ -132,10 +140,50 @@ class AddNewGameFragment : Fragment() {
                 over2Hours.isChecked = false
         }
 
-        if (game.gameType == GameType.EXPANSION)
+        if (game.gameType == GameType.EXPANSION) {
             binding.gameType.check(R.id.expansionButton)
-        else
+        } else
             binding.gameType.check(R.id.gameButton)
+
+        val gameButton = binding.gameType[0]
+        val expansionButton = binding.gameType[1]
+        val parentGame = binding.parentGame
+        val editParentGameButton = binding.editParentGame
+
+        gameButton.setOnClickListener {
+            binding.gameType.check(R.id.gameButton)
+            parentGame.visibility = View.GONE
+            editParentGameButton.visibility = View.GONE
+        }
+        expansionButton.setOnClickListener {
+            binding.gameType.check(R.id.expansionButton)
+            parentGame.visibility = View.VISIBLE
+            editParentGameButton.visibility = View.VISIBLE
+        }
+
+        binding.editParentGame.setOnClickListener {
+            val dialogView =
+                LayoutInflater.from(requireContext()).inflate(R.layout.dialog_games_list, null)
+
+            var selectedGame: MyGame? = null
+
+            val adapter = DialogGamesListAdapter(GamesListListener {
+                selectedGame = it
+            }, requireContext())
+
+            val listOfGames = dialogView.findViewById<RecyclerView>(R.id.games_list)
+            listOfGames.adapter = adapter
+
+            MaterialAlertDialogBuilder(requireContext())
+                .setView(dialogView)
+                .setTitle(R.string.select_parent_game)
+                .setPositiveButton(R.string.ok) { _, _ ->
+                    if (selectedGame != null)
+                        viewModel.updateParentGame(selectedGame!!.id)
+                }
+                .setNegativeButton(R.string.cancel, null)
+                .show()
+        }
 
         val minAgeValue = binding.minAgeValue
         val decreaseAge = binding.minusButton

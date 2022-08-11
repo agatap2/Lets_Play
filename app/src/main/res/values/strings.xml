@@ -12,6 +12,8 @@
     <string name="min_age">Minimal age: </string>
     <string name="over_20">20+</string>
     <string name="over_2h">2h+</string>
+    <string name="select_parent_game">Select parent game</string>
+    <string name="parent_game">Parent game: %s</string>
 
     <string name="game_cover">Game cover</string>
     <string name="game_name">Name</string>

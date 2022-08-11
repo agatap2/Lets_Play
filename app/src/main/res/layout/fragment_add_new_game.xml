@@ -132,16 +132,45 @@
         </com.google.android.material.button.MaterialButtonToggleGroup>
 
         <TextView
+            android:id="@+id/parent_game"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:text="@{viewModel.parentGame}"
+            android:textColor="@color/primaryTextColor"
+            android:visibility="visible"
+            app:layout_constraintEnd_toStartOf="@+id/edit_parent_game"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/game_type" />
+
+        <ImageButton
+            android:id="@+id/edit_parent_game"
+            style="@android:style/Widget.ImageButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:background="#00FFFFFF"
+            android:contentDescription="@string/select_parent_game"
+            app:layout_constraintBottom_toBottomOf="@+id/parent_game"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/parent_game"
+            app:srcCompat="@drawable/ic_baseline_edit_24"
+            app:tint="@color/primaryDarkColor" />
+
+        <TextView
             android:id="@+id/num_of_players"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="16dp"
             android:text="@string/number_of_players"
             android:textColor="@color/primaryTextColor"
             app:layout_constraintBottom_toTopOf="@id/min_num_of_players"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/game_type" />
+            app:layout_constraintTop_toBottomOf="@id/parent_game" />
 
         <TextView
             android:id="@+id/min_num_of_players"

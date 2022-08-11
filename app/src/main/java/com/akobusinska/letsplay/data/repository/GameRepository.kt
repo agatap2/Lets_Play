@@ -21,6 +21,10 @@ class GameRepository(
 
     fun getOnlyExpansions() = localDataSource.getFilteredCollection(GameType.EXPANSION)
 
+    fun getGameById(id: Int) = localDataSource.getGame(id)
+
+    suspend fun updateGame(game: MyGame) = localDataSource.updateGame(game)
+
     suspend fun downloadGamesList(name: String): List<MyGame> {
         return withContext(Dispatchers.IO) {
             formatData(remoteDataSource.searchForGames(name))
@@ -36,12 +40,11 @@ class GameRepository(
                 name = game.name ?: "",
                 minPlayers = game.minPlayers ?: 1,
                 maxPlayers = game.maxPlayers ?: 20,
-                recommendedForMorePlayers = false,
                 minPlaytime = game.minPlaytime ?: 5,
                 maxPlaytime = game.maxPlaytime ?: 120,
                 minAge = game.minAge ?: 3,
                 thumbURL = game.thumbUrl ?: game.imageUrl ?: "",
-                gameType = if (game.type == "game" && !game.name?.contains("expansion", true)!!) GameType.GAME else GameType.EXPANSION
+                gameType = if (game.type == "game" && !game.name?.contains("expansion", true)!!) GameType.GAME else GameType.EXPANSION,
             )
 
             listOfGames.add(newGame)
