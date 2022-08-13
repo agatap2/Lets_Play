@@ -1,9 +1,6 @@
 package com.akobusinska.letsplay.ui.gamesList
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.*
 import com.akobusinska.letsplay.data.entities.GameType
 import com.akobusinska.letsplay.data.entities.MyGame
 import com.akobusinska.letsplay.data.repository.GameRepository
@@ -13,7 +10,7 @@ import javax.inject.Inject
 @HiltViewModel
 class GamesListViewModel @Inject constructor(private val repository: GameRepository) : ViewModel() {
 
-    private lateinit var _gamesCollection: LiveData<List<MyGame>>
+    private val _gamesCollection = MediatorLiveData<List<MyGame>>()
     val gamesCollection: LiveData<List<MyGame>>
         get() = _gamesCollection
 
@@ -31,13 +28,19 @@ class GamesListViewModel @Inject constructor(private val repository: GameReposit
         name: String = ""
     ) {
 
-        _gamesCollection = if (filtered) {
+        if (filtered) {
             if (gameType == GameType.GAME)
-                repository.getOnlyGames()
+                _gamesCollection.addSource(repository.getOnlyGames()) {
+                    _gamesCollection.value = it
+                }
             else
-                repository.getOnlyExpansions()
+                _gamesCollection.addSource(repository.getOnlyExpansions()) {
+                    _gamesCollection.value = it
+                }
         } else {
-            repository.getFullCollection()
+            _gamesCollection.addSource(repository.getFullCollection()) {
+                _gamesCollection.value = it
+            }
         }
 
         if (name.isNotBlank()) filterGames(name)
@@ -52,10 +55,11 @@ class GamesListViewModel @Inject constructor(private val repository: GameReposit
     }
 
     fun filterGames(name: String) {
-        Transformations.map(_gamesCollection) { myGames ->
-            myGames.filter { game ->
-                game.name.contains(name)
+        if (name.isNotBlank())
+            Transformations.map(_gamesCollection) { myGames ->
+                myGames.filter { game ->
+                    game.name.contains(name)
+                }
             }
-        }
     }
 }

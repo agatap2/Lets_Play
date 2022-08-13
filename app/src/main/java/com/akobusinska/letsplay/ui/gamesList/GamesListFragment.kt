@@ -8,11 +8,13 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.DividerItemDecoration
 import com.akobusinska.letsplay.R
 import com.akobusinska.letsplay.data.entities.GameType
 import com.akobusinska.letsplay.databinding.FragmentGamesListBinding
 import com.akobusinska.letsplay.ui.gamesList.BasicGamesListAdapter.GamesListListener
 import com.akobusinska.letsplay.utils.afterTextChanged
+import com.akobusinska.letsplay.utils.bindRecyclerView
 import com.akobusinska.letsplay.utils.showInput
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputLayout
@@ -41,28 +43,32 @@ class GamesListFragment : Fragment() {
         })
 
         binding.lifecycleOwner = this
-        binding.fullGamesList.adapter = adapter
         binding.viewModel = viewModel
 
+        binding.fullGamesList.apply {
+            this.adapter = adapter
+            addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
+        }
+
         binding.all.setOnClickListener {
-            if (!allSelected) {
+            if (!allSelected)
                 viewModel.getGamesCollection(false, name = getFilter())
-                allDisplayed()
-            }
+
+            allDisplayed()
         }
 
         binding.gameFilterButton.setOnClickListener {
-            if (!gamesSelected) {
+            if (!gamesSelected)
                 viewModel.getGamesCollection(true, GameType.GAME, getFilter())
-                onlyGamesDisplayed()
-            }
+
+            onlyGamesDisplayed()
         }
 
         binding.expansionFilterButton.setOnClickListener {
-            if (!expansionsSelected) {
+            if (!expansionsSelected)
                 viewModel.getGamesCollection(true, GameType.EXPANSION, getFilter())
-                onlyExpansionsDisplayed()
-            }
+
+            onlyExpansionsDisplayed()
         }
 
         binding.addGameButton.setOnClickListener {
@@ -94,9 +100,13 @@ class GamesListFragment : Fragment() {
 
         viewModel.navigateToGameDetails.observe(viewLifecycleOwner) { gameId ->
             gameId?.let {
-                // Navigate to details fragment
+                // TODO Navigate to details fragment
                 viewModel.doneNavigating()
             }
+        }
+
+        viewModel.gamesCollection.observe(viewLifecycleOwner) { gamesList ->
+            binding.fullGamesList.bindRecyclerView(gamesList)
         }
 
         return binding.root

@@ -23,6 +23,8 @@ class GameRepository(
 
     fun getGameById(id: Int) = localDataSource.getGame(id)
 
+    suspend fun insertGame(game: MyGame) = localDataSource.insertGame(game)
+
     suspend fun updateGame(game: MyGame) = localDataSource.updateGame(game)
 
     suspend fun downloadGamesList(name: String): List<MyGame> {
@@ -44,7 +46,11 @@ class GameRepository(
                 maxPlaytime = game.maxPlaytime ?: 120,
                 minAge = game.minAge ?: 3,
                 thumbURL = game.thumbUrl ?: game.imageUrl ?: "",
-                gameType = if (game.type == "game" && !game.name?.contains("expansion", true)!!) GameType.GAME else GameType.EXPANSION,
+                gameType = if (game.type == "game" && !game.name?.contains(
+                        "expansion",
+                        true
+                    )!!
+                ) GameType.GAME else GameType.EXPANSION,
             )
 
             listOfGames.add(newGame)

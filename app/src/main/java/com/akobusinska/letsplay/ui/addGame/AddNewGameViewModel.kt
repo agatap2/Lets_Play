@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import androidx.lifecycle.*
 import com.akobusinska.letsplay.R
+import com.akobusinska.letsplay.data.entities.GameType
 import com.akobusinska.letsplay.data.entities.MyGame
 import com.akobusinska.letsplay.data.repository.GameRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,11 +24,7 @@ class AddNewGameViewModel @SuppressLint("StaticFieldLeak")
     val newGame: LiveData<MyGame>
         get() = _newGame
 
-    private val _status = MutableLiveData<GameRepository.RequestStatus>()
-    val status: LiveData<GameRepository.RequestStatus>
-        get() = _status
-
-    private val _foundGamesList = MutableLiveData<List<MyGame>>()
+    private val _foundGamesList = MediatorLiveData<List<MyGame>>()
     val foundGamesList: LiveData<List<MyGame>>
         get() = _foundGamesList
 
@@ -35,25 +32,8 @@ class AddNewGameViewModel @SuppressLint("StaticFieldLeak")
         _newGame.value = state.get<MyGame>("game")
     }
 
-    fun getSearchResult() {
-        viewModelScope.launch {
-            try {
-                _status.value = GameRepository.RequestStatus.LOADING
-                _foundGamesList.value = repository.getOnlyGames().value
-                _status.value = GameRepository.RequestStatus.DONE
-            } catch (e: Exception) {
-                _status.value = GameRepository.RequestStatus.ERROR
-                println("ERROR: ${e.message}")
-            }
-        }
-    }
-
-    val parentGame = Transformations.map(newGame) { game ->
-        if (game.parentGame != game.id)
-            context.getString(R.string.parent_game,
-                game.parentGame.let { repository.getGameById(it).value?.name ?: "" })
-        else
-            context.getString(R.string.parent_game, "?")
+    var parentGameName = Transformations.map(newGame) {
+        context.getString(R.string.parent_game, "?")
     }
 
     val minNumberOfPlayers = Transformations.map(newGame) { game ->
@@ -96,8 +76,48 @@ class AddNewGameViewModel @SuppressLint("StaticFieldLeak")
             listOf(newGame.value?.minPlaytime!!.toFloat(), newGame.value?.maxPlaytime!!.toFloat())
     }
 
-    fun updateParentGame(id: Int) {
-        val parentGame = repository.getGameById(id).value
+    fun insertGameIntoDatabase() {
+        viewModelScope.launch {
+            newGame.value?.let { repository.insertGame(it) }
+        }
+    }
+
+    fun getSearchResult() {
+        _foundGamesList.addSource(repository.getOnlyGames()) {
+            _foundGamesList.value = it
+        }
+    }
+
+    fun updateGameFields(
+        name: String,
+        minPlayers: Int,
+        maxPlayers: Int,
+        recommendedForMore: Boolean,
+        minPlaytime: Int,
+        maxPlaytime: Int,
+        minAge: Int,
+        thumbUrl: String,
+        gameType: GameType,
+        parent: Int
+    ) {
+        _newGame.value.let { game ->
+            if (game != null) {
+                game.name = name
+                game.minPlayers = minPlayers
+                game.maxPlayers = maxPlayers
+                game.recommendedForMorePlayers = recommendedForMore
+                game.minPlaytime = minPlaytime
+                game.maxPlaytime = maxPlaytime
+                game.minAge = minAge
+                game.thumbURL = thumbUrl
+                game.gameType = gameType
+                game.parentGame = parent
+            }
+        }
+    }
+
+    fun updateParentGame(parent: MyGame) {
+        val parentGame = repository.getGameById(parent.id).value
         parentGame?.expansions?.add(newGame.value!!.id)
 
         viewModelScope.launch {

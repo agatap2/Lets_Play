@@ -23,6 +23,6 @@ data class MyGame(
     var expansions: MutableList<Int> = mutableListOf()
 ) : Parcelable
 
-enum class GameType(type: String) {
-    GAME("game"), EXPANSION("expansion")
+enum class GameType {
+    GAME, EXPANSION
 }

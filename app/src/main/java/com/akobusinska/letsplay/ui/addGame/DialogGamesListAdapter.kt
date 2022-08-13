@@ -1,22 +1,17 @@
 package com.akobusinska.letsplay.ui.addGame
 
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.RadioButton
-import android.widget.TextView
-import androidx.core.content.ContextCompat.getColor
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.akobusinska.letsplay.R
 import com.akobusinska.letsplay.data.entities.MyGame
 import com.akobusinska.letsplay.databinding.SelectGameListBinding
 
 class DialogGamesListAdapter(
-    private val clickListener: GamesListListener,
-    private val context: Context
+    private val clickListener: GamesListListener
 ) :
     ListAdapter<MyGame, DialogGamesListAdapter.ViewHolder>(DiffCallback) {
 
@@ -35,16 +30,25 @@ class DialogGamesListAdapter(
     inner class ViewHolder constructor(private val binding: SelectGameListBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        var name: TextView = binding.name
         private var radioSelect: RadioButton = binding.listItem
+        private var game: MyGame? = null
 
         init {
-            binding.list.setOnClickListener {
-                lastCheckedPosition = adapterPosition
-            }
             radioSelect.setOnClickListener {
-                lastCheckedPosition = adapterPosition
+                updateRadioButton()
             }
+            binding.name.setOnClickListener {
+                updateRadioButton()
+            }
+            binding.cover.setOnClickListener {
+                updateRadioButton()
+            }
+        }
+
+        private fun updateRadioButton() {
+            lastCheckedPosition = adapterPosition
+            notifyDataSetChanged()
+            if (game != null) clickListener.onClick(game!!)
         }
 
         fun bind(clickListener: GamesListListener, item: MyGame, position: Int) {
@@ -52,16 +56,8 @@ class DialogGamesListAdapter(
             binding.clickListener = clickListener
             binding.executePendingBindings()
 
-            val radioSelect = binding.listItem
-
+            game = item
             radioSelect.isChecked = position == lastCheckedPosition
-            if (lastCheckedPosition == position) {
-                name.setTextColor(getColor(context, R.color.primaryColor))
-                radioSelect.isChecked = true
-            } else {
-                name.setTextColor(getColor(context, R.color.primaryTextColor))
-                radioSelect.isChecked = false
-            }
         }
     }
 
