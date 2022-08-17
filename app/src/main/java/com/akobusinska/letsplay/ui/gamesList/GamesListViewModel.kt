@@ -1,6 +1,9 @@
 package com.akobusinska.letsplay.ui.gamesList
 
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import com.akobusinska.letsplay.data.entities.GameType
 import com.akobusinska.letsplay.data.entities.MyGame
 import com.akobusinska.letsplay.data.repository.GameRepository
@@ -10,12 +13,13 @@ import javax.inject.Inject
 @HiltViewModel
 class GamesListViewModel @Inject constructor(private val repository: GameRepository) : ViewModel() {
 
+    private lateinit var _fullGamesCollection: List<MyGame>
     private val _gamesCollection = MediatorLiveData<List<MyGame>>()
     val gamesCollection: LiveData<List<MyGame>>
         get() = _gamesCollection
 
-    private val _navigateToGameDetails = MutableLiveData<Int>()
-    val navigateToGameDetails: LiveData<Int>
+    private val _navigateToGameDetails = MutableLiveData<Int?>()
+    val navigateToGameDetails: LiveData<Int?>
         get() = _navigateToGameDetails
 
     init {
@@ -27,23 +31,26 @@ class GamesListViewModel @Inject constructor(private val repository: GameReposit
         gameType: GameType = GameType.GAME,
         name: String = ""
     ) {
-
         if (filtered) {
             if (gameType == GameType.GAME)
                 _gamesCollection.addSource(repository.getOnlyGames()) {
-                    _gamesCollection.value = it
+                    reloadList(name, it)
                 }
             else
                 _gamesCollection.addSource(repository.getOnlyExpansions()) {
-                    _gamesCollection.value = it
+                    reloadList(name, it)
                 }
         } else {
             _gamesCollection.addSource(repository.getFullCollection()) {
-                _gamesCollection.value = it
+                reloadList(name, it)
             }
         }
+    }
 
+    private fun reloadList(name: String, list: List<MyGame>) {
+        _fullGamesCollection = list
         if (name.isNotBlank()) filterGames(name)
+        _gamesCollection.value = list
     }
 
     fun navigateToGameDetails(gameId: Int) {
@@ -55,11 +62,10 @@ class GamesListViewModel @Inject constructor(private val repository: GameReposit
     }
 
     fun filterGames(name: String) {
-        if (name.isNotBlank())
-            Transformations.map(_gamesCollection) { myGames ->
-                myGames.filter { game ->
-                    game.name.contains(name)
-                }
+        if (name.isNotBlank()) {
+            _gamesCollection.value = _fullGamesCollection.filter { game ->
+                game.name.contains(name, true)
             }
+        }
     }
 }

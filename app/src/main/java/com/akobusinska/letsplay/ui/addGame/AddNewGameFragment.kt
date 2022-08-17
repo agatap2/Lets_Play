@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
 import com.akobusinska.letsplay.R
 import com.akobusinska.letsplay.data.entities.GameType
@@ -186,7 +187,10 @@ class AddNewGameFragment : Fragment() {
         })
 
         val listOfGames = editParentGameDialogView.findViewById<RecyclerView>(R.id.games_list)
-        listOfGames.adapter = adapter
+        listOfGames.apply {
+            this.adapter = adapter
+            addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
+        }
 
         viewModel.foundGamesList.observe(viewLifecycleOwner) {
             listOfGames.bindDialogRecyclerView(it)

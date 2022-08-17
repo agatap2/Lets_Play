@@ -95,15 +95,18 @@
             android:background="@color/medium_green"
             app:layout_constraintTop_toBottomOf="@+id/toggleButton" />
 
-        <androidx.recyclerview.widget.RecyclerView
+        <com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView
             android:id="@+id/full_games_list"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginTop="8dp"
+            app:fastScrollPopupBgColor="@color/primaryDarkColor"
+            app:fastScrollPopupTextColor="@color/light_green"
+            app:fastScrollAutoHide="false"
+            app:fastScrollThumbEnabled="true"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/view"
-            app:listData="@{viewModel.gamesCollection}" />
+            app:layout_constraintTop_toBottomOf="@+id/view" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/add_game_button"

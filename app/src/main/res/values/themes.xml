@@ -12,7 +12,7 @@
         <item name="colorSecondaryVariant">@color/primaryDarkColor</item>
         <item name="colorOnSecondary">@color/light_green</item>
 
-        <item name="fontFamily">@font/andika</item>
+        <item name="fontFamily">@font/abeezee</item>
     </style>
 
     <style name="Widget.App.Tooltip" parent="Widget.MaterialComponents.Tooltip">

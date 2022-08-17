@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.widget.doOnTextChanged
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -13,7 +14,6 @@ import com.akobusinska.letsplay.R
 import com.akobusinska.letsplay.data.entities.GameType
 import com.akobusinska.letsplay.databinding.FragmentGamesListBinding
 import com.akobusinska.letsplay.ui.gamesList.BasicGamesListAdapter.GamesListListener
-import com.akobusinska.letsplay.utils.afterTextChanged
 import com.akobusinska.letsplay.utils.bindRecyclerView
 import com.akobusinska.letsplay.utils.showInput
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -28,6 +28,7 @@ class GamesListFragment : Fragment() {
     private var allSelected = true
     private var gamesSelected = false
     private var expansionsSelected = false
+    private var refresh = true
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -94,8 +95,9 @@ class GamesListFragment : Fragment() {
                 )
         }
 
-        binding.searchBar.afterTextChanged {
-            viewModel.filterGames(it)
+        binding.searchBar.doOnTextChanged { text, _, _, _ ->
+            viewModel.filterGames(text.toString())
+            refresh = true
         }
 
         viewModel.navigateToGameDetails.observe(viewLifecycleOwner) { gameId ->
@@ -106,7 +108,10 @@ class GamesListFragment : Fragment() {
         }
 
         viewModel.gamesCollection.observe(viewLifecycleOwner) { gamesList ->
-            binding.fullGamesList.bindRecyclerView(gamesList)
+            if (refresh) {
+                binding.fullGamesList.bindRecyclerView(gamesList)
+                refresh = false
+            }
         }
 
         return binding.root
@@ -118,17 +123,20 @@ class GamesListFragment : Fragment() {
         allSelected = true
         gamesSelected = false
         expansionsSelected = false
+        refresh = true
     }
 
     private fun onlyGamesDisplayed() {
         allSelected = false
         gamesSelected = true
         expansionsSelected = false
+        refresh = true
     }
 
     private fun onlyExpansionsDisplayed() {
         allSelected = false
         gamesSelected = false
         expansionsSelected = true
+        refresh = true
     }
 }

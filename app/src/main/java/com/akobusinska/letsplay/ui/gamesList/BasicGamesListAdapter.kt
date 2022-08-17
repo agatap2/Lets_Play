@@ -7,9 +7,10 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.akobusinska.letsplay.data.entities.MyGame
 import com.akobusinska.letsplay.databinding.BasicListItemBinding
+import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView.SectionedAdapter
 
 class BasicGamesListAdapter(private val clickListener: GamesListListener) :
-    ListAdapter<MyGame, BasicGamesListAdapter.ViewHolder>(DiffCallback) {
+    ListAdapter<MyGame, BasicGamesListAdapter.ViewHolder>(DiffCallback), SectionedAdapter {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder.from(parent)
@@ -17,6 +18,10 @@ class BasicGamesListAdapter(private val clickListener: GamesListListener) :
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(clickListener, getItem(position))
+    }
+
+    override fun getSectionName(position: Int): String {
+        return getItem(position).name.first().toString()
     }
 
     companion object DiffCallback : DiffUtil.ItemCallback<MyGame>() {
