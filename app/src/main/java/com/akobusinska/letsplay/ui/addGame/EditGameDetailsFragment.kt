@@ -19,7 +19,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.akobusinska.letsplay.R
 import com.akobusinska.letsplay.data.entities.GameType
 import com.akobusinska.letsplay.data.entities.MyGame
-import com.akobusinska.letsplay.databinding.FragmentAddNewGameBinding
+import com.akobusinska.letsplay.databinding.FragmentEditGameDetailsBinding
 import com.akobusinska.letsplay.ui.addGame.DialogGamesListAdapter.GamesListListener
 import com.akobusinska.letsplay.utils.bindDialogRecyclerView
 import com.akobusinska.letsplay.utils.changeButtonColor
@@ -32,7 +32,7 @@ import com.google.android.material.textfield.TextInputLayout
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class AddNewGameFragment : Fragment() {
+class EditGameDetailsFragment : Fragment() {
 
     private lateinit var title: TextInputLayout
     private lateinit var type: GameType
@@ -47,9 +47,11 @@ class AddNewGameFragment : Fragment() {
     private lateinit var application: Application
     private lateinit var pictureUrl: String
     private var parent: Int = -1
+    private var isGameNew: Boolean = true
+    private lateinit var game: MyGame
 
-    val viewModel: AddNewGameViewModel by viewModels()
-    private val args: AddNewGameFragmentArgs by navArgs()
+    val viewModel: EditGameDetailsViewModel by viewModels()
+    private val args: EditGameDetailsFragmentArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -57,10 +59,11 @@ class AddNewGameFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        val binding: FragmentAddNewGameBinding =
-            DataBindingUtil.inflate(inflater, R.layout.fragment_add_new_game, container, false)
+        val binding: FragmentEditGameDetailsBinding =
+            DataBindingUtil.inflate(inflater, R.layout.fragment_edit_game_details, container, false)
 
-        val game = args.game
+        game = args.game!!
+        isGameNew = args.isGameNew
 
         binding.lifecycleOwner = this
         binding.viewModel = viewModel
@@ -68,9 +71,9 @@ class AddNewGameFragment : Fragment() {
         viewModel.getSearchResult()
 
         application = requireNotNull(activity).application
-        pictureUrl = game?.thumbURL.toString()
+        pictureUrl = game.thumbURL
         title = binding.titleLayout
-        type = game?.gameType ?: GameType.GAME
+        type = game.gameType
         minNumberOfPlayers = binding.minNumOfPlayers
         maxNumberOfPlayers = binding.maxNumOfPlayers
         numberOfPlayersSlider = binding.numOfPlayersSlider
@@ -78,7 +81,7 @@ class AddNewGameFragment : Fragment() {
         maxPlaytime = binding.maxPlaytime
         playtimeSlider = binding.playtimeSlider
         recommendedForMore = binding.recommendedForMoreSwitch
-        parent = game?.parentGame!!
+        parent = game.parentGame
 
         val moreThan20 = binding.moreThan20
 
@@ -196,6 +199,16 @@ class AddNewGameFragment : Fragment() {
             listOfGames.bindDialogRecyclerView(it)
         }
 
+        viewModel.parentGame.observe(viewLifecycleOwner) {
+            binding.parentGame.text =
+                application.resources.getString(
+                    R.string.parent_game,
+                    it.name
+                )
+            it.expansions.add(game.id)
+            viewModel.updateParentGame(it)
+        }
+
         binding.editParentGame.setOnClickListener {
             if (editParentGameDialogView.parent != null) (editParentGameDialogView.parent as ViewGroup).removeView(
                 editParentGameDialogView
@@ -207,7 +220,7 @@ class AddNewGameFragment : Fragment() {
                 .setPositiveButton(R.string.ok) { _, _ ->
                     if (selectedGame != null) {
                         parent = selectedGame!!.id
-                        viewModel.updateParentGame(selectedGame!!)
+                        viewModel.getParentGame(selectedGame!!.id)
                         binding.parentGame.text = application.resources.getString(
                             R.string.parent_game,
                             selectedGame!!.name
@@ -248,6 +261,16 @@ class AddNewGameFragment : Fragment() {
         }
 
         val recommendedForMorePlayersText = binding.recommendedForMoreText
+
+        if (game.recommendedForMorePlayers) {
+            binding.recommendedForMoreSwitch.isChecked = true
+            recommendedForMorePlayersText.setTextColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    R.color.primaryTextColor
+                )
+            )
+        }
 
         binding.recommendedForMoreSwitch.setOnCheckedChangeListener { _, isChecked ->
 
@@ -293,25 +316,30 @@ class AddNewGameFragment : Fragment() {
             viewLifecycleOwner,
             object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
-                    findNavController().navigate(AddNewGameFragmentDirections.navigateToCollectionList())
+                    navigateToPreviousScreen()
                 }
             }
         )
 
         binding.save.setOnClickListener {
             saveGame()
-            navigateToMainScreen()
+            navigateToPreviousScreen()
         }
 
         binding.cancel.setOnClickListener {
-            navigateToMainScreen()
+            navigateToPreviousScreen()
         }
 
         return binding.root
     }
 
-    private fun navigateToMainScreen() {
-        findNavController().navigate(AddNewGameFragmentDirections.navigateToCollectionList())
+    private fun navigateToPreviousScreen() {
+        if (isGameNew)
+            findNavController().navigate(EditGameDetailsFragmentDirections.navigateToCollectionList())
+        else
+            findNavController().navigate(
+                EditGameDetailsFragmentDirections.navigateToGameDetails(game)
+            )
     }
 
     private fun onOutOfRangeCheckboxClick(
@@ -328,19 +356,27 @@ class AddNewGameFragment : Fragment() {
     }
 
     private fun saveGame() {
+
+        val id = if (isGameNew) -1 else game.id
+        val parentGame = if (type == GameType.GAME) id else parent
+
         viewModel.updateGameFields(
+            id,
             title.editText?.text.toString(),
             numberOfPlayersSlider.values[0].toInt(),
-            numberOfPlayersSlider.values[0].toInt(),
+            numberOfPlayersSlider.values[1].toInt(),
             recommendedForMore.isChecked,
             playtimeSlider.values[0].toInt(),
             playtimeSlider.values[1].toInt(),
             minAgeValue.text.toString().toInt(),
             pictureUrl,
             type,
-            parent
+            parentGame
         )
 
-        viewModel.insertGameIntoDatabase()
+        if (isGameNew)
+            viewModel.insertGameIntoDatabase()
+        else
+            viewModel.updateGameInDatabase()
     }
 }

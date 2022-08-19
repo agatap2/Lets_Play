@@ -9,7 +9,7 @@ import kotlinx.parcelize.Parcelize
 @Entity(tableName = "my_game_table")
 data class MyGame(
     @PrimaryKey(autoGenerate = true)
-    val id: Int = 0,
+    var id: Int = 0,
     var name: String = "",
     var minPlayers: Int = 1,
     var maxPlayers: Int = 20,

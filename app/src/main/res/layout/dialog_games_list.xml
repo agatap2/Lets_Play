@@ -6,7 +6,7 @@
 
         <variable
             name="viewModel"
-            type="com.akobusinska.letsplay.ui.addGame.AddNewGameViewModel" />
+            type="com.akobusinska.letsplay.ui.addGame.EditGameDetailsViewModel" />
     </data>
 
     <FrameLayout

@@ -12,6 +12,9 @@
         <action
             android:id="@+id/searchForGame"
             app:destination="@id/webSearchResultFragment" />
+        <action
+            android:id="@+id/navigateToGameDetails"
+            app:destination="@id/gameDetailsFragment" />
     </fragment>
     <fragment
         android:id="@+id/webSearchResultFragment"
@@ -27,9 +30,30 @@
     </fragment>
     <fragment
         android:id="@+id/addNewGameFragment"
-        android:name="com.akobusinska.letsplay.ui.addGame.AddNewGameFragment"
+        android:name="com.akobusinska.letsplay.ui.addGame.EditGameDetailsFragment"
         android:label="fragment_add_new_game"
-        tools:layout="@layout/fragment_add_new_game">
+        tools:layout="@layout/fragment_edit_game_details">
+        <argument
+            android:name="game"
+            app:argType="com.akobusinska.letsplay.data.entities.MyGame"
+            app:nullable="true" />
+        <argument
+            android:name="isGameNew"
+            app:argType="boolean" />
+        <action
+            android:id="@+id/navigateToCollectionList"
+            app:destination="@id/gamesListFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/navigation"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/navigateToGameDetails"
+            app:destination="@id/gameDetailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/gameDetailsFragment"
+        android:name="com.akobusinska.letsplay.ui.gameDetails.GameDetailsFragment"
+        android:label="GameDetailsFragment">
         <argument
             android:name="game"
             app:argType="com.akobusinska.letsplay.data.entities.MyGame"
@@ -40,5 +64,8 @@
             app:launchSingleTop="true"
             app:popUpTo="@id/navigation"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/navigateToGamesEditionForm"
+            app:destination="@id/addNewGameFragment" />
     </fragment>
 </navigation>

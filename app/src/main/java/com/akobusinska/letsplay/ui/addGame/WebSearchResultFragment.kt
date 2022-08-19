@@ -33,7 +33,7 @@ class WebSearchResultFragment : Fragment() {
         binding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_web_search_result, container, false)
 
-        gameName = WebSearchResultFragmentArgs.fromBundle(arguments!!).gameName
+        gameName = WebSearchResultFragmentArgs.fromBundle(requireArguments()).gameName
 
         val adapter = BasicGamesListAdapter(GamesListListener { game ->
             viewModel.navigateToNewGameForm(game)
@@ -75,7 +75,7 @@ class WebSearchResultFragment : Fragment() {
     private fun navigateToNewGameForm(game: MyGame?) {
         this.findNavController()
             .navigate(
-                WebSearchResultFragmentDirections.navigateToNewGameForm(game)
+                WebSearchResultFragmentDirections.navigateToNewGameForm(game, true)
             )
     }
 

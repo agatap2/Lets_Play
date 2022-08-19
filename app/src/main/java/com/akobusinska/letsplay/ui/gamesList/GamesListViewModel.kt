@@ -18,8 +18,8 @@ class GamesListViewModel @Inject constructor(private val repository: GameReposit
     val gamesCollection: LiveData<List<MyGame>>
         get() = _gamesCollection
 
-    private val _navigateToGameDetails = MutableLiveData<Int?>()
-    val navigateToGameDetails: LiveData<Int?>
+    private val _navigateToGameDetails = MutableLiveData<MyGame?>()
+    val navigateToGameDetails: LiveData<MyGame?>
         get() = _navigateToGameDetails
 
     init {
@@ -53,8 +53,8 @@ class GamesListViewModel @Inject constructor(private val repository: GameReposit
         _gamesCollection.value = list
     }
 
-    fun navigateToGameDetails(gameId: Int) {
-        _navigateToGameDetails.value = gameId
+    fun navigateToGameDetails(game: MyGame) {
+        _navigateToGameDetails.value = game
     }
 
     fun doneNavigating() {

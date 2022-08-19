@@ -9,11 +9,22 @@
     <string name="game_time">Game time (in minutes):</string>
     <string name="number_of_players">Number of players:</string>
     <string name="recommended_for_more_players">Recommended for more players</string>
-    <string name="min_age">Minimal age: </string>
+    <string name="min_age">Minimal age:</string>
     <string name="over_20">20+</string>
     <string name="over_2h">2h+</string>
     <string name="select_parent_game">Select parent game</string>
     <string name="parent_game">Parent game: %s</string>
+    <string name="confirm_delete_title">Confirm delete...</string>
+    <string name="confirm_delete_message">Are you sure you want to delete this game from your collection?</string>
+
+    <string name="owned_expansions_value"><![CDATA[<b>Owned expansions:</b> %s]]></string>
+    <string name="parent_game_value"><![CDATA[<b>Parent game:</b> %s]]></string>
+    <string name="number_of_players_value"><![CDATA[<b>Number of players:</b> %d - %d]]></string>
+    <string name="recommended_for_more_players_value">Game is recommended for more players</string>
+    <string name="large_number_of_players_value"><![CDATA[<b>Number of players:</b> %d - %d or more]]></string>
+    <string name="playtime_value"><![CDATA[<b>Game time:</b> %d min - %d min]]></string>
+    <string name="long_playtime"><![CDATA[<b>Game time:</b>  %d min - %d min or more]]></string>
+    <string name="min_age_value"><![CDATA[<b>Minimal age:</b> %d]]></string>
 
     <string name="game_cover">Game cover</string>
     <string name="game_name">Name</string>
@@ -22,11 +33,15 @@
     <string name="decrease_minimal_age">Decrease minimal age</string>
     <string name="title">Title</string>
     <string name="edit_game_cover">Edit game cover</string>
+    <string name="edit">Edit</string>
+    <string name="remove">Remove</string>
 
     <string name="add_game">Add game</string>
     <string name="provide_game_name">Provide game name</string>
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
     <string name="save">Save</string>
     <string name="select_game">Select game</string>
     <string name="skip">Skip</string>

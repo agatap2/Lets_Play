@@ -23,9 +23,13 @@ class GameRepository(
 
     fun getGameById(id: Int) = localDataSource.getGame(id)
 
+    fun getExpansionsListById(id: Int) = localDataSource.getExpansions(id)
+
     suspend fun insertGame(game: MyGame) = localDataSource.insertGame(game)
 
     suspend fun updateGame(game: MyGame) = localDataSource.updateGame(game)
+
+    suspend fun deleteGame(game: MyGame) = localDataSource.deleteGame(game)
 
     suspend fun downloadGamesList(name: String): List<MyGame> {
         return withContext(Dispatchers.IO) {

@@ -40,7 +40,7 @@ class GamesListFragment : Fragment() {
         )
 
         val adapter = BasicGamesListAdapter(GamesListListener { game ->
-            viewModel.navigateToGameDetails(game.id)
+            viewModel.navigateToGameDetails(game)
         })
 
         binding.lifecycleOwner = this
@@ -100,9 +100,11 @@ class GamesListFragment : Fragment() {
             refresh = true
         }
 
-        viewModel.navigateToGameDetails.observe(viewLifecycleOwner) { gameId ->
-            gameId?.let {
-                // TODO Navigate to details fragment
+        viewModel.navigateToGameDetails.observe(viewLifecycleOwner) { game ->
+            if (findNavController().currentDestination?.id == R.id.gamesListFragment) {
+                this.findNavController().navigate(
+                    GamesListFragmentDirections.navigateToGameDetails(game)
+                )
                 viewModel.doneNavigating()
             }
         }

@@ -18,6 +18,9 @@ interface GameDao {
     @Query("SELECT * FROM my_game_table WHERE id = :id")
     fun getGame(id: Int): LiveData<MyGame>
 
+    @Query("SELECT * FROM my_game_table WHERE parentGame = :id")
+    fun getExpansions(id: Int): LiveData<List<MyGame>>
+
     @Insert(onConflict = REPLACE)
     suspend fun insertGame(game: MyGame)
 

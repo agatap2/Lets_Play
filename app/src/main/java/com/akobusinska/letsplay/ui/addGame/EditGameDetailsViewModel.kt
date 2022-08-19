@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class AddNewGameViewModel @SuppressLint("StaticFieldLeak")
+class EditGameDetailsViewModel @SuppressLint("StaticFieldLeak")
 @Inject constructor(
     private val repository: GameRepository,
     state: SavedStateHandle,
@@ -24,6 +24,10 @@ class AddNewGameViewModel @SuppressLint("StaticFieldLeak")
     val newGame: LiveData<MyGame>
         get() = _newGame
 
+    private val _parentGame = MediatorLiveData<MyGame>()
+    val parentGame: LiveData<MyGame>
+        get() = _parentGame
+
     private val _foundGamesList = MediatorLiveData<List<MyGame>>()
     val foundGamesList: LiveData<List<MyGame>>
         get() = _foundGamesList
@@ -33,6 +37,8 @@ class AddNewGameViewModel @SuppressLint("StaticFieldLeak")
     }
 
     var parentGameName = Transformations.map(newGame) {
+        if (it?.gameType == GameType.EXPANSION && it.id != it.parentGame)
+            getParentGame(it.parentGame)
         context.getString(R.string.parent_game, "?")
     }
 
@@ -76,9 +82,22 @@ class AddNewGameViewModel @SuppressLint("StaticFieldLeak")
             listOf(newGame.value?.minPlaytime!!.toFloat(), newGame.value?.maxPlaytime!!.toFloat())
     }
 
+    fun getParentGame(id: Int) {
+        _parentGame.addSource(repository.getGameById(id)) {
+            if (it != null)
+                _parentGame.value = it
+        }
+    }
+
     fun insertGameIntoDatabase() {
         viewModelScope.launch {
             newGame.value?.let { repository.insertGame(it) }
+        }
+    }
+
+    fun updateGameInDatabase() {
+        viewModelScope.launch {
+            newGame.value?.let { repository.updateGame(it) }
         }
     }
 
@@ -89,6 +108,7 @@ class AddNewGameViewModel @SuppressLint("StaticFieldLeak")
     }
 
     fun updateGameFields(
+        id: Int,
         name: String,
         minPlayers: Int,
         maxPlayers: Int,
@@ -102,6 +122,7 @@ class AddNewGameViewModel @SuppressLint("StaticFieldLeak")
     ) {
         _newGame.value.let { game ->
             if (game != null) {
+                if (id != -1) game.id = id
                 game.name = name
                 game.minPlayers = minPlayers
                 game.maxPlayers = maxPlayers
@@ -117,13 +138,8 @@ class AddNewGameViewModel @SuppressLint("StaticFieldLeak")
     }
 
     fun updateParentGame(parent: MyGame) {
-        val parentGame = repository.getGameById(parent.id).value
-        parentGame?.expansions?.add(newGame.value!!.id)
-
         viewModelScope.launch {
-            if (parentGame != null) {
-                repository.updateGame(parentGame)
-            }
+            repository.updateGame(parent)
         }
     }
 
