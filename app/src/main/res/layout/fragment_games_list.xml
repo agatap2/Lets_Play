@@ -95,9 +95,9 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginTop="8dp"
+            app:fastScrollAutoHide="false"
             app:fastScrollPopupBgColor="@color/primaryDarkColor"
             app:fastScrollPopupTextColor="@color/light_green"
-            app:fastScrollAutoHide="false"
             app:fastScrollThumbEnabled="true"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -115,6 +115,17 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:srcCompat="@drawable/ic_baseline_add_24" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/select_game_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:clickable="true"
+            android:focusable="true"
+            app:layout_constraintBottom_toTopOf="@+id/add_game_button"
+            app:layout_constraintEnd_toEndOf="@+id/add_game_button"
+            app:srcCompat="@drawable/ic_filter_check" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

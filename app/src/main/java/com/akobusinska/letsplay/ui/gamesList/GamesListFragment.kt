@@ -75,7 +75,7 @@ class GamesListFragment : Fragment() {
         binding.addGameButton.setOnClickListener {
 
             val dialogView =
-                LayoutInflater.from(requireContext()).inflate(R.layout.dialog_text_input, null)
+                LayoutInflater.from(requireContext()).inflate(R.layout.dialog_game_name, null)
 
             MaterialAlertDialogBuilder(requireContext())
                 .setView(dialogView)
@@ -93,6 +93,10 @@ class GamesListFragment : Fragment() {
                     R.id.dialog_text_input_layout,
                     R.string.game_name
                 )
+        }
+
+        binding.selectGameButton.setOnClickListener {
+            findNavController().navigate(GamesListFragmentDirections.navigateToGameSelectionFragment())
         }
 
         binding.searchBar.doOnTextChanged { text, _, _, _ ->

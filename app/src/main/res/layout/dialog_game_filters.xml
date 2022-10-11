@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingStart="?attr/dialogPreferredPadding"
+        android:paddingTop="8dp"
+        android:paddingEnd="?attr/dialogPreferredPadding">
+
+        <TextView
+            android:id="@+id/num_of_players"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/number_of_players"
+            android:textColor="@color/primaryTextColor"
+            app:layout_constraintBottom_toTopOf="@id/num_of_players_value"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/num_of_players_value"
+            style="@style/SmallTextViewBox"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="4dp"
+            android:layout_marginBottom="16dp"
+            android:text="2"
+            app:layout_constraintBottom_toBottomOf="@+id/num_of_players"
+            app:layout_constraintEnd_toStartOf="@+id/num_of_players_slider"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/num_of_players" />
+
+        <com.google.android.material.slider.Slider
+            android:id="@+id/num_of_players_slider"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/number_of_players"
+            android:stepSize="1"
+            android:valueFrom="1"
+            android:valueTo="20"
+            app:labelBehavior="floating"
+            app:labelStyle="@style/Widget.App.Tooltip"
+            app:layout_constraintBottom_toBottomOf="@+id/num_of_players_value"
+            app:layout_constraintEnd_toEndOf="@+id/playtime_slider"
+            app:layout_constraintStart_toEndOf="@+id/num_of_players_value"
+            app:layout_constraintTop_toTopOf="@+id/num_of_players_value" />
+
+        <CheckBox
+            android:id="@+id/more_than_20"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:buttonTint="@color/primaryDarkColor"
+            android:text="@string/over_20"
+            app:layout_constraintBottom_toBottomOf="@id/num_of_players_slider"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@+id/num_of_players_slider"
+            app:layout_constraintTop_toTopOf="@id/num_of_players_slider"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <TextView
+            android:id="@+id/play_time"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="@string/max_game_time"
+            android:textColor="@color/primaryTextColor"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/num_of_players_value" />
+
+        <TextView
+            android:id="@+id/playtime_value"
+            style="@style/SmallTextViewBox"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="4dp"
+            android:layout_marginBottom="16dp"
+            android:text="@string/over_2h"
+            app:layout_constraintBottom_toTopOf="@id/min_age"
+            app:layout_constraintEnd_toStartOf="@+id/playtime_slider"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/play_time" />
+
+        <com.google.android.material.slider.Slider
+            android:id="@+id/playtime_slider"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/game_time"
+            android:stepSize="5"
+            android:valueFrom="5"
+            android:valueTo="120"
+            app:labelBehavior="floating"
+            app:labelStyle="@style/Widget.App.Tooltip"
+            app:layout_constraintBottom_toBottomOf="@+id/playtime_value"
+            app:layout_constraintEnd_toStartOf="@+id/no_time_limit"
+            app:layout_constraintStart_toEndOf="@+id/playtime_value"
+            app:layout_constraintTop_toTopOf="@+id/playtime_value" />
+
+        <CheckBox
+            android:id="@+id/no_time_limit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:buttonTint="@color/primaryDarkColor"
+            android:text="@string/none"
+            app:layout_constraintBottom_toBottomOf="@id/playtime_slider"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/playtime_slider"
+            app:layout_constraintTop_toTopOf="@id/playtime_slider"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <TextView
+            android:id="@+id/min_age"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="@string/min_age"
+            android:textColor="@color/primaryTextColor"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/playtime_value" />
+
+        <ImageButton
+            android:id="@+id/plus_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#00FFFFFF"
+            android:contentDescription="@string/increase_minimal_age"
+            android:minWidth="48dp"
+            android:minHeight="48dp"
+            app:layout_constraintBottom_toBottomOf="@+id/min_age_value"
+            app:layout_constraintStart_toEndOf="@+id/min_age_value"
+            app:layout_constraintTop_toTopOf="@+id/min_age_value"
+            app:srcCompat="@drawable/ic_baseline_add_circle_24"
+            app:tint="@color/primaryColor" />
+
+        <TextView
+            android:id="@+id/min_age_value"
+            style="@style/SmallTextViewBox"
+            android:text="18"
+            app:layout_constraintBottom_toBottomOf="@id/minus_button"
+            app:layout_constraintEnd_toStartOf="@id/plus_button"
+            app:layout_constraintStart_toEndOf="@+id/minus_button"
+            app:layout_constraintTop_toTopOf="@+id/minus_button" />
+
+        <ImageButton
+            android:id="@+id/minus_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#00FFFFFF"
+            android:contentDescription="@string/decrease_minimal_age"
+            android:minWidth="48dp"
+            android:minHeight="48dp"
+            app:layout_constraintBottom_toBottomOf="@+id/min_age"
+            app:layout_constraintStart_toEndOf="@+id/min_age"
+            app:layout_constraintTop_toTopOf="@+id/min_age"
+            app:srcCompat="@drawable/ic_baseline_remove_circle_24"
+            app:tint="@color/primaryColor" />
+
+        <CheckBox
+            android:id="@+id/exclude_recommended_for_more"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="-8dp"
+            android:layout_marginTop="24dp"
+            android:buttonTint="@color/primaryDarkColor"
+            android:text="@string/exclude_games_recommended_for_more_players"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/min_age"
+            app:layout_constraintTop_toBottomOf="@+id/min_age" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

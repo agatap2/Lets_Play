@@ -36,7 +36,6 @@ class GameDetailsFragment : Fragment() {
         val recommendedForMorePlayersIcon = binding.recommendedForMoreIcon
 
         binding.lifecycleOwner = this
-        binding.viewModel = viewModel
         binding.game = null
 
         viewModel.game.observe(viewLifecycleOwner) {
@@ -80,7 +79,7 @@ class GameDetailsFragment : Fragment() {
 
         requireActivity().addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                menuInflater.inflate(R.menu.menu, menu)
+                menuInflater.inflate(R.menu.details_menu, menu)
             }
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
@@ -88,7 +87,7 @@ class GameDetailsFragment : Fragment() {
                     R.id.edit -> {
                         viewModel.navigateToGameEditionForm(game)
                     }
-                    R.id.remove -> {
+                    R.id.revert -> {
                         MaterialAlertDialogBuilder(requireContext())
                             .setTitle(resources.getString(R.string.confirm_delete_title))
                             .setMessage(resources.getString(R.string.confirm_delete_message))

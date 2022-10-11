@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CheckBox
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
@@ -46,6 +47,8 @@ class EditGameDetailsFragment : Fragment() {
     private lateinit var minAgeValue: TextView
     private lateinit var application: Application
     private lateinit var pictureUrl: String
+    private lateinit var moreThan20: CheckBox
+    private lateinit var over2Hours: CheckBox
     private var parent: Int = -1
     private var isGameNew: Boolean = true
     private lateinit var game: MyGame
@@ -82,8 +85,8 @@ class EditGameDetailsFragment : Fragment() {
         playtimeSlider = binding.playtimeSlider
         recommendedForMore = binding.recommendedForMoreSwitch
         parent = game.parentGame
-
-        val moreThan20 = binding.moreThan20
+        moreThan20 = binding.moreThan20
+        over2Hours = binding.moreThan2Hours
 
         if (game.maxPlayers > 20) moreThan20.isChecked = true
 
@@ -120,8 +123,6 @@ class EditGameDetailsFragment : Fragment() {
             if (slider.values[1] < 20)
                 moreThan20.isChecked = false
         }
-
-        val over2Hours = binding.moreThan2Hours
 
         if (game.maxPlaytime > 120) over2Hours.isChecked = true
 
@@ -235,17 +236,17 @@ class EditGameDetailsFragment : Fragment() {
         val decreaseAge = binding.minusButton
         val increaseAge = binding.plusButton
 
-        if (game.minAge == 3) decreaseAge.changeButtonColor(application, true)
-        else if (game.minAge == 18) increaseAge.changeButtonColor(application, true)
+        if (game.minAge == 3) decreaseAge.changeButtonColor(true)
+        else if (game.minAge == 18) increaseAge.changeButtonColor(true)
 
         decreaseAge.setOnClickListener {
             var minAge = minAgeValue.text.toString().toInt()
             if (minAge > 3)
                 minAge--
-            if (minAge == 3) decreaseAge.changeButtonColor(application, true)
-            else decreaseAge.changeButtonColor(application, false)
+            if (minAge == 3) decreaseAge.changeButtonColor(true)
+            else decreaseAge.changeButtonColor(false)
 
-            increaseAge.changeButtonColor(application, false)
+            increaseAge.changeButtonColor(false)
             minAgeValue.text = minAge.toString()
         }
 
@@ -253,10 +254,10 @@ class EditGameDetailsFragment : Fragment() {
             var maxAge = minAgeValue.text.toString().toInt()
             if (maxAge < 18)
                 maxAge++
-            if (maxAge == 18) increaseAge.changeButtonColor(application, true)
-            else increaseAge.changeButtonColor(application, false)
+            if (maxAge == 18) increaseAge.changeButtonColor(true)
+            else increaseAge.changeButtonColor(false)
 
-            decreaseAge.changeButtonColor(application, false)
+            decreaseAge.changeButtonColor(false)
             minAgeValue.text = maxAge.toString()
         }
 
@@ -294,7 +295,7 @@ class EditGameDetailsFragment : Fragment() {
         binding.editUrlButton.setOnClickListener {
 
             val editUrlDialogView =
-                LayoutInflater.from(requireContext()).inflate(R.layout.dialog_text_input, null)
+                LayoutInflater.from(requireContext()).inflate(R.layout.dialog_game_name, null)
 
             MaterialAlertDialogBuilder(requireContext())
                 .setView(editUrlDialogView)
@@ -358,16 +359,28 @@ class EditGameDetailsFragment : Fragment() {
     private fun saveGame() {
 
         val id = if (isGameNew) -1 else game.id
+
         val parentGame = if (type == GameType.GAME) id else parent
+
+        val maxNumberOfPlayers =
+            if (game.maxPlayers > 20) game.maxPlayers else numberOfPlayersSlider.values[1].toInt()
+
+        val maxPlaytime = if (game.maxPlaytime > 120 && over2Hours.isChecked) {
+            game.maxPlaytime
+        } else if (game.maxPlaytime <= 120 && over2Hours.isChecked) {
+            121
+        } else {
+            playtimeSlider.values[1].toInt()
+        }
 
         viewModel.updateGameFields(
             id,
             title.editText?.text.toString(),
             numberOfPlayersSlider.values[0].toInt(),
-            numberOfPlayersSlider.values[1].toInt(),
+            maxNumberOfPlayers,
             recommendedForMore.isChecked,
             playtimeSlider.values[0].toInt(),
-            playtimeSlider.values[1].toInt(),
+            maxPlaytime,
             minAgeValue.text.toString().toInt(),
             pictureUrl,
             type,

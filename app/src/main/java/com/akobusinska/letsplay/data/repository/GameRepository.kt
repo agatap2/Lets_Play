@@ -3,6 +3,7 @@ package com.akobusinska.letsplay.data.repository
 import com.akobusinska.letsplay.data.entities.GameType
 import com.akobusinska.letsplay.data.entities.MyGame
 import com.akobusinska.letsplay.data.json.GamesList
+import com.akobusinska.letsplay.data.local.Filter
 import com.akobusinska.letsplay.data.local.GameDao
 import com.akobusinska.letsplay.data.remote.GameRemoteDataSource
 import kotlinx.coroutines.Dispatchers
@@ -24,6 +25,13 @@ class GameRepository(
     fun getGameById(id: Int) = localDataSource.getGame(id)
 
     fun getExpansionsListById(id: Int) = localDataSource.getExpansions(id)
+
+    fun getFilteredGames(filter: Filter) = localDataSource.getFilteredGamesCollection(
+        filter.numberOfPlayers,
+        filter.maxPlaytime,
+        filter.age,
+        filter.excludeRecommendedForMore
+    )
 
     suspend fun insertGame(game: MyGame) = localDataSource.insertGame(game)
 

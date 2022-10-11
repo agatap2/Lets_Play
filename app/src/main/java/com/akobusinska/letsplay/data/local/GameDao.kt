@@ -15,6 +15,22 @@ interface GameDao {
     @Query("SELECT * FROM my_game_table WHERE gameType = :gameType ORDER BY name ASC")
     fun getFilteredCollection(gameType: GameType): LiveData<List<MyGame>>
 
+    @Query("SELECT * FROM my_game_table WHERE " +
+            "gameType = :gameType AND " +
+            "maxPlayers >= :numberOfPlayers AND " +
+            "minPlayers <= :numberOfPlayers AND " +
+            "maxPlaytime <= :playtime AND " +
+            "minAge <= :age AND " +
+            "(recommendedForMorePlayers != :excludeRecommendedForMore OR :excludeRecommendedForMore == 0) " +
+            "ORDER BY name ASC")
+    fun getFilteredGamesCollection(
+        numberOfPlayers: Int,
+        playtime: Int,
+        age: Int,
+        excludeRecommendedForMore: Boolean,
+        gameType: GameType = GameType.GAME
+    ): LiveData<List<MyGame>>
+
     @Query("SELECT * FROM my_game_table WHERE id = :id")
     fun getGame(id: Int): LiveData<MyGame>
 

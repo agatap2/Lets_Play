@@ -11,7 +11,7 @@
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/remove"
+        android:id="@+id/revert"
         android:enabled="true"
         android:icon="@android:drawable/ic_menu_delete"
         android:title="@string/remove"

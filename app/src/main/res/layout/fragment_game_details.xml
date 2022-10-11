@@ -9,10 +9,6 @@
             name="game"
             type="com.akobusinska.letsplay.data.entities.MyGame" />
 
-        <variable
-            name="viewModel"
-            type="com.akobusinska.letsplay.ui.gameDetails.GameDetailsViewModel" />
-
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -63,7 +59,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:padding="6dp"
-                android:text="@{viewModel.displayGameType}"
+                app:gameType="@{game.gameType}"
                 android:textColor="@color/primaryTextColor"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -116,10 +112,11 @@
         <TextView
             android:id="@+id/num_of_players"
             style="@style/GameDetailsText"
-            android:text="@{viewModel.displayNumberOfPlayers}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/num_of_players_icon"
-            app:layout_constraintTop_toBottomOf="@+id/parent_and_children" />
+            app:layout_constraintTop_toBottomOf="@+id/parent_and_children"
+            app:maxNumberOfPlayers="@{game.maxPlayers}"
+            app:minNumberOfPlayers="@{game.minPlayers}" />
 
         <ImageView
             android:id="@+id/playtime_icon"
@@ -134,10 +131,11 @@
         <TextView
             android:id="@+id/playtime"
             style="@style/GameDetailsText"
-            android:text="@{viewModel.displayPlaytime}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/playtime_icon"
-            app:layout_constraintTop_toBottomOf="@+id/num_of_players" />
+            app:layout_constraintTop_toBottomOf="@+id/num_of_players"
+            app:maxPlaytime="@{game.maxPlaytime}"
+            app:minPlaytime="@{game.minPlaytime}" />
 
         <ImageView
             android:id="@+id/min_age_icon"
@@ -152,7 +150,7 @@
         <TextView
             android:id="@+id/min_age"
             style="@style/GameDetailsText"
-            android:text="@{viewModel.displayMinAge}"
+            app:minAge="@{game.minAge}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/min_age_icon"
             app:layout_constraintTop_toBottomOf="@+id/playtime" />

@@ -5,42 +5,51 @@
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+
+        <variable
+            name="game"
+            type="com.akobusinska.letsplay.data.entities.MyGame" />
+
+        <variable
+            name="clickListener"
+            type="com.akobusinska.letsplay.ui.gameSelection.DetailedGamesListAdapter.GamesListListener" />
+    </data>
+
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:backgroundTint="@color/light_green"
-        android:clickable="true"
         android:elevation="2dp"
-        android:focusable="true"
         android:orientation="horizontal"
         card_view:cardUseCompatPadding="true">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="80dp">
+            android:layout_height="wrap_content">
 
             <ImageView
                 android:id="@+id/thumb"
                 android:layout_width="72dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
+                android:layout_height="72dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
-                android:layout_marginBottom="8dp"
                 android:contentDescription="@string/game_cover"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:imageUrl="@{game.thumbURL}"
                 app:layout_constraintEnd_toStartOf="@+id/name"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/revert"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:ignore="ImageContrastCheck"
-                tools:src="@drawable/ic_launcher_background" />
+                tools:src="@drawable/ic_broken_image" />
 
             <TextView
                 android:id="@+id/name"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:text="@{game.name}"
                 android:textColor="@color/primaryTextColor"
                 android:textSize="16sp"
                 android:textStyle="bold"
@@ -54,23 +63,73 @@
                 android:id="@+id/number_of_players"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
                 android:textColor="@color/primaryTextColor"
                 app:layout_constraintBottom_toTopOf="@id/playtime"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/recommended_for_more_icon"
                 app:layout_constraintStart_toStartOf="@+id/name"
                 app:layout_constraintTop_toBottomOf="@id/name"
+                app:maxNumberOfPlayers="@{game.maxPlayers}"
+                app:minNumberOfPlayers="@{game.minPlayers}"
                 tools:text="Liczba graczy: 1-5" />
+
+            <ImageView
+                android:id="@+id/recommended_for_more_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                app:layout_constraintBottom_toTopOf="@+id/playtime"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/name"
+                card_view:srcCompat="@drawable/ic_more_players" />
 
             <TextView
                 android:id="@+id/playtime"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="8dp"
                 android:textColor="@color/primaryTextColor"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/min_age"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/name"
                 app:layout_constraintTop_toBottomOf="@id/number_of_players"
+                app:maxPlaytime="@{game.maxPlaytime}"
+                app:minPlaytime="@{game.minPlaytime}"
                 tools:text="Czas gry: 40min - 70min" />
+
+            <TextView
+                android:id="@+id/min_age"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="6dp"
+                android:textColor="@color/primaryTextColor"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toEndOf="@+id/thumb"
+                app:layout_constraintTop_toBottomOf="@+id/playtime"
+                app:minAge="@{game.minAge}"
+                tools:text="Minimalny wiek: 3" />
+
+            <ImageView
+                android:id="@+id/revert"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:onClick="@{() -> clickListener.onClick(game)}"
+                app:layout_constraintBottom_toBottomOf="@+id/thumb"
+                app:layout_constraintEnd_toStartOf="@+id/thumb"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/thumb"
+                card_view:srcCompat="@drawable/ic_baseline_list_remove_24" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

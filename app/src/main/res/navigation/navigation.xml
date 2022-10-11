@@ -15,6 +15,9 @@
         <action
             android:id="@+id/navigateToGameDetails"
             app:destination="@id/gameDetailsFragment" />
+        <action
+            android:id="@+id/navigateToGameSelectionFragment"
+            app:destination="@id/selectGameFragment" />
     </fragment>
     <fragment
         android:id="@+id/webSearchResultFragment"
@@ -68,4 +71,8 @@
             android:id="@+id/navigateToGamesEditionForm"
             app:destination="@id/addNewGameFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/selectGameFragment"
+        android:name="com.akobusinska.letsplay.ui.gameSelection.SelectGameFragment"
+        android:label="SelectGameFragment" />
 </navigation>

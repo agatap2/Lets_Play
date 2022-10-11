@@ -7,11 +7,14 @@
     <string name="expansion">Expansion</string>
     <string name="all">All</string>
     <string name="game_time">Game time (in minutes):</string>
+    <string name="max_game_time">Maximum game time (in minutes):</string>
     <string name="number_of_players">Number of players:</string>
     <string name="recommended_for_more_players">Recommended for more players</string>
+    <string name="playable_with_less_players">Playable with smaller number of players</string>
     <string name="min_age">Minimal age:</string>
     <string name="over_20">20+</string>
     <string name="over_2h">2h+</string>
+    <string name="none">None</string>
     <string name="select_parent_game">Select parent game</string>
     <string name="parent_game">Parent game: %s</string>
     <string name="confirm_delete_title">Confirm delete...</string>
@@ -21,9 +24,9 @@
     <string name="parent_game_value"><![CDATA[<b>Parent game:</b> %s]]></string>
     <string name="number_of_players_value"><![CDATA[<b>Number of players:</b> %d - %d]]></string>
     <string name="recommended_for_more_players_value">Game is recommended for more players</string>
-    <string name="large_number_of_players_value"><![CDATA[<b>Number of players:</b> %d - %d or more]]></string>
+    <string name="large_number_of_players_value"><![CDATA[<b>Number of players:</b> %d - 20 or more]]></string>
     <string name="playtime_value"><![CDATA[<b>Game time:</b> %d min - %d min]]></string>
-    <string name="long_playtime"><![CDATA[<b>Game time:</b>  %d min - %d min or more]]></string>
+    <string name="long_playtime"><![CDATA[<b>Game time:</b>  %d min - 120 min or more]]></string>
     <string name="min_age_value"><![CDATA[<b>Minimal age:</b> %d]]></string>
 
     <string name="game_cover">Game cover</string>
@@ -47,4 +50,7 @@
     <string name="skip">Skip</string>
     <string name="provide_cover_picture_url">Provide cover picture url</string>
     <string name="picture_url">URL</string>
+    <string name="filter">Filter</string>
+    <string name="filter_games">Filter games</string>
+    <string name="exclude_games_recommended_for_more_players">Exclude games recommended for more players</string>
 </resources>
