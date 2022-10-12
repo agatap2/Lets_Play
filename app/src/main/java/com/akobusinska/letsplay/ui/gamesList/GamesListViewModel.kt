@@ -66,6 +66,6 @@ class GamesListViewModel @Inject constructor(private val repository: GameReposit
             _gamesCollection.value = _fullGamesCollection.filter { game ->
                 game.name.contains(name, true)
             }
-        }
+        } else getGamesCollection(false)
     }
 }

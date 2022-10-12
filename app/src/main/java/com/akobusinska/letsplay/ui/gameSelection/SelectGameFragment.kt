@@ -44,10 +44,12 @@ class SelectGameFragment : Fragment() {
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 when (menuItem.itemId) {
                     R.id.filter -> {
-                        DialogGamesFilteringFragment(viewModel).show(
-                            requireActivity().supportFragmentManager,
-                            "filter"
-                        )
+                        viewModel.allGames.observe(viewLifecycleOwner) {
+                            DialogGamesFilteringFragment(viewModel).show(
+                                requireActivity().supportFragmentManager,
+                                "filter"
+                            )
+                        }
                     }
                 }
                 return false

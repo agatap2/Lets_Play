@@ -363,15 +363,18 @@ class EditGameDetailsFragment : Fragment() {
         val parentGame = if (type == GameType.GAME) id else parent
 
         val maxNumberOfPlayers =
-            if (game.maxPlayers > 20) game.maxPlayers else numberOfPlayersSlider.values[1].toInt()
+            if (game.maxPlayers > 20 && moreThan20.isChecked)
+                game.maxPlayers
+            else if (game.maxPlayers <= 20 && moreThan20.isChecked)
+                100
+            else numberOfPlayersSlider.values[1].toInt()
 
-        val maxPlaytime = if (game.maxPlaytime > 120 && over2Hours.isChecked) {
+        val maxPlaytime = if (game.maxPlaytime > 120 && over2Hours.isChecked)
             game.maxPlaytime
-        } else if (game.maxPlaytime <= 120 && over2Hours.isChecked) {
-            121
-        } else {
+        else if (game.maxPlaytime <= 120 && over2Hours.isChecked)
+            480
+        else
             playtimeSlider.values[1].toInt()
-        }
 
         viewModel.updateGameFields(
             id,

@@ -113,13 +113,15 @@ class DialogGamesFilteringFragment(val viewModel: SelectGameViewModel) : DialogF
         }
 
         numberOfPlayersSlider.addOnChangeListener { slider, _, _ ->
-            if (!moreThan20.isChecked) {
+            if (!moreThan20.isChecked)
                 numberOfPlayersText.text = slider.value.toInt().toString()
-                filter.numberOfPlayers = numberOfPlayersSlider.value.toInt()
-            }
 
-            if (slider.value < 20)
+            if (slider.value < 20) {
                 moreThan20.isChecked = false
+                filter.numberOfPlayers = numberOfPlayersSlider.value.toInt()
+            } else
+                if (moreThan20.isChecked) filter.numberOfPlayers = 100
+                else filter.numberOfPlayers = 20
         }
 
         noTimeLimit.setOnCheckedChangeListener { _, isChecked ->
