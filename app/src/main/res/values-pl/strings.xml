@@ -1,0 +1,56 @@
+<resources>
+    <string name="app_name">Zagrajmy w...</string>
+
+    <string name="games">Gry</string>
+    <string name="expansions">Dodatki</string>
+    <string name="game">Gra</string>
+    <string name="expansion">Dodatek</string>
+    <string name="all">Wszystkie</string>
+    <string name="game_time">Długość rozgrywki (w minutach):</string>
+    <string name="max_game_time">Maksymalna długość rozgrywki (w minutach):</string>
+    <string name="number_of_players">Liczba graczy:</string>
+    <string name="recommended_for_more_players">Zalecana rozgrywka w większą ilość osób</string>
+    <string name="playable_with_less_players">Nadaje się przy mniejszej liczbie graczy</string>
+    <string name="min_age">Minimalny wiek:</string>
+    <string name="over_20">20+</string>
+    <string name="over_2h">2h+</string>
+    <string name="none">Brak</string>
+    <string name="select_parent_game">Wybierz podstawową grę</string>
+    <string name="parent_game">Podstawowa gra: %s</string>
+    <string name="confirm_delete_title">Potwierdź usunięcie gry...</string>
+    <string name="confirm_delete_message">Czy jesteś pewien, że chcesz usunąć tę grę ze swojej kolekcji?</string>
+
+    <string name="owned_expansions_value"><![CDATA[<b>Posiadane dodatki:</b> %s]]></string>
+    <string name="parent_game_value"><![CDATA[<b>Podstawowa gra:</b> %s]]></string>
+    <string name="number_of_players_value"><![CDATA[<b>Liczba graczy:</b> %d - %d]]></string>
+    <string name="recommended_for_more_players_value">Zalecana jest rozgrywka w większą ilość osób</string>
+    <string name="large_number_of_players_value"><![CDATA[<b>Liczba graczy:</b> %d - 20 lub więcej]]></string>
+    <string name="playtime_value"><![CDATA[<b>Długość rozgrywki:</b> %d min - %d min]]></string>
+    <string name="long_playtime"><![CDATA[<b>Długość rozgrywki:</b>  %d min - 120 min lub więcej]]></string>
+    <string name="min_age_value"><![CDATA[<b>Minimalny wiek:</b> %d]]></string>
+
+    <string name="game_cover">Okładka</string>
+    <string name="game_name">Nazwa</string>
+    <string name="loading_icon">Ikona ładowania</string>
+    <string name="increase_minimal_age">Zwiększ minimalny wiek</string>
+    <string name="decrease_minimal_age">Zmniejsz minimalny wiek</string>
+    <string name="title">Tytuł</string>
+    <string name="edit_game_cover">Zmień okładkę gry</string>
+    <string name="edit">Edytuj</string>
+    <string name="remove">Usuń</string>
+
+    <string name="add_game">Dodaj grę</string>
+    <string name="provide_game_name">Podaj nazwę gry</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Anuluj</string>
+    <string name="yes">Tak</string>
+    <string name="no">Nie</string>
+    <string name="save">Zapisz</string>
+    <string name="select_game">Wybierz grę</string>
+    <string name="skip">Pomiń</string>
+    <string name="provide_cover_picture_url">Podaj adres URL okładki</string>
+    <string name="picture_url">URL</string>
+    <string name="filter">Filtruj</string>
+    <string name="filter_games">Filtruj gry</string>
+    <string name="exclude_games_recommended_for_more_players">Pomiń gry zalecane na większą ilość osób</string>
+</resources>
