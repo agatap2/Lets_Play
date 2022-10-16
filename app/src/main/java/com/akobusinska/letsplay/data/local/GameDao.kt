@@ -18,9 +18,9 @@ interface GameDao {
     @Query("SELECT * FROM my_game_table WHERE " +
             "maxPlayers >= :numberOfPlayers AND " +
             "minPlayers <= :numberOfPlayers AND " +
-            "maxPlaytime <= :playtime AND " +
             "minAge <= :age AND " +
-            "(recommendedForMorePlayers != :excludeRecommendedForMore OR :excludeRecommendedForMore == 0) " +
+            "(recommendedForMorePlayers != :excludeRecommendedForMore OR :excludeRecommendedForMore == 0) AND" +
+            "(:playtime BETWEEN minPlaytime AND maxPlaytime)" +
             "ORDER BY name ASC")
     fun getFilteredGamesCollection(
         numberOfPlayers: Int,
