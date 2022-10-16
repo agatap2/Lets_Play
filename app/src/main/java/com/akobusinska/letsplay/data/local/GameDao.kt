@@ -20,7 +20,7 @@ interface GameDao {
             "minPlayers <= :numberOfPlayers AND " +
             "minAge <= :age AND " +
             "(recommendedForMorePlayers != :excludeRecommendedForMore OR :excludeRecommendedForMore == 0) AND" +
-            "(:playtime BETWEEN minPlaytime AND maxPlaytime)" +
+            "((:playtime BETWEEN minPlaytime AND maxPlaytime) OR (maxPlaytime <= :playtime))" +
             "ORDER BY name ASC")
     fun getFilteredGamesCollection(
         numberOfPlayers: Int,
