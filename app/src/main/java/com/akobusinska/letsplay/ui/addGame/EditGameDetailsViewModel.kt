@@ -37,7 +37,7 @@ class EditGameDetailsViewModel @SuppressLint("StaticFieldLeak")
     }
 
     var parentGameName = Transformations.map(newGame) {
-        if (it?.gameType == GameType.EXPANSION && it.id != it.parentGame)
+        if (it?.gameType == GameType.EXPANSION && it.game_id != it.parentGame)
             getParentGame(it.parentGame)
         context.getString(R.string.parent_game, "?")
     }
@@ -122,7 +122,7 @@ class EditGameDetailsViewModel @SuppressLint("StaticFieldLeak")
     ) {
         _newGame.value.let { game ->
             if (game != null) {
-                if (id != -1) game.id = id
+                if (id != -1) game.game_id = id
                 game.name = name
                 game.minPlayers = minPlayers
                 game.maxPlayers = maxPlayers

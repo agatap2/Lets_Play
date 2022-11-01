@@ -50,7 +50,7 @@ class SelectGameViewModel @Inject constructor(private val repository: GameReposi
 
                 if (allGames.value != null) {
                     for (gameOfGameType in allGames.value!!)
-                        if (gameOfGameType.id == game.parentGame) {
+                        if (gameOfGameType.game_id == game.parentGame) {
                             parentGame = gameOfGameType
                             addedParentGames.add(game.parentGame)
                             break

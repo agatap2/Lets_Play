@@ -49,7 +49,7 @@ class GameDetailsViewModel @Inject constructor(
             _parentAndChildren.value = ""
             if (expansionsList != null)
                 for (game in expansionsList) {
-                    if (game.id != parentId)
+                    if (game.game_id != parentId)
                         _parentAndChildren.value = _parentAndChildren.value + "<br>" + game.name
                 }
         }
