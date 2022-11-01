@@ -19,6 +19,8 @@
     <string name="parent_game">Parent game: %s</string>
     <string name="confirm_delete_title">Confirm delete...</string>
     <string name="confirm_delete_message">Are you sure you want to delete this game from your collection?</string>
+    <string name="select_random">Select random</string>
+    <string name="selected_random_game">Your game for today!</string>
 
     <string name="owned_expansions_value"><![CDATA[<b>Owned expansions:</b> %s]]></string>
     <string name="parent_game_value"><![CDATA[<b>Parent game:</b> %s]]></string>
@@ -53,4 +55,5 @@
     <string name="filter">Filter</string>
     <string name="filter_games">Filter games</string>
     <string name="exclude_games_recommended_for_more_players">Exclude games recommended for more players</string>
+
 </resources>

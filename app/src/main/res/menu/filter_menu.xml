@@ -2,6 +2,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/select_random"
+        android:enabled="true"
+        android:icon="@drawable/ic_select_random"
+        android:title="@string/select_random"
+        android:visible="true"
+        app:showAsAction="ifRoom" />
+    <item
         android:id="@+id/filter"
         android:enabled="true"
         android:icon="@drawable/ic_baseline_filter_alt_24"

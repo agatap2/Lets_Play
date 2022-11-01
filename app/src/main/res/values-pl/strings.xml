@@ -19,6 +19,8 @@
     <string name="parent_game">Podstawowa gra: %s</string>
     <string name="confirm_delete_title">Potwierdź usunięcie gry...</string>
     <string name="confirm_delete_message">Czy jesteś pewien, że chcesz usunąć tę grę ze swojej kolekcji?</string>
+    <string name="select_random">Wybierz losową</string>
+    <string name="selected_random_game">Dziś zagraj w...</string>
 
     <string name="owned_expansions_value"><![CDATA[<b>Posiadane dodatki:</b> %s]]></string>
     <string name="parent_game_value"><![CDATA[<b>Podstawowa gra:</b> %s]]></string>

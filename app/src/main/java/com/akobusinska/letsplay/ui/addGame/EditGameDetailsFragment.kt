@@ -206,7 +206,7 @@ class EditGameDetailsFragment : Fragment() {
                     R.string.parent_game,
                     it.name
                 )
-            it.expansions.add(game.id)
+            it.expansions.add(game.game_id)
             viewModel.updateParentGame(it)
         }
 
@@ -220,8 +220,8 @@ class EditGameDetailsFragment : Fragment() {
                 .setTitle(R.string.select_parent_game)
                 .setPositiveButton(R.string.ok) { _, _ ->
                     if (selectedGame != null) {
-                        parent = selectedGame!!.id
-                        viewModel.getParentGame(selectedGame!!.id)
+                        parent = selectedGame!!.game_id
+                        viewModel.getParentGame(selectedGame!!.game_id)
                         binding.parentGame.text = application.resources.getString(
                             R.string.parent_game,
                             selectedGame!!.name
@@ -358,7 +358,7 @@ class EditGameDetailsFragment : Fragment() {
 
     private fun saveGame() {
 
-        val id = if (isGameNew) -1 else game.id
+        val id = if (isGameNew) -1 else game.game_id
 
         val parentGame = if (type == GameType.GAME) id else parent
 

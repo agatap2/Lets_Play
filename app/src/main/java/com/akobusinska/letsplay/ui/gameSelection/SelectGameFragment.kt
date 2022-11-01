@@ -43,6 +43,13 @@ class SelectGameFragment : Fragment() {
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 when (menuItem.itemId) {
+                    R.id.select_random -> {
+                        if (viewModel.selectedGamesCollection.value != null)
+                            DialogRandomGameFragment(viewModel.selectedGamesCollection.value!!.random()).show(
+                                requireActivity().supportFragmentManager,
+                                "random"
+                            )
+                    }
                     R.id.filter -> {
                         viewModel.allGames.observe(viewLifecycleOwner) {
                             DialogGamesFilteringFragment(viewModel).show(
