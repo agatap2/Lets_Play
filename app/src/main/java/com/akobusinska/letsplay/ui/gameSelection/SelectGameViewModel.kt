@@ -73,7 +73,7 @@ class SelectGameViewModel @Inject constructor(private val repository: GameReposi
             }
 
             for (game in unselectedGamesCollection.value!!) {
-                if (!gamesList.contains(game)) {
+                if (gamesList.any { it.game_id != game.game_id }) {
                     _selectedGamesCollection.value =
                         _selectedGamesCollection.value?.toMutableList()?.apply { remove(game) }
                             ?.toList()
