@@ -43,42 +43,36 @@ class SelectGameViewModel @Inject constructor(private val repository: GameReposi
         _selectedGamesCollection.addSource(repository.getFilteredGames(filter)) { gamesList ->
             _selectedGamesCollection.value = gamesList
 
-            var parentGame: MyGame? = null
-            val addedParentGames: MutableList<Int> = mutableListOf()
+            for (filterMatchingGame in gamesList) {
 
-            for (game in gamesList) {
+                if (filterMatchingGame.gameType == GameType.EXPANSION) {
 
-                if (allGames.value != null) {
-                    for (gameOfGameType in allGames.value!!)
-                        if (gameOfGameType.game_id == game.parentGame) {
-                            parentGame = gameOfGameType
-                            addedParentGames.add(game.parentGame)
-                            break
-                        } else parentGame = null
-                }
+                    if (allGames.value != null) {
+                        val parentGames =
+                            allGames.value!!.filter { it.game_id == filterMatchingGame.parentGame }
 
-                if (game.gameType == GameType.EXPANSION) {
-                    if (parentGame != null) {
+                        if(parentGames.isNotEmpty())
                         _selectedGamesCollection.value =
                             _selectedGamesCollection.value?.toMutableList()?.apply {
-                                if (!this.contains(parentGame))
-                                    add(parentGame)
+                                if (!this.contains(parentGames[0]))
+                                    add(parentGames[0])
                             }?.toList()
                     }
 
                     _selectedGamesCollection.value =
-                        _selectedGamesCollection.value?.toMutableList()?.apply { remove(game) }
+                        _selectedGamesCollection.value?.toMutableList()?.apply { remove(filterMatchingGame) }
                             ?.toList()
                 }
             }
 
-            for (game in unselectedGamesCollection.value!!) {
-                if (gamesList.any { it.game_id != game.game_id }) {
-                    _selectedGamesCollection.value =
-                        _selectedGamesCollection.value?.toMutableList()?.apply { remove(game) }
-                            ?.toList()
+            for (unselectedGame in unselectedGamesCollection.value!!) {
+                if (gamesList.none { it.game_id == unselectedGame.game_id }) {
                     _unselectedGamesCollection.value =
-                        _unselectedGamesCollection.value?.toMutableList()?.apply { remove(game) }
+                        _unselectedGamesCollection.value?.toMutableList()?.apply { remove(unselectedGame) }
+                            ?.toList()
+                } else {
+                    _selectedGamesCollection.value =
+                        _selectedGamesCollection.value?.toMutableList()?.apply { remove(unselectedGame) }
                             ?.toList()
                 }
             }
