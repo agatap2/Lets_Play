@@ -54,7 +54,7 @@
             android:layout_marginEnd="8dp"
             app:boxBackgroundMode="outline"
             app:boxStrokeColor="@color/primaryColor"
-            app:boxStrokeWidth="2dp"
+            app:boxStrokeWidth="1dp"
             app:errorEnabled="false"
             app:layout_constraintBottom_toBottomOf="@+id/cover"
             app:layout_constraintEnd_toStartOf="@+id/cover"
@@ -71,7 +71,7 @@
                 android:padding="8dp"
                 android:text="@{viewModel.newGame.name}"
                 android:textColor="@color/primaryTextColor"
-                android:textColorHint="@color/primaryDarkColor"
+                android:textColorHint="@color/primaryColor"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 tools:hint="@string/game_name"
@@ -142,7 +142,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/parent_game"
             app:srcCompat="@drawable/ic_baseline_edit_24"
-            app:tint="@color/primaryDarkColor" />
+            app:tint="@color/primaryColor" />
 
         <TextView
             android:id="@+id/num_of_players"
@@ -201,7 +201,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
-            android:buttonTint="@color/primaryDarkColor"
+            android:buttonTint="@color/primaryColor"
             android:text="@string/over_20"
             app:layout_constraintBottom_toBottomOf="@id/max_num_of_players"
             app:layout_constraintEnd_toEndOf="parent"
@@ -227,7 +227,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
-            android:backgroundTint="@color/primaryDarkColor"
+            android:backgroundTint="@color/primaryColor"
             android:minWidth="48dp"
             android:minHeight="48dp"
             app:layout_constraintBottom_toBottomOf="@+id/recommended_for_more_text"
@@ -293,7 +293,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
-            android:buttonTint="@color/primaryDarkColor"
+            android:buttonTint="@color/primaryColor"
             android:text="@string/over_2h"
             app:layout_constraintBottom_toBottomOf="@id/max_playtime"
             app:layout_constraintEnd_toEndOf="parent"
