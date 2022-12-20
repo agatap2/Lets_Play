@@ -19,6 +19,7 @@
     <string name="parent_game">Parent game: %s</string>
     <string name="confirm_delete_title">Confirm delete...</string>
     <string name="confirm_delete_message">Are you sure you want to delete this game from your collection?</string>
+    <string name="confirm_adding_dublicate">You already own a game with the same name. Are you sure you want to use it?</string>
     <string name="select_random">Select random</string>
     <string name="selected_random_game">Your game for today!</string>
 
@@ -48,6 +49,7 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="save">Save</string>
+    <string name="rename">Change name</string>
     <string name="select_game">Select game</string>
     <string name="skip">Skip</string>
     <string name="provide_cover_picture_url">Provide cover picture url</string>

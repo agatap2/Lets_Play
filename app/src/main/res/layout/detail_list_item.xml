@@ -38,7 +38,7 @@
                 android:contentDescription="@string/game_cover"
                 app:imageUrl="@{game.thumbURL}"
                 app:layout_constraintEnd_toStartOf="@+id/name"
-                app:layout_constraintStart_toEndOf="@+id/revert"
+                app:layout_constraintStart_toEndOf="@+id/delete"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:ignore="ImageContrastCheck"
                 tools:src="@drawable/ic_broken_image" />
@@ -119,7 +119,7 @@
                 tools:text="Minimalny wiek: 3" />
 
             <ImageView
-                android:id="@+id/revert"
+                android:id="@+id/delete"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:layout_marginStart="8dp"

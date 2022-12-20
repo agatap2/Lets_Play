@@ -19,6 +19,7 @@
     <string name="parent_game">Podstawowa gra: %s</string>
     <string name="confirm_delete_title">Potwierdź usunięcie gry...</string>
     <string name="confirm_delete_message">Czy jesteś pewien, że chcesz usunąć tę grę ze swojej kolekcji?</string>
+    <string name="confirm_adding_dublicate">Posiadasz już grę o tej samej nazwie. Czy na pewno chcesz jej użyć?</string>
     <string name="select_random">Wybierz losową</string>
     <string name="selected_random_game">Dziś zagraj w...</string>
 
@@ -48,6 +49,7 @@
     <string name="yes">Tak</string>
     <string name="no">Nie</string>
     <string name="save">Zapisz</string>
+    <string name="rename">Zmień nazwę</string>
     <string name="select_game">Wybierz grę</string>
     <string name="skip">Pomiń</string>
     <string name="provide_cover_picture_url">Podaj adres URL okładki</string>

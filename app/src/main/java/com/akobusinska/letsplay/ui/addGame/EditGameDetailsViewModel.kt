@@ -32,8 +32,16 @@ class EditGameDetailsViewModel @SuppressLint("StaticFieldLeak")
     val foundGamesList: LiveData<List<MyGame>>
         get() = _foundGamesList
 
+    private val _allGamesList = MediatorLiveData<List<MyGame>>()
+    val allGamesList: LiveData<List<MyGame>>
+        get() = _allGamesList
+
     init {
         _newGame.value = state.get<MyGame>("game")
+
+        _allGamesList.addSource(repository.getFullCollection()) {
+            _allGamesList.value = it
+        }
     }
 
     var parentGameName = Transformations.map(newGame) {

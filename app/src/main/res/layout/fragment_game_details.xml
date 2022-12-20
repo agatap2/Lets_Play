@@ -57,11 +57,12 @@
                 android:id="@+id/game_type"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:background="@color/shade"
                 android:gravity="center"
                 android:padding="6dp"
+                android:textColor="@color/primaryColor"
+                android:textSize="14sp"
                 app:gameType="@{game.gameType}"
-                android:textColor="@color/primaryTextColor"
-                android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -150,10 +151,10 @@
         <TextView
             android:id="@+id/min_age"
             style="@style/GameDetailsText"
-            app:minAge="@{game.minAge}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/min_age_icon"
-            app:layout_constraintTop_toBottomOf="@+id/playtime" />
+            app:layout_constraintTop_toBottomOf="@+id/playtime"
+            app:minAge="@{game.minAge}" />
 
         <ImageView
             android:id="@+id/recommended_for_more_icon"

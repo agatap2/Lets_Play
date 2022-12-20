@@ -324,7 +324,6 @@ class EditGameDetailsFragment : Fragment() {
 
         binding.save.setOnClickListener {
             saveGame()
-            navigateToPreviousScreen()
         }
 
         binding.cancel.setOnClickListener {
@@ -376,9 +375,11 @@ class EditGameDetailsFragment : Fragment() {
         else
             playtimeSlider.values[1].toInt()
 
+        val name = title.editText?.text.toString()
+
         viewModel.updateGameFields(
             id,
-            title.editText?.text.toString(),
+            name,
             numberOfPlayersSlider.values[0].toInt(),
             maxNumberOfPlayers,
             recommendedForMore.isChecked,
@@ -390,9 +391,28 @@ class EditGameDetailsFragment : Fragment() {
             parentGame
         )
 
-        if (isGameNew)
-            viewModel.insertGameIntoDatabase()
-        else
-            viewModel.updateGameInDatabase()
+        viewModel.allGamesList.observe(viewLifecycleOwner) { list ->
+            if (list.any { it.name == name && it.game_id != id }) {
+                MaterialAlertDialogBuilder(requireContext())
+                    .setMessage(resources.getString(R.string.confirm_adding_dublicate))
+                    .setNegativeButton(resources.getString(R.string.rename)) { dialog, _ ->
+                        dialog.cancel()
+                    }
+                    .setPositiveButton(resources.getString(R.string.yes)) { _, _ ->
+                        navigateToPreviousScreen()
+                        if (isGameNew)
+                            viewModel.insertGameIntoDatabase()
+                        else
+                            viewModel.updateGameInDatabase()
+                    }
+                    .show()
+            } else {
+                navigateToPreviousScreen()
+                if (isGameNew)
+                    viewModel.insertGameIntoDatabase()
+                else
+                    viewModel.updateGameInDatabase()
+            }
+        }
     }
 }

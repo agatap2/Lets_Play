@@ -87,9 +87,8 @@ class GameDetailsFragment : Fragment() {
                     R.id.edit -> {
                         viewModel.navigateToGameEditionForm(game)
                     }
-                    R.id.revert -> {
+                    R.id.delete -> {
                         MaterialAlertDialogBuilder(requireContext())
-                            .setTitle(resources.getString(R.string.confirm_delete_title))
                             .setMessage(resources.getString(R.string.confirm_delete_message))
                             .setNegativeButton(resources.getString(R.string.no)) { dialog, _ ->
                                 dialog.cancel()
