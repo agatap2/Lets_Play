@@ -5,16 +5,17 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.activityViewModels
 import com.akobusinska.letsplay.R
-import com.akobusinska.letsplay.data.entities.MyGame
 import com.akobusinska.letsplay.databinding.DialogRandomGameBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
-class DialogRandomGameFragment(game: MyGame) : DialogFragment() {
-
-    private val selectedGame = game
+class DialogRandomGameFragment : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+
+        val viewModel: SelectGameViewModel by activityViewModels()
+        val selectedGame = viewModel.randomGame
 
         val builder = MaterialAlertDialogBuilder(requireContext())
         val inflater = LayoutInflater.from(context)

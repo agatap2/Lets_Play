@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.widget.TextView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.activityViewModels
 import com.akobusinska.letsplay.R
 import com.akobusinska.letsplay.databinding.DialogGameFiltersBinding
 import com.akobusinska.letsplay.utils.changeButtonColor
@@ -15,11 +16,12 @@ import com.google.android.material.slider.Slider
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class DialogGamesFilteringFragment(val viewModel: SelectGameViewModel) : DialogFragment() {
-
-    private val filter = viewModel.currentFilter
+class DialogGamesFilteringFragment : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+
+        val viewModel: SelectGameViewModel by activityViewModels()
+        val filter = viewModel.currentFilter
 
         val builder = MaterialAlertDialogBuilder(requireContext())
         val inflater = LayoutInflater.from(context)

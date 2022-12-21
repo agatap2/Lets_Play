@@ -28,6 +28,7 @@ class SelectGameViewModel @Inject constructor(private val repository: GameReposi
         get() = _unselectedGamesCollection
 
     var currentFilter = Filter()
+    var randomGame = MyGame()
 
     init {
         _selectedGamesCollection.addSource(repository.getOnlyGames()) {
@@ -35,6 +36,10 @@ class SelectGameViewModel @Inject constructor(private val repository: GameReposi
         }
 
         _unselectedGamesCollection.value = mutableListOf()
+    }
+
+    fun selectRandomGame() {
+        randomGame = selectedGamesCollection.value?.random()!!
     }
 
     fun filterGamesCollection(filter: Filter) {

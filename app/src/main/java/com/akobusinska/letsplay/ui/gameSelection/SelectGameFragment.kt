@@ -5,7 +5,7 @@ import android.view.*
 import androidx.core.view.MenuProvider
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import com.akobusinska.letsplay.R
 import com.akobusinska.letsplay.databinding.FragmentSelectGameBinding
@@ -16,7 +16,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class SelectGameFragment : Fragment() {
 
-    val viewModel: SelectGameViewModel by viewModels()
+    val viewModel: SelectGameViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -44,8 +44,9 @@ class SelectGameFragment : Fragment() {
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 when (menuItem.itemId) {
                     R.id.select_random -> {
+                        viewModel.selectRandomGame()
                         if (!viewModel.selectedGamesCollection.value.isNullOrEmpty())
-                            DialogRandomGameFragment(viewModel.selectedGamesCollection.value!!.random()).show(
+                            DialogRandomGameFragment().show(
                                 requireActivity().supportFragmentManager,
                                 "random"
                             )
@@ -53,7 +54,7 @@ class SelectGameFragment : Fragment() {
                     R.id.filter -> {
                         viewModel.allGames.observe(viewLifecycleOwner) {
                             if (!viewModel.allGames.value.isNullOrEmpty())
-                                DialogGamesFilteringFragment(viewModel).show(
+                                DialogGamesFilteringFragment().show(
                                     requireActivity().supportFragmentManager,
                                     "filter"
                                 )
