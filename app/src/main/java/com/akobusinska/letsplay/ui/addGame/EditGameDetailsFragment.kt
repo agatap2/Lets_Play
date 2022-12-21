@@ -407,7 +407,11 @@ class EditGameDetailsFragment : Fragment() {
                     }
                     .show()
             } else {
-                navigateToPreviousScreen()
+                try {
+                    navigateToPreviousScreen()
+                } catch (e: IllegalArgumentException) {
+                    println("Navigation was already performed.")
+                }
                 if (isGameNew)
                     viewModel.insertGameIntoDatabase()
                 else
