@@ -93,6 +93,11 @@ class GamesListFragment : Fragment() {
                     R.id.dialog_text_input_layout,
                     R.string.game_name
                 )
+
+//            DialogGameNameFragment(resources.getString(R.string.provide_game_name) , resources.getString(R.string.game_name)).show(
+//                requireActivity().supportFragmentManager,
+//                "game_name"
+//            )
         }
 
         binding.selectGameButton.setOnClickListener {
@@ -103,6 +108,8 @@ class GamesListFragment : Fragment() {
             viewModel.filterGames(text.toString())
             refresh = true
         }
+
+        binding.searchBar
 
         viewModel.navigateToGameDetails.observe(viewLifecycleOwner) { game ->
             if (findNavController().currentDestination?.id == R.id.gamesListFragment) {

@@ -11,170 +11,179 @@
 
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ui.gameDetails.GameDetailsFragment">
+        android:fillViewport="true">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/constraintLayout"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            android:background="@drawable/green_square"
-            android:orientation="vertical"
-            app:layout_constraintBottom_toBottomOf="@+id/cover"
-            app:layout_constraintEnd_toStartOf="@+id/cover"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context=".ui.gameDetails.GameDetailsFragment">
 
-            <TextView
-                android:id="@+id/name"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/constraintLayout"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:padding="8dp"
-                android:text="@{game.name}"
-                android:textColor="@color/primaryTextColor"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toTopOf="@id/separator"
-                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/green_square"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="@+id/cover"
+                app:layout_constraintEnd_toStartOf="@+id/cover"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent">
 
-            <View
-                android:id="@+id/separator"
-                android:layout_width="0dp"
-                android:layout_height="1dp"
-                android:background="@color/primaryColor"
+                <TextView
+                    android:id="@+id/name"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:padding="8dp"
+                    android:text="@{game.name}"
+                    android:textColor="@color/primaryTextColor"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toTopOf="@id/separator"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <View
+                    android:id="@+id/separator"
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:background="@color/primaryColor"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/name" />
+
+                <TextView
+                    android:id="@+id/game_type"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="@color/shade"
+                    android:gravity="center"
+                    android:padding="6dp"
+                    android:textColor="@color/primaryColor"
+                    android:textSize="14sp"
+                    app:gameType="@{game.gameType}"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/separator"
+                    app:layout_constraintVertical_bias="1.0" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <ImageView
+                android:id="@+id/cover"
+                style="@style/GameCover"
+                android:layout_marginBottom="32dp"
+                android:contentDescription="@string/game_cover"
+                app:imageUrl="@{game.thumbURL}"
+                app:layout_constraintBottom_toTopOf="@+id/parent_and_children"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:srcCompat="@drawable/ic_broken_image" />
+
+            <ImageView
+                android:id="@+id/parent_and_children_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                app:layout_constraintBottom_toBottomOf="@id/parent_and_children"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/name" />
+                app:layout_constraintTop_toTopOf="@+id/parent_and_children"
+                app:srcCompat="@drawable/ic_source" />
 
             <TextView
-                android:id="@+id/game_type"
-                android:layout_width="0dp"
+                android:id="@+id/parent_and_children"
+                style="@style/GameDetailsText"
+                android:textColor="@color/primaryTextColor"
+                app:layout_constraintBottom_toBottomOf="@+id/num_of_players_icon"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/parent_and_children_icon"
+                app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
+                app:layout_constraintVertical_bias="1.0" />
+
+            <ImageView
+                android:id="@+id/num_of_players_icon"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@color/shade"
-                android:gravity="center"
-                android:padding="6dp"
-                android:textColor="@color/primaryColor"
-                android:textSize="14sp"
-                app:gameType="@{game.gameType}"
+                android:layout_marginStart="16dp"
+                app:layout_constraintBottom_toBottomOf="@id/num_of_players"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/num_of_players"
+                app:srcCompat="@drawable/ic_number_of_players" />
+
+            <TextView
+                android:id="@+id/num_of_players"
+                style="@style/GameDetailsText"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/num_of_players_icon"
+                app:layout_constraintTop_toBottomOf="@+id/parent_and_children"
+                app:maxNumberOfPlayers="@{game.maxPlayers}"
+                app:minNumberOfPlayers="@{game.minPlayers}" />
+
+            <ImageView
+                android:id="@+id/playtime_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                app:layout_constraintBottom_toBottomOf="@id/playtime"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/playtime"
+                app:srcCompat="@drawable/ic_time" />
+
+            <TextView
+                android:id="@+id/playtime"
+                style="@style/GameDetailsText"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/playtime_icon"
+                app:layout_constraintTop_toBottomOf="@+id/num_of_players"
+                app:maxPlaytime="@{game.maxPlaytime}"
+                app:minPlaytime="@{game.minPlaytime}" />
+
+            <ImageView
+                android:id="@+id/min_age_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                app:layout_constraintBottom_toBottomOf="@id/min_age"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/min_age"
+                app:srcCompat="@drawable/ic_face" />
+
+            <TextView
+                android:id="@+id/min_age"
+                style="@style/GameDetailsText"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/min_age_icon"
+                app:layout_constraintTop_toBottomOf="@+id/playtime"
+                app:minAge="@{game.minAge}" />
+
+            <ImageView
+                android:id="@+id/recommended_for_more_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                app:layout_constraintBottom_toBottomOf="@+id/recommended_for_more"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/recommended_for_more"
+                app:srcCompat="@drawable/ic_more_players" />
+
+            <TextView
+                android:id="@+id/recommended_for_more"
+                style="@style/GameDetailsText"
+                android:layout_marginBottom="16dp"
+                android:text="@string/recommended_for_more_players_value"
+                android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/separator"
-                app:layout_constraintVertical_bias="1.0" />
+                app:layout_constraintStart_toEndOf="@id/recommended_for_more_icon"
+                app:layout_constraintTop_toBottomOf="@+id/min_age"
+                app:layout_constraintVertical_bias="0.0" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <ImageView
-            android:id="@+id/cover"
-            style="@style/GameCover"
-            android:layout_marginBottom="32dp"
-            android:contentDescription="@string/game_cover"
-            app:imageUrl="@{game.thumbURL}"
-            app:layout_constraintBottom_toTopOf="@+id/parent_and_children"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:srcCompat="@drawable/ic_broken_image" />
-
-        <ImageView
-            android:id="@+id/parent_and_children_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            app:layout_constraintBottom_toBottomOf="@id/parent_and_children"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/parent_and_children"
-            app:srcCompat="@drawable/ic_source" />
-
-        <TextView
-            android:id="@+id/parent_and_children"
-            style="@style/GameDetailsText"
-            android:textColor="@color/primaryTextColor"
-            app:layout_constraintBottom_toBottomOf="@+id/num_of_players_icon"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/parent_and_children_icon"
-            app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
-            app:layout_constraintVertical_bias="1.0" />
-
-        <ImageView
-            android:id="@+id/num_of_players_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            app:layout_constraintBottom_toBottomOf="@id/num_of_players"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/num_of_players"
-            app:srcCompat="@drawable/ic_number_of_players" />
-
-        <TextView
-            android:id="@+id/num_of_players"
-            style="@style/GameDetailsText"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/num_of_players_icon"
-            app:layout_constraintTop_toBottomOf="@+id/parent_and_children"
-            app:maxNumberOfPlayers="@{game.maxPlayers}"
-            app:minNumberOfPlayers="@{game.minPlayers}" />
-
-        <ImageView
-            android:id="@+id/playtime_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            app:layout_constraintBottom_toBottomOf="@id/playtime"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/playtime"
-            app:srcCompat="@drawable/ic_time" />
-
-        <TextView
-            android:id="@+id/playtime"
-            style="@style/GameDetailsText"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/playtime_icon"
-            app:layout_constraintTop_toBottomOf="@+id/num_of_players"
-            app:maxPlaytime="@{game.maxPlaytime}"
-            app:minPlaytime="@{game.minPlaytime}" />
-
-        <ImageView
-            android:id="@+id/min_age_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            app:layout_constraintBottom_toBottomOf="@id/min_age"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/min_age"
-            app:srcCompat="@drawable/ic_face" />
-
-        <TextView
-            android:id="@+id/min_age"
-            style="@style/GameDetailsText"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/min_age_icon"
-            app:layout_constraintTop_toBottomOf="@+id/playtime"
-            app:minAge="@{game.minAge}" />
-
-        <ImageView
-            android:id="@+id/recommended_for_more_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            app:layout_constraintBottom_toBottomOf="@+id/recommended_for_more"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/recommended_for_more"
-            app:srcCompat="@drawable/ic_more_players" />
-
-        <TextView
-            android:id="@+id/recommended_for_more"
-            style="@style/GameDetailsText"
-            android:text="@string/recommended_for_more_players_value"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/recommended_for_more_icon"
-            app:layout_constraintTop_toBottomOf="@+id/min_age" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
 </layout>
