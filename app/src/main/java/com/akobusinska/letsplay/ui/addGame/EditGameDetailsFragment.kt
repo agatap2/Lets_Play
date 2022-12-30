@@ -233,6 +233,7 @@ class EditGameDetailsFragment : Fragment() {
         }
 
         minAgeValue = binding.minAgeValue
+
         val decreaseAge = binding.minusButton
         val increaseAge = binding.plusButton
 
@@ -295,7 +296,7 @@ class EditGameDetailsFragment : Fragment() {
         binding.editUrlButton.setOnClickListener {
 
             val editUrlDialogView =
-                LayoutInflater.from(requireContext()).inflate(R.layout.dialog_game_name, null)
+                LayoutInflater.from(requireContext()).inflate(R.layout.dialog_text_field, null)
 
             MaterialAlertDialogBuilder(requireContext())
                 .setView(editUrlDialogView)
@@ -324,6 +325,34 @@ class EditGameDetailsFragment : Fragment() {
 
         binding.save.setOnClickListener {
             saveGame()
+
+            viewModel.allGamesList.observe(viewLifecycleOwner) { list ->
+                if (list.any { it.name == binding.title.text.toString() && isGameNew }) {
+                    MaterialAlertDialogBuilder(requireContext())
+                        .setMessage(resources.getString(R.string.confirm_adding_dublicate))
+                        .setNegativeButton(resources.getString(R.string.rename)) { dialog, _ ->
+                            dialog.cancel()
+                        }
+                        .setPositiveButton(resources.getString(R.string.yes)) { _, _ ->
+                            navigateToPreviousScreen()
+                            if (isGameNew)
+                                viewModel.insertGameIntoDatabase()
+                            else
+                                viewModel.updateGameInDatabase()
+                        }
+                        .show()
+                } else {
+                    try {
+                        navigateToPreviousScreen()
+                    } catch (e: IllegalArgumentException) {
+                        println("Navigation was already performed.")
+                    }
+                    if (isGameNew)
+                        viewModel.insertGameIntoDatabase()
+                    else
+                        viewModel.updateGameInDatabase()
+                }
+            }
         }
 
         binding.cancel.setOnClickListener {
@@ -390,33 +419,5 @@ class EditGameDetailsFragment : Fragment() {
             type,
             parentGame
         )
-
-        viewModel.allGamesList.observe(viewLifecycleOwner) { list ->
-            if (list.any { it.name == name && it.game_id != id }) {
-                MaterialAlertDialogBuilder(requireContext())
-                    .setMessage(resources.getString(R.string.confirm_adding_dublicate))
-                    .setNegativeButton(resources.getString(R.string.rename)) { dialog, _ ->
-                        dialog.cancel()
-                    }
-                    .setPositiveButton(resources.getString(R.string.yes)) { _, _ ->
-                        navigateToPreviousScreen()
-                        if (isGameNew)
-                            viewModel.insertGameIntoDatabase()
-                        else
-                            viewModel.updateGameInDatabase()
-                    }
-                    .show()
-            } else {
-                try {
-                    navigateToPreviousScreen()
-                } catch (e: IllegalArgumentException) {
-                    println("Navigation was already performed.")
-                }
-                if (isGameNew)
-                    viewModel.insertGameIntoDatabase()
-                else
-                    viewModel.updateGameInDatabase()
-            }
-        }
     }
 }
