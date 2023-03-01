@@ -1,9 +1,11 @@
 package com.akobusinska.letsplay.ui.gameSelection
 
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.akobusinska.letsplay.R
 import com.akobusinska.letsplay.data.entities.GameType
 import com.akobusinska.letsplay.data.entities.MyGame
 import com.akobusinska.letsplay.data.local.Filter
@@ -56,16 +58,17 @@ class SelectGameViewModel @Inject constructor(private val repository: GameReposi
                         val parentGames =
                             allGames.value!!.filter { it.game_id == filterMatchingGame.parentGame }
 
-                        if(parentGames.isNotEmpty())
-                        _selectedGamesCollection.value =
-                            _selectedGamesCollection.value?.toMutableList()?.apply {
-                                if (!this.contains(parentGames[0]))
-                                    add(parentGames[0])
-                            }?.toList()
+                        if (parentGames.isNotEmpty())
+                            _selectedGamesCollection.value =
+                                _selectedGamesCollection.value?.toMutableList()?.apply {
+                                    if (!this.contains(parentGames[0]))
+                                        add(parentGames[0])
+                                }?.toList()
                     }
 
                     _selectedGamesCollection.value =
-                        _selectedGamesCollection.value?.toMutableList()?.apply { remove(filterMatchingGame) }
+                        _selectedGamesCollection.value?.toMutableList()
+                            ?.apply { remove(filterMatchingGame) }
                             ?.toList()
                 }
             }
@@ -73,11 +76,13 @@ class SelectGameViewModel @Inject constructor(private val repository: GameReposi
             for (unselectedGame in unselectedGamesCollection.value!!) {
                 if (gamesList.none { it.game_id == unselectedGame.game_id }) {
                     _unselectedGamesCollection.value =
-                        _unselectedGamesCollection.value?.toMutableList()?.apply { remove(unselectedGame) }
+                        _unselectedGamesCollection.value?.toMutableList()
+                            ?.apply { remove(unselectedGame) }
                             ?.toList()
                 } else {
                     _selectedGamesCollection.value =
-                        _selectedGamesCollection.value?.toMutableList()?.apply { remove(unselectedGame) }
+                        _selectedGamesCollection.value?.toMutableList()
+                            ?.apply { remove(unselectedGame) }
                             ?.toList()
                 }
             }
@@ -96,5 +101,24 @@ class SelectGameViewModel @Inject constructor(private val repository: GameReposi
             _selectedGamesCollection.value?.toMutableList()?.apply { add(game) }?.toList()
         _unselectedGamesCollection.value =
             _unselectedGamesCollection.value?.toMutableList()?.apply { remove(game) }?.toList()
+    }
+
+    fun getSelectedGamesNameList(context: Context): String {
+        var namesList = ""
+        val gamesList = ArrayList<String>()
+
+        if (selectedGamesCollection.value != null) {
+            for (game: MyGame in selectedGamesCollection.value!!)
+                gamesList.add(game.name)
+            gamesList.sort()
+        }
+
+        if (gamesList.isNotEmpty()) {
+            for (gameName: String in gamesList)
+                namesList += "\n$gameName, "
+            namesList = context.getString(R.string.games_we_can_play) + namesList.substring(0, namesList.length - 2)
+        }
+
+        return namesList
     }
 }

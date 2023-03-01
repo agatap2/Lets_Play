@@ -6,6 +6,8 @@ import com.akobusinska.letsplay.data.json.GamesList
 import com.akobusinska.letsplay.data.local.Filter
 import com.akobusinska.letsplay.data.local.GameDao
 import com.akobusinska.letsplay.data.remote.GameRemoteDataSource
+import com.akobusinska.letsplay.utils.roundDown
+import com.akobusinska.letsplay.utils.roundUp
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -54,8 +56,8 @@ class GameRepository(
                 name = game.name ?: "",
                 minPlayers = game.minPlayers ?: 1,
                 maxPlayers = game.maxPlayers ?: 20,
-                minPlaytime = game.minPlaytime ?: 5,
-                maxPlaytime = game.maxPlaytime ?: 120,
+                minPlaytime = game.minPlaytime?.roundDown() ?: 5,
+                maxPlaytime = game.maxPlaytime?.roundUp() ?: 120,
                 minAge = if (game.minAge != null) {
                     if (game.minAge > 18) 18 else if (game.minAge < 3) 3 else game.minAge
                 } else 3,

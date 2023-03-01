@@ -1,5 +1,6 @@
 package com.akobusinska.letsplay.ui.gameSelection
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.*
 import androidx.core.view.MenuProvider
@@ -43,6 +44,18 @@ class SelectGameFragment : Fragment() {
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 when (menuItem.itemId) {
+                    R.id.share -> {
+                        val gamesList = viewModel.getSelectedGamesNameList(requireContext())
+                        val sendIntent: Intent = Intent().apply {
+                            action = Intent.ACTION_SEND
+                            putExtra(Intent.EXTRA_TEXT, gamesList)
+                            type = "text/plain"
+                        }
+
+                        val shareIntent = Intent.createChooser(sendIntent, null)
+                        if (gamesList.isNotBlank())
+                            startActivity(shareIntent)
+                    }
                     R.id.select_random -> {
                         viewModel.selectRandomGame()
                         if (!viewModel.selectedGamesCollection.value.isNullOrEmpty())

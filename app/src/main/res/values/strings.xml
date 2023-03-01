@@ -57,5 +57,7 @@
     <string name="filter">Filter</string>
     <string name="filter_games">Filter games</string>
     <string name="exclude_games_recommended_for_more_players">Exclude games recommended for more players</string>
+    <string name="share_list">Share</string>
+    <string name="games_we_can_play">"We can play one of these games: "</string>
 
 </resources>

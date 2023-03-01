@@ -57,4 +57,6 @@
     <string name="filter">Filtruj</string>
     <string name="filter_games">Filtruj gry</string>
     <string name="exclude_games_recommended_for_more_players">Pomiń gry zalecane na większą ilość osób</string>
+    <string name="share_list">Share</string>
+    <string name="games_we_can_play">"Możemy zagrać w: "</string>
 </resources>

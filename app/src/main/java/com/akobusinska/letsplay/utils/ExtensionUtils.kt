@@ -35,3 +35,15 @@ fun ImageButton.changeButtonColor(block: Boolean) {
     else
         this.setColorFilter(context.resources.getColor(R.color.primaryColor))
 }
+
+fun Int.roundUp(): Int {
+    val modulo = this.mod(5)
+    return if (modulo != 0) (this + 5 - modulo)
+    else this
+}
+
+fun Int.roundDown(): Int {
+    val modulo = this.mod(5)
+    return if (modulo != 0) (this - modulo)
+    else this
+}
