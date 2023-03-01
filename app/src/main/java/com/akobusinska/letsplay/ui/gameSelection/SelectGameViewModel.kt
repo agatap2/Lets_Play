@@ -89,18 +89,20 @@ class SelectGameViewModel @Inject constructor(private val repository: GameReposi
         }
     }
 
-    fun removeItemFromList(game: MyGame) {
+    fun removeItemFromList(game: MyGame): Boolean {
         _selectedGamesCollection.value =
             _selectedGamesCollection.value?.toMutableList()?.apply { remove(game) }?.toList()
         _unselectedGamesCollection.value =
             _unselectedGamesCollection.value?.toMutableList()?.apply { add(game) }?.toList()
+        return _unselectedGamesCollection.value.isNullOrEmpty()
     }
 
-    fun revertItemIntoList(game: MyGame) {
+    fun revertItemIntoList(game: MyGame): Boolean {
         _selectedGamesCollection.value =
             _selectedGamesCollection.value?.toMutableList()?.apply { add(game) }?.toList()
         _unselectedGamesCollection.value =
             _unselectedGamesCollection.value?.toMutableList()?.apply { remove(game) }?.toList()
+        return _unselectedGamesCollection.value.isNullOrEmpty()
     }
 
     fun getSelectedGamesNameList(context: Context): String {

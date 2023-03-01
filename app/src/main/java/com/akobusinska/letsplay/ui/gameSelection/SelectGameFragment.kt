@@ -29,12 +29,12 @@ class SelectGameFragment : Fragment() {
 
         val selectedGamesAdapter =
             DetailedGamesListAdapter(DetailedGamesListAdapter.GamesListListener { game ->
-                viewModel.removeItemFromList(game)
+                changeGuidelinePosition(viewModel.removeItemFromList(game), binding)
             })
 
         val removedGamesAdapter =
             SimpleGamesListAdapter(SimpleGamesListAdapter.GamesListListener { game ->
-                viewModel.revertItemIntoList(game)
+                changeGuidelinePosition(viewModel.revertItemIntoList(game), binding)
             })
 
         requireActivity().addMenuProvider(object : MenuProvider {
@@ -93,4 +93,10 @@ class SelectGameFragment : Fragment() {
         return binding.root
     }
 
+    private fun changeGuidelinePosition(emptyList: Boolean, binding: FragmentSelectGameBinding) {
+        if(emptyList)
+            binding.guideline.setGuidelinePercent(1.0F)
+        else
+            binding.guideline.setGuidelinePercent(0.65F)
+    }
 }
