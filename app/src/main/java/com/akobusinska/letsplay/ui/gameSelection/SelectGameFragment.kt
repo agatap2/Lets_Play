@@ -27,6 +27,8 @@ class SelectGameFragment : Fragment() {
         val binding: FragmentSelectGameBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_select_game, container, false)
 
+        changeGuidelinePosition(viewModel.unselectedGamesCollection.value.isNullOrEmpty(), binding)
+
         val selectedGamesAdapter =
             DetailedGamesListAdapter(DetailedGamesListAdapter.GamesListListener { game ->
                 changeGuidelinePosition(viewModel.removeItemFromList(game), binding)
