@@ -51,6 +51,7 @@ class EditGameDetailsFragment : Fragment() {
     private lateinit var over2Hours: CheckBox
     private var parent: Int = -1
     private var isGameNew: Boolean = true
+    private var checked: Boolean = true
     private lateinit var game: MyGame
 
     val viewModel: EditGameDetailsViewModel by viewModels()
@@ -206,8 +207,8 @@ class EditGameDetailsFragment : Fragment() {
                     R.string.parent_game,
                     it.name
                 )
-            it.expansions.add(game.game_id)
-            viewModel.updateParentGame(it)
+            if (!it.expansions.contains(game.game_id))
+                it.expansions.add(game.game_id)
         }
 
         binding.editParentGame.setOnClickListener {
@@ -325,32 +326,37 @@ class EditGameDetailsFragment : Fragment() {
 
         binding.save.setOnClickListener {
             saveGame()
+            checked = false
+            viewModel.refresh()
 
             viewModel.allGamesList.observe(viewLifecycleOwner) { list ->
-                if (list.any { it.name == binding.title.text.toString() && isGameNew }) {
-                    MaterialAlertDialogBuilder(requireContext())
-                        .setMessage(resources.getString(R.string.confirm_adding_dublicate))
-                        .setNegativeButton(resources.getString(R.string.rename)) { dialog, _ ->
-                            dialog.cancel()
-                        }
-                        .setPositiveButton(resources.getString(R.string.yes)) { _, _ ->
+                if (!checked) {
+                    if (list.any { it.name == binding.title.text.toString() && isGameNew }) {
+                        MaterialAlertDialogBuilder(requireContext())
+                            .setMessage(resources.getString(R.string.confirm_adding_dublicate))
+                            .setNegativeButton(resources.getString(R.string.rename)) { dialog, _ ->
+                                dialog.cancel()
+                            }
+                            .setPositiveButton(resources.getString(R.string.yes)) { _, _ ->
+                                navigateToPreviousScreen()
+                                if (isGameNew)
+                                    viewModel.insertGameIntoDatabase()
+                                else
+                                    viewModel.updateGameInDatabase()
+                            }
+                            .show()
+                    } else {
+                        try {
                             navigateToPreviousScreen()
-                            if (isGameNew)
-                                viewModel.insertGameIntoDatabase()
-                            else
-                                viewModel.updateGameInDatabase()
+                        } catch (e: IllegalArgumentException) {
+                            println("Navigation was already performed.")
                         }
-                        .show()
-                } else {
-                    try {
-                        navigateToPreviousScreen()
-                    } catch (e: IllegalArgumentException) {
-                        println("Navigation was already performed.")
+                        if (isGameNew)
+                            viewModel.insertGameIntoDatabase()
+                        else
+                            viewModel.updateGameInDatabase()
                     }
-                    if (isGameNew)
-                        viewModel.insertGameIntoDatabase()
-                    else
-                        viewModel.updateGameInDatabase()
+                    checked = true
                 }
             }
         }

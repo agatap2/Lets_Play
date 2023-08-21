@@ -7,6 +7,7 @@ import com.akobusinska.letsplay.R
 import com.akobusinska.letsplay.data.entities.GameType
 import com.akobusinska.letsplay.data.entities.MyGame
 import com.akobusinska.letsplay.data.repository.GameRepository
+import com.akobusinska.letsplay.utils.RefreshableLiveData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
@@ -32,7 +33,7 @@ class EditGameDetailsViewModel @SuppressLint("StaticFieldLeak")
     val foundGamesList: LiveData<List<MyGame>>
         get() = _foundGamesList
 
-    private val _allGamesList = MediatorLiveData<List<MyGame>>()
+    private val _allGamesList = RefreshableLiveData { repository.getFullCollection() }
     val allGamesList: LiveData<List<MyGame>>
         get() = _allGamesList
 
@@ -42,6 +43,10 @@ class EditGameDetailsViewModel @SuppressLint("StaticFieldLeak")
         _allGamesList.addSource(repository.getFullCollection()) {
             _allGamesList.value = it
         }
+    }
+
+    fun refresh() {
+        _allGamesList.refresh()
     }
 
     var parentGameName = Transformations.map(newGame) {

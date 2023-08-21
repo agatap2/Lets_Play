@@ -1,5 +1,6 @@
 package com.akobusinska.letsplay.ui.gamesList
 
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
@@ -7,11 +8,17 @@ import androidx.lifecycle.ViewModel
 import com.akobusinska.letsplay.data.entities.GameType
 import com.akobusinska.letsplay.data.entities.MyGame
 import com.akobusinska.letsplay.data.repository.GameRepository
+import com.akobusinska.letsplay.utils.Backup
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
+
 @HiltViewModel
-class GamesListViewModel @Inject constructor(private val repository: GameRepository) : ViewModel() {
+class GamesListViewModel @Inject constructor(
+    private val repository: GameRepository,
+    @ApplicationContext private val context: Context
+) : ViewModel() {
 
     private lateinit var _fullGamesCollection: List<MyGame>
     private val _gamesCollection = MediatorLiveData<List<MyGame>>()
@@ -48,6 +55,9 @@ class GamesListViewModel @Inject constructor(private val repository: GameReposit
     }
 
     private fun reloadList(name: String, list: List<MyGame>) {
+
+        Backup.writeJSON(list, context)
+
         _fullGamesCollection = list
         if (name.isNotBlank()) filterGames(name)
         _gamesCollection.value = list
