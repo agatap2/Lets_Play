@@ -22,7 +22,7 @@ object NetworkModule {
     @Singleton
     @Provides
     fun provideRetrofit(gson: Gson): Retrofit = Retrofit.Builder()
-        .baseUrl("https://api.boardgameatlas.com/api/")
+        .baseUrl("https://boardgamegeek.com/xmlapi2/")
         .addConverterFactory(GsonConverterFactory.create(gson))
         .build()
 

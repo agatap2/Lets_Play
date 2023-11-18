@@ -1,7 +1,6 @@
 package com.akobusinska.letsplay.di
 
 import android.content.Context
-import androidx.room.Room
 import com.akobusinska.letsplay.data.local.GameDao
 import com.akobusinska.letsplay.data.local.GamesDatabase
 import com.akobusinska.letsplay.data.remote.GameRemoteDataSource
@@ -20,11 +19,7 @@ object DatabaseModule {
     @Singleton
     @Provides
     fun provideDatabase(@ApplicationContext context: Context): GamesDatabase {
-        return Room.databaseBuilder(
-            context,
-            GamesDatabase::class.java,
-            "games_database"
-        ).fallbackToDestructiveMigration().build()
+        return GamesDatabase.getInstance(context)!!
     }
 
     @Singleton

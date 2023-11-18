@@ -56,7 +56,8 @@ class GamesListViewModel @Inject constructor(
 
     private fun reloadList(name: String, list: List<MyGame>) {
 
-        Backup.writeJSON(list, context)
+        val backup = Backup(context)
+        backup.writeJSON(list, context)
 
         _fullGamesCollection = list
         if (name.isNotBlank()) filterGames(name)
