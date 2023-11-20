@@ -2,10 +2,11 @@ package com.akobusinska.letsplay.data.repository
 
 import com.akobusinska.letsplay.data.entities.GameType
 import com.akobusinska.letsplay.data.entities.MyGame
-import com.akobusinska.letsplay.data.json.GamesList
 import com.akobusinska.letsplay.data.local.Filter
 import com.akobusinska.letsplay.data.local.GameDao
 import com.akobusinska.letsplay.data.remote.GameRemoteDataSource
+import com.akobusinska.letsplay.data.xml.BoardGame
+import com.akobusinska.letsplay.data.xml.BoardGamesSearchResult
 import com.akobusinska.letsplay.utils.roundDown
 import com.akobusinska.letsplay.utils.roundUp
 import kotlinx.coroutines.Dispatchers
@@ -41,32 +42,42 @@ class GameRepository(
 
     suspend fun deleteGame(game: MyGame) = localDataSource.deleteGame(game)
 
-    suspend fun downloadGamesList(name: String): List<MyGame> {
+    suspend fun downloadGamesList(name: String): List<*> {
         return withContext(Dispatchers.IO) {
-            formatData(remoteDataSource.searchForGames(name))
+            remoteDataSource.searchForGames(name)
         }
     }
 
-    private fun formatData(data: GamesList): List<MyGame> {
+    suspend fun downloadGamesWithDetailsList(gamesIDs: List<BoardGamesSearchResult>): List<MyGame> {
+        return withContext(Dispatchers.IO) {
+            formatData(remoteDataSource.searchForGameDetails(gamesIDs.map { game -> game.objectId }) as List<BoardGame>)
+        }
+    }
+
+    private fun formatData(games: List<BoardGame>): List<MyGame> {
 
         val listOfGames = mutableListOf<MyGame>()
 
-        data.games?.forEach { game ->
+        games.forEach { game ->
             val newGame = MyGame(
                 name = game.name ?: "",
-                minPlayers = game.minPlayers ?: 1,
-                maxPlayers = game.maxPlayers ?: 20,
-                minPlaytime = game.minPlaytime?.roundDown() ?: 5,
-                maxPlaytime = game.maxPlaytime?.roundUp() ?: 120,
-                minAge = if (game.minAge != null) {
-                    if (game.minAge > 18) 18 else if (game.minAge < 3) 3 else game.minAge
+                minPlayers = if (game.minPlayers == null || game.minPlayers < 1) 1
+                else game.minPlayers,
+                maxPlayers = if (game.maxPlayers == null || game.maxPlayers < 1) 20
+                else game.maxPlayers,
+                minPlaytime = if(game.minPlayTime == null || game.minPlayTime < 5) 5
+                else game.minPlayTime.roundDown(),
+                maxPlaytime = if(game.maxPlayTime == null || game.maxPlayTime < 5) 120
+                else game.maxPlayTime.roundUp(),
+                minAge = if (game.age != null) {
+                    if (game.age > 18) 18 else if (game.age < 3) 3 else game.age
                 } else 3,
-                thumbURL = game.thumbUrl ?: game.imageUrl ?: "",
-                gameType = if (game.type == "game" && !game.name?.contains(
+                thumbURL = game.image ?: "",
+                gameType = if (game.description?.contains(
                         "expansion",
                         true
-                    )!!
-                ) GameType.GAME else GameType.EXPANSION,
+                    ) == true
+                ) GameType.EXPANSION else GameType.GAME,
             )
 
             listOfGames.add(newGame)

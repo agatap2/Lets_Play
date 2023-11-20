@@ -1,8 +1,10 @@
 package com.akobusinska.letsplay.data.remote
 
-import javax.inject.Inject
+class GameRemoteDataSource {
 
-class GameRemoteDataSource @Inject constructor(private val gameService: GameService) {
+    private val gameService = GameService()
 
-    suspend fun searchForGames(name: String) = gameService.getSearchResult(name = name)
+    fun searchForGames(name: String) = gameService.loadGamesListXmlFromNetwork(name)
+
+    fun searchForGameDetails(ids: List<String>) = gameService.loadGameDetailsXmlFromNetwork(ids)
 }

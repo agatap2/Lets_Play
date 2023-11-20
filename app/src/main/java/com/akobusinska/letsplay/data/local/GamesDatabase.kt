@@ -5,7 +5,6 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.akobusinska.letsplay.data.StartingGames
 import com.akobusinska.letsplay.data.entities.MyGame
 import com.akobusinska.letsplay.data.entities.Play
 import com.akobusinska.letsplay.data.entities.PlayWithPlaysCrossRef
@@ -33,7 +32,7 @@ abstract class GamesDatabase : RoomDatabase() {
                         GamesDatabase::class.java,
                         "games_database"
                     )
-                        .addCallback(StartingGames(context))
+                        //.addCallback(StartingGames(context))
                         .fallbackToDestructiveMigration()
                         .build()
                 }

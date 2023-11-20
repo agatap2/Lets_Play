@@ -49,35 +49,35 @@ class EditGameDetailsViewModel @SuppressLint("StaticFieldLeak")
         _allGamesList.refresh()
     }
 
-    var parentGameName = Transformations.map(newGame) {
-        if (it?.gameType == GameType.EXPANSION && it.game_id != it.parentGame)
+    var parentGameName = newGame.map {
+        if (it.gameType == GameType.EXPANSION && it.game_id != it.parentGame)
             getParentGame(it.parentGame)
         context.getString(R.string.parent_game, "?")
     }
 
-    val minNumberOfPlayers = Transformations.map(newGame) { game ->
+    val minNumberOfPlayers = newGame.map { game ->
         game.minPlayers.toString()
     }
 
-    val maxNumberOfPlayers = Transformations.map(newGame) { game ->
+    val maxNumberOfPlayers = newGame.map { game ->
         if (game.maxPlayers > 20)
             "20+"
         else
             game.maxPlayers.toString()
     }
 
-    val minPlaytime = Transformations.map(newGame) { game ->
+    val minPlaytime = newGame.map { game ->
         game.minPlaytime.toString()
     }
 
-    val maxPlaytime = Transformations.map(newGame) { game ->
+    val maxPlaytime = newGame.map { game ->
         if (game.maxPlaytime > 120)
             "2h+"
         else
             game.maxPlaytime.toString()
     }
 
-    val minAge = Transformations.map(newGame) { game ->
+    val minAge = newGame.map { game ->
         game.minAge.toString()
     }
 

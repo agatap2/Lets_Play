@@ -2,7 +2,6 @@ package com.akobusinska.letsplay.data.local
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import androidx.room.OnConflictStrategy.REPLACE
 import com.akobusinska.letsplay.data.entities.GameStatistics
 import com.akobusinska.letsplay.data.entities.GameType
 import com.akobusinska.letsplay.data.entities.GameWithPlay
@@ -47,7 +46,7 @@ interface GameDao {
     @Query("SELECT * FROM my_game_table")
     fun getGameWithPlaysAndPlayers(): List<GameStatistics>
 
-    @Insert(onConflict = REPLACE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertGame(game: MyGame)
 
     @Update

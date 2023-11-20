@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.akobusinska.letsplay.data.entities.MyGame
 import com.akobusinska.letsplay.data.repository.GameRepository
 import com.akobusinska.letsplay.data.repository.GameRepository.RequestStatus
+import com.akobusinska.letsplay.data.xml.BoardGamesSearchResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -36,10 +37,13 @@ class WebSearchResultViewModel @Inject constructor(private val repository: GameR
     }
 
     fun getSearchResult(name: String) {
+        var searchResultList: List<BoardGamesSearchResult>
         viewModelScope.launch {
             try {
                 _status.value = RequestStatus.LOADING
-                _foundGamesList.value = repository.downloadGamesList(name)
+                searchResultList =
+                    repository.downloadGamesList(name).take(20) as List<BoardGamesSearchResult>
+                _foundGamesList.value = repository.downloadGamesWithDetailsList(searchResultList)
                 _status.value = RequestStatus.DONE
             } catch (e: Exception) {
                 _status.value = RequestStatus.ERROR
