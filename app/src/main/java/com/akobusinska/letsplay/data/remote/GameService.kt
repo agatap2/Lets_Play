@@ -2,8 +2,8 @@ package com.akobusinska.letsplay.data.remote
 
 import com.akobusinska.letsplay.data.xml.BoardGame
 import com.akobusinska.letsplay.data.xml.BoardGamesSearchResult
-import com.akobusinska.letsplay.utils.XmlParser
-import com.akobusinska.letsplay.utils.XmlParser.SearchResult
+import com.akobusinska.letsplay.utils.xmlParsers.XmlParser
+import com.akobusinska.letsplay.utils.xmlParsers.XmlParser.SearchResult
 import org.xmlpull.v1.XmlPullParserException
 import java.io.IOException
 import java.io.InputStream
@@ -34,6 +34,16 @@ class GameService {
         return downloadXML(urlString)?.use { stream ->
             XmlParser().parseGamesList(stream, SearchResult.DETAILS)
         } ?: emptyList<BoardGame>()
+    }
+
+    @Throws(XmlPullParserException::class, IOException::class)
+    fun loadCollectionXmlFromNetwork(userName: String): List<*> {
+
+        val urlString = "https://boardgamegeek.com/xmlapi/collection/$userName?own=1"
+
+        return downloadXML(urlString)?.use { stream ->
+            XmlParser().parseUserCollection(stream)
+        } ?: emptyList<BoardGamesSearchResult>()
     }
 
     @Throws(IOException::class)

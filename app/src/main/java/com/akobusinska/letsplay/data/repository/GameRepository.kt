@@ -54,12 +54,19 @@ class GameRepository(
         }
     }
 
+    suspend fun downloadUserCollection(userName: String): List<*> {
+        return withContext(Dispatchers.IO) {
+            remoteDataSource.searchForUserCollection(userName)
+        }
+    }
+
     private fun formatData(games: List<BoardGame>): List<MyGame> {
 
         val listOfGames = mutableListOf<MyGame>()
 
         games.forEach { game ->
             val newGame = MyGame(
+                game_id = game.id,
                 name = game.name ?: "",
                 minPlayers = if (game.minPlayers == null || game.minPlayers < 1) 1
                 else game.minPlayers,
@@ -73,11 +80,12 @@ class GameRepository(
                     if (game.age > 18) 18 else if (game.age < 3) 3 else game.age
                 } else 3,
                 thumbURL = game.image ?: "",
-                gameType = if (game.description?.contains(
-                        "expansion",
+                gameType = if (game.category?.contains(
+                        "Expansion for Base-game",
                         true
                     ) == true
                 ) GameType.EXPANSION else GameType.GAME,
+                expansions = (game.expansions as MutableList<Int>)
             )
 
             listOfGames.add(newGame)

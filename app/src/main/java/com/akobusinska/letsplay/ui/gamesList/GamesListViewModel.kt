@@ -8,7 +8,6 @@ import androidx.lifecycle.ViewModel
 import com.akobusinska.letsplay.data.entities.GameType
 import com.akobusinska.letsplay.data.entities.MyGame
 import com.akobusinska.letsplay.data.repository.GameRepository
-import com.akobusinska.letsplay.utils.Backup
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
@@ -56,8 +55,8 @@ class GamesListViewModel @Inject constructor(
 
     private fun reloadList(name: String, list: List<MyGame>) {
 
-        val backup = Backup(context)
-        backup.writeJSON(list, context)
+//        val backup = Backup(context)
+//        backup.writeJSON(list)
 
         _fullGamesCollection = list
         if (name.isNotBlank()) filterGames(name)

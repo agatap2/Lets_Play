@@ -15,6 +15,7 @@ class Backup(context: Context) {
 
     private var contextWrapper: ContextWrapper
     private var txtFile: File
+    private val collectionTextFile: File
     private var objectMapper: ObjectMapper
 
     init {
@@ -22,10 +23,11 @@ class Backup(context: Context) {
         val directory = contextWrapper.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
 
         txtFile = File(directory, "myGamesBackup.json")
+        collectionTextFile = File(directory, "myCollection.json")
         objectMapper = ObjectMapper()
     }
 
-    fun writeJSON(games: List<MyGame>, context: Context) {
+    fun writeJSON(games: List<MyGame>?) {
 
         val mapper = jacksonObjectMapper()
         val json = mapper.writeValueAsString(games)
@@ -35,7 +37,7 @@ class Backup(context: Context) {
         val osw: OutputStreamWriter
 
         try {
-            fos = FileOutputStream(txtFile)
+            fos = FileOutputStream(collectionTextFile)
             osw = OutputStreamWriter(fos)
             osw.write(json)
             osw.flush()
@@ -50,7 +52,7 @@ class Backup(context: Context) {
         val directory = contextWrapper.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
         val txtFile = File(directory, "myGamesBackup.json")
         //val gamesList: List<MyGame> =
-           // objectMapper.readValue(txtFile, object : TypeReference(MyGame) {})
+        //objectMapper.readValue(txtFile, object : TypeReference(MyGame) {})
 
     }
 }

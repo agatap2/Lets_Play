@@ -12,5 +12,9 @@ enum class Tags(val fieldName: String) {
     MAX_PLAYTIME("maxplaytime"),
     STARTING_AGE("age"),
     DESCRIPTION("description"),
-    COVER("image")
+    CATEGORY("boardgamecategory"),
+    EXPANSION("boardgameexpansion"),
+    COVER("image"),
+    COLLECTION("items"),
+    COLLECTION_ITEM("item")
 }

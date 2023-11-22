@@ -1,13 +1,11 @@
-package com.akobusinska.letsplay.utils
+package com.akobusinska.letsplay.utils.xmlParsers
 
-import android.util.Xml
 import com.akobusinska.letsplay.data.xml.BoardGame
-import com.akobusinska.letsplay.data.xml.BoardGamesSearchResult
-import com.akobusinska.letsplay.data.xml.IBoardGames
 import com.akobusinska.letsplay.data.xml.Tags.BOARD_GAME
-import com.akobusinska.letsplay.data.xml.Tags.BOARD_GAMES_LIST
+import com.akobusinska.letsplay.data.xml.Tags.CATEGORY
 import com.akobusinska.letsplay.data.xml.Tags.COVER
 import com.akobusinska.letsplay.data.xml.Tags.DESCRIPTION
+import com.akobusinska.letsplay.data.xml.Tags.EXPANSION
 import com.akobusinska.letsplay.data.xml.Tags.GAME_ID
 import com.akobusinska.letsplay.data.xml.Tags.MAX_PLAYERS
 import com.akobusinska.letsplay.data.xml.Tags.MAX_PLAYTIME
@@ -19,79 +17,14 @@ import com.akobusinska.letsplay.data.xml.Tags.STARTING_AGE
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserException
 import java.io.IOException
-import java.io.InputStream
 
-class XmlParser {
-
-    enum class SearchResult { IDS, DETAILS }
-
-    fun parseGamesList(inputStream: InputStream, searchResult: SearchResult): List<*> {
-        inputStream.use { inputStream ->
-            val parser: XmlPullParser = Xml.newPullParser()
-            parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false)
-            parser.setInput(inputStream, null)
-            parser.nextTag()
-
-            return readBoardGames(parser, searchResult)
-        }
-    }
+class BoardGameDetailsParser {
 
     @Throws(XmlPullParserException::class, IOException::class)
-    private fun readBoardGames(parser: XmlPullParser, searchResult: SearchResult): List<*> {
-        val entries = mutableListOf<IBoardGames>()
-
-        parser.require(XmlPullParser.START_TAG, null, BOARD_GAMES_LIST.fieldName)
-
-        while (parser.next() != XmlPullParser.END_TAG) {
-
-            if (parser.eventType != XmlPullParser.START_TAG) {
-                continue
-            }
-            if (parser.name == BOARD_GAME.fieldName) {
-                if (searchResult == SearchResult.IDS)
-                    entries.add(readBoardGame(parser))
-                else
-                    entries.add(readBoardGameDetails(parser))
-            } else {
-                skip(parser)
-            }
-        }
-
-        return entries
-    }
-
-    @Throws(XmlPullParserException::class, IOException::class)
-    private fun readBoardGame(parser: XmlPullParser): BoardGamesSearchResult {
+    fun readBoardGameDetails(parser: XmlPullParser): BoardGame {
         parser.require(XmlPullParser.START_TAG, null, BOARD_GAME.fieldName)
 
-        val objectId = parser.getAttributeValue(null, GAME_ID.fieldName)
-        var name = ""
-
-        while (parser.next() != XmlPullParser.END_TAG) {
-            if (parser.eventType != XmlPullParser.START_TAG) {
-                continue
-            }
-            when (parser.name) {
-                NAME.fieldName -> name = readBoardGameName(parser)
-                else -> skip(parser)
-            }
-        }
-
-        return BoardGamesSearchResult(objectId, name)
-    }
-
-    @Throws(XmlPullParserException::class, IOException::class)
-    private fun readBoardGameName(parser: XmlPullParser): String {
-        parser.require(XmlPullParser.START_TAG, null, NAME.fieldName)
-        val primary = parser.getAttributeValue(null, PRIMARY.fieldName)
-        val name = readText(parser)
-        parser.require(XmlPullParser.END_TAG, null, NAME.fieldName)
-
-        return if (primary == "true") name else ""
-    }
-
-    @Throws(XmlPullParserException::class, IOException::class)
-    private fun readBoardGameDetails(parser: XmlPullParser): BoardGame {
+        val id: Int = parser.getAttributeValue(null, GAME_ID.fieldName).toInt()
         var minPlayers: Int? = null
         var maxPlayers: Int? = null
         var minPlayTime: Int? = null
@@ -99,10 +32,13 @@ class XmlParser {
         var age: Int? = null
         var name: String? = null
         var description: String? = null
+        var categories: String? = null
+        val expansions: ArrayList<Int> = arrayListOf()
         var image: String? = null
 
 
         while (parser.next() != XmlPullParser.END_TAG) {
+
             if (parser.eventType != XmlPullParser.START_TAG) {
                 continue
             }
@@ -119,12 +55,15 @@ class XmlParser {
                 }
 
                 DESCRIPTION.fieldName -> description = readDescription(parser)
+                CATEGORY.fieldName -> categories += readCategory(parser)
+                EXPANSION.fieldName -> expansions.add(readExpansion(parser))
                 COVER.fieldName -> image = readImage(parser)
                 else -> skip(parser)
             }
         }
 
         return BoardGame(
+            id,
             minPlayers,
             maxPlayers,
             minPlayTime,
@@ -132,8 +71,20 @@ class XmlParser {
             age,
             name,
             description,
+            categories,
+            expansions,
             image
         )
+    }
+
+    @Throws(XmlPullParserException::class, IOException::class)
+    private fun readBoardGameName(parser: XmlPullParser): String {
+        parser.require(XmlPullParser.START_TAG, null, NAME.fieldName)
+        val primary = parser.getAttributeValue(null, PRIMARY.fieldName)
+        val name = readText(parser)
+        parser.require(XmlPullParser.END_TAG, null, NAME.fieldName)
+
+        return if (primary == "true") name else ""
     }
 
     @Throws(XmlPullParserException::class, IOException::class)
@@ -182,6 +133,28 @@ class XmlParser {
         val description = readText(parser)
         parser.require(XmlPullParser.END_TAG, null, DESCRIPTION.fieldName)
         return description
+    }
+
+    @Throws(XmlPullParserException::class, IOException::class)
+    private fun readCategory(parser: XmlPullParser): String {
+        parser.require(XmlPullParser.START_TAG, null, CATEGORY.fieldName)
+        val category = readText(parser)
+        parser.require(XmlPullParser.END_TAG, null, CATEGORY.fieldName)
+        return category
+    }
+
+    @Throws(XmlPullParserException::class, IOException::class)
+    private fun readExpansion(parser: XmlPullParser): Int {
+        parser.require(XmlPullParser.START_TAG, null, EXPANSION.fieldName)
+        val expansion = parser.getAttributeValue(null, GAME_ID.fieldName)
+        while (parser.next() != XmlPullParser.END_TAG) {
+            if (parser.eventType != XmlPullParser.START_TAG) {
+                continue
+            }
+            skip(parser)
+        }
+
+        return expansion.toInt()
     }
 
     @Throws(XmlPullParserException::class, IOException::class)

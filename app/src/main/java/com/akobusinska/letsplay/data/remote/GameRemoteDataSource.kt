@@ -7,4 +7,6 @@ class GameRemoteDataSource {
     fun searchForGames(name: String) = gameService.loadGamesListXmlFromNetwork(name)
 
     fun searchForGameDetails(ids: List<String>) = gameService.loadGameDetailsXmlFromNetwork(ids)
+
+    fun searchForUserCollection(userName: String) = gameService.loadCollectionXmlFromNetwork(userName)
 }
