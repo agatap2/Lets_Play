@@ -4,8 +4,10 @@ import android.annotation.SuppressLint
 import android.content.Context
 import androidx.lifecycle.*
 import com.akobusinska.letsplay.R
+import com.akobusinska.letsplay.data.entities.CollectionOwnerWithGames
 import com.akobusinska.letsplay.data.entities.GameType
 import com.akobusinska.letsplay.data.entities.MyGame
+import com.akobusinska.letsplay.data.repository.CollectionOwnerRepository
 import com.akobusinska.letsplay.data.repository.GameRepository
 import com.akobusinska.letsplay.utils.RefreshableLiveData
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,6 +19,7 @@ import javax.inject.Inject
 class EditGameDetailsViewModel @SuppressLint("StaticFieldLeak")
 @Inject constructor(
     private val repository: GameRepository,
+    private val userRepository: CollectionOwnerRepository,
     state: SavedStateHandle,
     @ApplicationContext private val context: Context
 ) : ViewModel() {
@@ -50,7 +53,7 @@ class EditGameDetailsViewModel @SuppressLint("StaticFieldLeak")
     }
 
     var parentGameName = newGame.map {
-        if (it.gameType == GameType.EXPANSION && it.game_id != it.parentGame)
+        if (it.gameType == GameType.EXPANSION && it.gameId != it.parentGame)
             getParentGame(it.parentGame)
         context.getString(R.string.parent_game, "?")
     }
@@ -91,8 +94,10 @@ class EditGameDetailsViewModel @SuppressLint("StaticFieldLeak")
     val playtimeRange = MutableLiveData<List<Float>>().apply {
         value = if (newGame.value?.maxPlaytime!! > 120)
             listOf(newGame.value!!.minPlaytime.toFloat(), 120F)
-        else
+        else {
+            println("LIST: " + newGame.value?.minPlaytime!!.toString())
             listOf(newGame.value?.minPlaytime!!.toFloat(), newGame.value?.maxPlaytime!!.toFloat())
+        }
     }
 
     fun getParentGame(id: Int) {
@@ -104,7 +109,17 @@ class EditGameDetailsViewModel @SuppressLint("StaticFieldLeak")
 
     fun insertGameIntoDatabase() {
         viewModelScope.launch {
-            newGame.value?.let { repository.insertGame(it) }
+            newGame.value?.let {
+                repository.insertGame(it)
+            }
+        }
+    }
+
+    fun insertGameWithOwnerIntoDatabase() {
+        viewModelScope.launch {
+            newGame.value?.let {
+                userRepository.insertUserWithGames(CollectionOwnerWithGames(1, it.gameId))
+            }
         }
     }
 
@@ -135,7 +150,7 @@ class EditGameDetailsViewModel @SuppressLint("StaticFieldLeak")
     ) {
         _newGame.value.let { game ->
             if (game != null) {
-                if (id != -1) game.game_id = id
+                if (id != -1) game.gameId = id
                 game.name = name
                 game.minPlayers = minPlayers
                 game.maxPlayers = maxPlayers

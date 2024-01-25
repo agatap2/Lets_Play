@@ -25,6 +25,13 @@ class GameRepository(
 
     fun getOnlyExpansions() = localDataSource.getFilteredCollection(GameType.EXPANSION)
 
+    fun getFullCollectionOfUser(userName: String) = localDataSource.getCollection()
+
+    fun getOnlyGamesOfUser(userName: String) = localDataSource.getFilteredCollection(GameType.GAME)
+
+    fun getOnlyExpansionOfUsers(userName: String) =
+        localDataSource.getFilteredCollection(GameType.EXPANSION)
+
     fun getGameById(id: Int) = localDataSource.getGame(id)
 
     fun getExpansionsListById(id: Int) = localDataSource.getExpansions(id)
@@ -54,27 +61,23 @@ class GameRepository(
         }
     }
 
-    suspend fun downloadUserCollection(userName: String): List<*> {
-        return withContext(Dispatchers.IO) {
-            remoteDataSource.searchForUserCollection(userName)
-        }
-    }
-
     private fun formatData(games: List<BoardGame>): List<MyGame> {
 
         val listOfGames = mutableListOf<MyGame>()
 
         games.forEach { game ->
             val newGame = MyGame(
-                game_id = game.id,
+                gameId = game.id,
                 name = game.name ?: "",
                 minPlayers = if (game.minPlayers == null || game.minPlayers < 1) 1
                 else game.minPlayers,
                 maxPlayers = if (game.maxPlayers == null || game.maxPlayers < 1) 20
                 else game.maxPlayers,
-                minPlaytime = if(game.minPlayTime == null || game.minPlayTime < 5) 5
+                minPlaytime = if (game.minPlayTime == null || game.minPlayTime < 5) 5
+                else if (game.minPlayTime > 120) 120
                 else game.minPlayTime.roundDown(),
-                maxPlaytime = if(game.maxPlayTime == null || game.maxPlayTime < 5) 120
+                maxPlaytime = if (game.maxPlayTime == null || game.maxPlayTime > 120) 120
+                else if (game.maxPlayTime < 5) 5
                 else game.maxPlayTime.roundUp(),
                 minAge = if (game.age != null) {
                     if (game.age > 18) 18 else if (game.age < 3) 3 else game.age
@@ -89,6 +92,7 @@ class GameRepository(
             )
 
             listOfGames.add(newGame)
+            println(newGame.maxPlaytime)
         }
 
         return listOfGames

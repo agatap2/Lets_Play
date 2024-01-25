@@ -7,6 +7,7 @@ import com.akobusinska.letsplay.utils.xmlParsers.XmlParser.SearchResult
 import org.xmlpull.v1.XmlPullParserException
 import java.io.IOException
 import java.io.InputStream
+import java.net.HttpURLConnection
 import java.net.URL
 
 class GameService {
@@ -49,14 +50,31 @@ class GameService {
     @Throws(IOException::class)
     private fun downloadXML(urlString: String): InputStream? {
         val url = URL(urlString)
+        var connection: HttpURLConnection?
 
-        return (url.openConnection() as? java.net.HttpURLConnection)?.run {
-            readTimeout = 10000
-            connectTimeout = 15000
-            requestMethod = "GET"
-            doInput = true
-            connect()
-            inputStream
+        for (i in 1..5) {
+            try {
+                connection = (url.openConnection() as? HttpURLConnection)
+                connection?.readTimeout = 10000
+                connection?.connectTimeout = 15000
+                connection?.requestMethod = "GET"
+                connection?.doInput = true
+                connection?.connect()
+
+                if (connection?.responseCode == 200) {
+                    return connection.inputStream
+                } else {
+                    println("CODE: " + connection?.responseCode)
+                    connection?.disconnect()
+                    Thread.sleep(5000)
+                }
+            } catch (e: Exception) {
+                return null
+            }
         }
+
+        return null
     }
 }
+
+

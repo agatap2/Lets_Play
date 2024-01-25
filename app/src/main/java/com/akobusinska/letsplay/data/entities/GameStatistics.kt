@@ -7,8 +7,8 @@ data class GameStatistics(
     @Embedded var game: MyGame,
     @Relation(
         entity = Play::class,
-        parentColumn = "game_id",
-        entityColumn = "foreign_game_id"
+        parentColumn = "gameId",
+        entityColumn = "foreignGameId"
     )
     var plays: List<PlayWithPlayers>
 )

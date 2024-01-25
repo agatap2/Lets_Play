@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.akobusinska.letsplay.data.entities.GameStatistics
 import com.akobusinska.letsplay.data.entities.GameType
-import com.akobusinska.letsplay.data.entities.GameWithPlay
+import com.akobusinska.letsplay.data.entities.GameWithPlays
 import com.akobusinska.letsplay.data.entities.MyGame
 
 @Dao
@@ -32,7 +32,7 @@ interface GameDao {
         excludeRecommendedForMore: Boolean
     ): LiveData<List<MyGame>>
 
-    @Query("SELECT * FROM my_game_table WHERE game_id = :id")
+    @Query("SELECT * FROM my_game_table WHERE gameId = :id")
     fun getGame(id: Int): LiveData<MyGame>
 
     @Query("SELECT * FROM my_game_table WHERE parentGame = :id")
@@ -40,14 +40,14 @@ interface GameDao {
 
     @Transaction
     @Query("SELECT * FROM my_game_table")
-    fun getGameWithPlays(): List<GameWithPlay>
+    fun getGameWithPlays(): List<GameWithPlays>
 
     @Transaction
     @Query("SELECT * FROM my_game_table")
     fun getGameWithPlaysAndPlayers(): List<GameStatistics>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertGame(game: MyGame)
+    suspend fun insertGame(game: MyGame): Long
 
     @Update
     suspend fun updateGame(game: MyGame)

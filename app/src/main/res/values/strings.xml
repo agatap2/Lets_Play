@@ -6,6 +6,7 @@
     <string name="game">Game</string>
     <string name="expansion">Expansion</string>
     <string name="all">All</string>
+    <string name="collection">Collection</string>
     <string name="game_time">Game time (in minutes):</string>
     <string name="max_game_time">Maximum game time (in minutes):</string>
     <string name="number_of_players">Number of players:</string>
@@ -59,5 +60,8 @@
     <string name="exclude_games_recommended_for_more_players">Exclude games recommended for more players</string>
     <string name="share_list">Share</string>
     <string name="games_we_can_play">"We can play one of these games: "</string>
+
+    <string name="user_name">Username</string>
+    <string name="select_collection_owner">Select collection</string>
 
 </resources>

@@ -110,10 +110,10 @@ class EditGameDetailsFragment : Fragment() {
                 )
         }
 
-        numberOfPlayersSlider.setLabelFormatter { value ->
-            if (value == 20.0F && moreThan20.isChecked) application.resources.getString(R.string.over_20) else value.toInt()
-                .toString()
-        }
+//        numberOfPlayersSlider.setLabelFormatter { value ->
+//            if (value == 20.0F && moreThan20.isChecked) application.resources.getString(R.string.over_20) else value.toInt()
+//                .toString()
+//        }
 
         numberOfPlayersSlider.addOnChangeListener { slider, _, _ ->
             binding.minNumOfPlayers.text = slider.values[0].toInt().toString()
@@ -146,10 +146,10 @@ class EditGameDetailsFragment : Fragment() {
                 )
         }
 
-        playtimeSlider.setLabelFormatter { value ->
-            if (value == 120.0F && over2Hours.isChecked) application.resources.getString(R.string.over_2h) else value.toInt()
-                .toString() + "min"
-        }
+//        playtimeSlider.setLabelFormatter { value ->
+//            if (value == 120.0F && over2Hours.isChecked) application.resources.getString(R.string.over_2h) else value.toInt()
+//                .toString() + "min"
+//        }
 
         playtimeSlider.addOnChangeListener { slider, _, _ ->
             binding.minPlaytime.text = slider.values[0].toInt().toString()
@@ -207,8 +207,8 @@ class EditGameDetailsFragment : Fragment() {
                     R.string.parent_game,
                     it.name
                 )
-            if (!it.expansions.contains(game.game_id))
-                it.expansions.add(game.game_id)
+//            if (!it.expansions.contains(game.gameId))
+//                it.expansions.add(game.gameId)
         }
 
         binding.editParentGame.setOnClickListener {
@@ -221,8 +221,8 @@ class EditGameDetailsFragment : Fragment() {
                 .setTitle(R.string.select_parent_game)
                 .setPositiveButton(R.string.ok) { _, _ ->
                     if (selectedGame != null) {
-                        parent = selectedGame!!.game_id
-                        viewModel.getParentGame(selectedGame!!.game_id)
+                        parent = selectedGame!!.gameId
+                        viewModel.getParentGame(selectedGame!!.gameId)
                         binding.parentGame.text = application.resources.getString(
                             R.string.parent_game,
                             selectedGame!!.name
@@ -339,8 +339,10 @@ class EditGameDetailsFragment : Fragment() {
                             }
                             .setPositiveButton(resources.getString(R.string.yes)) { _, _ ->
                                 navigateToPreviousScreen()
-                                if (isGameNew)
+                                if (isGameNew) {
                                     viewModel.insertGameIntoDatabase()
+                                    viewModel.insertGameWithOwnerIntoDatabase()
+                                }
                                 else
                                     viewModel.updateGameInDatabase()
                             }
@@ -351,8 +353,10 @@ class EditGameDetailsFragment : Fragment() {
                         } catch (e: IllegalArgumentException) {
                             println("Navigation was already performed.")
                         }
-                        if (isGameNew)
+                        if (isGameNew) {
                             viewModel.insertGameIntoDatabase()
+                            viewModel.insertGameWithOwnerIntoDatabase()
+                        }
                         else
                             viewModel.updateGameInDatabase()
                     }
@@ -392,7 +396,7 @@ class EditGameDetailsFragment : Fragment() {
 
     private fun saveGame() {
 
-        val id = if (isGameNew) -1 else game.game_id
+        val id = if (isGameNew) -1 else game.gameId
 
         val parentGame = if (type == GameType.GAME) id else parent
 

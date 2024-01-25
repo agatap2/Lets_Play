@@ -128,6 +128,16 @@
             app:layout_constraintEnd_toEndOf="@+id/add_game_button"
             app:srcCompat="@drawable/ic_filter_check" />
 
+        <ImageView
+            android:id="@+id/status_image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="@string/loading_icon"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:searchingSimpleStatus="@{viewModel.status}" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

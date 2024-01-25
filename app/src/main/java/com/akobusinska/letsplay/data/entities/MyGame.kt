@@ -2,6 +2,7 @@ package com.akobusinska.letsplay.data.entities
 
 import android.os.Parcelable
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import kotlinx.parcelize.Parcelize
 
@@ -9,7 +10,7 @@ import kotlinx.parcelize.Parcelize
 @Entity(tableName = "my_game_table")
 data class MyGame(
     @PrimaryKey(autoGenerate = true)
-    var game_id: Int = 0,
+    var gameId: Int = 0,
     var name: String = "",
     var minPlayers: Int = 1,
     var maxPlayers: Int = 20,
@@ -19,8 +20,8 @@ data class MyGame(
     var minAge: Int = 3,
     var thumbURL: String = "",
     var gameType: GameType = GameType.GAME,
-    var parentGame: Int = game_id,
-    var expansions: MutableList<Int> = mutableListOf()
+    var parentGame: Int = gameId,
+    @Ignore var expansions: MutableList<Int> = mutableListOf()
 ) : Parcelable
 
 enum class GameType {

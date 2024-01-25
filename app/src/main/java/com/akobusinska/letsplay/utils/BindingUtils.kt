@@ -1,5 +1,6 @@
 package com.akobusinska.letsplay.utils
 
+import android.os.CountDownTimer
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.ImageView
@@ -9,6 +10,7 @@ import androidx.core.text.HtmlCompat
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.akobusinska.letsplay.R
+import com.akobusinska.letsplay.data.entities.CollectionOwner
 import com.akobusinska.letsplay.data.entities.GameType
 import com.akobusinska.letsplay.data.entities.MyGame
 import com.akobusinska.letsplay.data.repository.GameRepository
@@ -16,6 +18,7 @@ import com.akobusinska.letsplay.ui.addGame.DialogGamesListAdapter
 import com.akobusinska.letsplay.ui.gameSelection.DetailedGamesListAdapter
 import com.akobusinska.letsplay.ui.gameSelection.SimpleGamesListAdapter
 import com.akobusinska.letsplay.ui.gamesList.BasicGamesListAdapter
+import com.akobusinska.letsplay.ui.gamesList.DialogUsersListAdapter
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import java.util.*
@@ -117,17 +120,50 @@ fun RecyclerView.bindDialogRecyclerView(data: List<MyGame>?) {
     adapter.submitList(data)
 }
 
+@BindingAdapter("dialogUsersListData")
+fun RecyclerView.bindUsersDialogRecyclerView(data: List<CollectionOwner>?) {
+    val adapter = this.adapter as DialogUsersListAdapter
+    adapter.submitList(data)
+}
+
 @BindingAdapter("searchingStatus")
-fun ImageView.bindStatus(status: GameRepository.RequestStatus) {
+fun ImageView.bindStatus(status: GameRepository.RequestStatus?) {
     when (status) {
         GameRepository.RequestStatus.LOADING -> {
             this.visibility = VISIBLE
             this.setImageResource(R.drawable.loading_animation)
         }
+
         GameRepository.RequestStatus.ERROR -> {
             this.visibility = VISIBLE
             this.setImageResource(R.drawable.ic_connection_error)
         }
+
+        else -> {
+            this.visibility = GONE
+        }
+    }
+}
+
+@BindingAdapter("searchingSimpleStatus")
+fun ImageView.bindSimpleStatus(status: GameRepository.RequestStatus?) {
+    when (status) {
+        GameRepository.RequestStatus.LOADING -> {
+            this.visibility = VISIBLE
+            this.setImageResource(R.drawable.loading_animation)
+        }
+
+        GameRepository.RequestStatus.ERROR -> {
+            object : CountDownTimer(3000, 1000) {
+                override fun onTick(millisUntilFinished: Long) {
+                }
+
+                override fun onFinish() {
+                    this@bindSimpleStatus.visibility = GONE
+                }
+            }.start()
+        }
+
         else -> {
             this.visibility = GONE
         }

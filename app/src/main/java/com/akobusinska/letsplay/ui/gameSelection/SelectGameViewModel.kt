@@ -55,7 +55,7 @@ class SelectGameViewModel @Inject constructor(private val repository: GameReposi
 
                     if (allGames.value != null) {
                         val parentGames =
-                            allGames.value!!.filter { it.game_id == filterMatchingGame.parentGame }
+                            allGames.value!!.filter { it.gameId == filterMatchingGame.parentGame }
 
                         if (parentGames.isNotEmpty())
                             _selectedGamesCollection.value =
@@ -73,7 +73,7 @@ class SelectGameViewModel @Inject constructor(private val repository: GameReposi
             }
 
             for (unselectedGame in unselectedGamesCollection.value!!) {
-                if (gamesList.none { it.game_id == unselectedGame.game_id }) {
+                if (gamesList.none { it.gameId == unselectedGame.gameId }) {
                     _unselectedGamesCollection.value =
                         _unselectedGamesCollection.value?.toMutableList()
                             ?.apply { remove(unselectedGame) }

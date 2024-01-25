@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="user"
+            type="com.akobusinska.letsplay.data.entities.CollectionOwner" />
+
+        <variable
+            name="clickListener"
+            type="com.akobusinska.letsplay.ui.gamesList.DialogUsersListAdapter.UsersListListener" />
+    </data>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#00FEFFF3"
+        android:onClick="@{() -> clickListener.onClick(user)}">
+
+        <RadioButton
+            android:id="@+id/list_item"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical" />
+
+        <TextView
+            android:id="@+id/name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="8dp"
+            android:text="@{user.name}"
+            android:textColor="@color/primaryTextColor"
+            tools:text="Default" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+</layout>

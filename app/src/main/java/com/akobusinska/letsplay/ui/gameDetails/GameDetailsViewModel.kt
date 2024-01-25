@@ -1,6 +1,11 @@
 package com.akobusinska.letsplay.ui.gameDetails
 
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.akobusinska.letsplay.data.entities.MyGame
 import com.akobusinska.letsplay.data.repository.GameRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -49,7 +54,7 @@ class GameDetailsViewModel @Inject constructor(
             _parentAndChildren.value = ""
             if (expansionsList != null)
                 for (game in expansionsList) {
-                    if (game.game_id != parentId)
+                    if (game.gameId != parentId)
                         _parentAndChildren.value = _parentAndChildren.value + "<br>" + game.name
                 }
         }

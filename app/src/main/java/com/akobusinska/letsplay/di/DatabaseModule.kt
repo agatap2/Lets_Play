@@ -1,9 +1,11 @@
 package com.akobusinska.letsplay.di
 
 import android.content.Context
+import com.akobusinska.letsplay.data.local.CollectionOwnerWithGamesDao
 import com.akobusinska.letsplay.data.local.GameDao
 import com.akobusinska.letsplay.data.local.GamesDatabase
 import com.akobusinska.letsplay.data.remote.GameRemoteDataSource
+import com.akobusinska.letsplay.data.repository.CollectionOwnerRepository
 import com.akobusinska.letsplay.data.repository.GameRepository
 import dagger.Module
 import dagger.Provides
@@ -28,8 +30,19 @@ object DatabaseModule {
 
     @Singleton
     @Provides
+    fun provideCollectionOwnerWithGamesDao(database: GamesDatabase) = database.collectionOwnerWithGamesDao
+
+    @Singleton
+    @Provides
     fun provideRepository(
         gameRemoteDataSource: GameRemoteDataSource,
         gameLocalDataSource: GameDao
     ): GameRepository = GameRepository(gameRemoteDataSource, gameLocalDataSource)
+
+    @Singleton
+    @Provides
+    fun provideUserRepository(
+        gameRemoteDataSource: GameRemoteDataSource,
+        gameLocalDataSource: CollectionOwnerWithGamesDao
+    ): CollectionOwnerRepository = CollectionOwnerRepository(gameRemoteDataSource, gameLocalDataSource)
 }

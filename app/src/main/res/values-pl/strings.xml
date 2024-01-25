@@ -6,6 +6,7 @@
     <string name="game">Gra</string>
     <string name="expansion">Dodatek</string>
     <string name="all">Wszystkie</string>
+    <string name="collection">Kolekcja</string>
     <string name="game_time">Długość rozgrywki (w minutach):</string>
     <string name="max_game_time">Maksymalna długość rozgrywki (w minutach):</string>
     <string name="number_of_players">Liczba graczy:</string>
@@ -59,4 +60,8 @@
     <string name="exclude_games_recommended_for_more_players">Pomiń gry zalecane na większą ilość osób</string>
     <string name="share_list">Share</string>
     <string name="games_we_can_play">"Możemy zagrać w: "</string>
+
+    <string name="user_name">Podaj nazwę użytkownika</string>
+    <string name="select_collection_owner">Wybierz kolekcje</string>
+
 </resources>

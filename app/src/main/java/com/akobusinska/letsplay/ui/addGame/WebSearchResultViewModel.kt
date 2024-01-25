@@ -42,37 +42,13 @@ class WebSearchResultViewModel @Inject constructor(private val repository: GameR
 
     fun getSearchResult(name: String) {
         var searchResultList: List<BoardGamesSearchResult>
-//        var userCollectionIds: List<BoardGamesSearchResult>
+
         viewModelScope.launch {
             try {
                 _status.value = RequestStatus.LOADING
                 searchResultList =
                     repository.downloadGamesList(name).take(20) as List<BoardGamesSearchResult>
                 _foundGamesList.value = repository.downloadGamesWithDetailsList(searchResultList)
-
-//                userCollectionIds =
-//                    repository.downloadUserCollection("jeffreypl") as List<BoardGamesSearchResult>
-//                _userCollection.value = repository.downloadGamesWithDetailsList(userCollectionIds)
-//
-//                _userCollection.value?.forEach { game ->
-//
-//                    if (game.gameType == GameType.GAME && game.expansions.isNotEmpty()) {
-//                        val iterator = game.expansions.iterator()
-//                        while (iterator.hasNext()) {
-//                            val expansionId = iterator.next()
-//                            val expansion = _userCollection.value!!.find { it.game_id == expansionId }
-//                            if (expansion == null || expansion.gameType == GameType.GAME) {
-//                                iterator.remove()
-//                            } else {
-//                                expansion.parentGame = game.parentGame
-//                            }
-//                        }
-//                    }
-//                }
-//
-//                _userCollection.value?.forEach { game ->
-//                    if(game.gameType == GameType.EXPANSION) game.expansions.clear()
-//                }
 
                 _status.value = RequestStatus.DONE
             } catch (e: Exception) {

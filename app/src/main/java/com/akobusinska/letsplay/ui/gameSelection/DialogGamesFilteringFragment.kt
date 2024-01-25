@@ -109,11 +109,6 @@ class DialogGamesFilteringFragment : DialogFragment() {
             }
         }
 
-        numberOfPlayersSlider.setLabelFormatter { value ->
-            if (value == 20.0F && moreThan20.isChecked) requireContext().resources.getString(R.string.over_20) else value.toInt()
-                .toString()
-        }
-
         numberOfPlayersSlider.addOnChangeListener { slider, _, _ ->
             if (!moreThan20.isChecked)
                 numberOfPlayersText.text = slider.value.toInt().toString()
@@ -146,11 +141,6 @@ class DialogGamesFilteringFragment : DialogFragment() {
                 )
                 filter.maxPlaytime = maxPlaytimeSlider.value.toInt()
             }
-        }
-
-        maxPlaytimeSlider.setLabelFormatter { value ->
-            if (value == 120.0F && noTimeLimit.isChecked) requireContext().resources.getString(R.string.over_2h) else value.toInt()
-                .toString() + "min"
         }
 
         maxPlaytimeSlider.addOnChangeListener { slider, _, _ ->

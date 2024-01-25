@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/user"
+        android:enabled="true"
+        android:icon="@drawable/ic_user"
+        android:title="user"
+        android:visible="true"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/bgg"
+        android:enabled="true"
+        android:icon="@drawable/ic_bgg_logo"
+        android:title="bgg"
+        android:visible="true"
+        app:showAsAction="ifRoom">
+        <menu>
+            <item
+                android:id="@+id/login"
+                android:title="Login" />
+            <item
+                android:id="@+id/find_friend"
+                android:title="Find friend" />
+        </menu>
+    </item>
+</menu>

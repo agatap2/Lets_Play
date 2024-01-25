@@ -1,7 +1,12 @@
 package com.akobusinska.letsplay.ui.gameDetails
 
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.core.text.HtmlCompat
@@ -43,7 +48,7 @@ class GameDetailsFragment : Fragment() {
             binding.game = it
 
             if (game?.gameType == GameType.GAME)
-                viewModel.getOwnedExpansions(it.game_id)
+                viewModel.getOwnedExpansions(it.gameId)
             else
                 viewModel.getParentGame(it.parentGame)
 

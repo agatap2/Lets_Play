@@ -18,7 +18,7 @@ class DetailedGamesListAdapter(private val clickListener: GamesListListener) :
         }
 
         override fun areContentsTheSame(oldItem: MyGame, newItem: MyGame): Boolean {
-            return oldItem.game_id == newItem.game_id
+            return oldItem.gameId == newItem.gameId
         }
     }
 
