@@ -211,8 +211,8 @@ class EditGameDetailsFragment : Fragment() {
                 .setTitle(R.string.select_parent_game)
                 .setPositiveButton(R.string.ok) { _, _ ->
                     if (selectedGame != null) {
-                        parent = selectedGame!!.gameId ?: 0
-                        viewModel.getParentGame(selectedGame!!.gameId ?: 0)
+                        parent = selectedGame!!.gameId
+                        viewModel.getParentGame(selectedGame!!.gameId)
                         binding.parentGame.text = application.resources.getString(
                             R.string.parent_game,
                             selectedGame!!.name

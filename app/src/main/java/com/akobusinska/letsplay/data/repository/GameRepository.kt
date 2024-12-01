@@ -8,7 +8,6 @@ import com.akobusinska.letsplay.data.entities.GameType
 import com.akobusinska.letsplay.data.entities.MyGame
 import com.akobusinska.letsplay.data.local.CollectionOwnerDao
 import com.akobusinska.letsplay.data.local.CollectionOwnerWithGamesDao
-import com.akobusinska.letsplay.data.local.Filter
 import com.akobusinska.letsplay.data.local.GameDao
 import com.akobusinska.letsplay.data.remote.GameRemoteDataSource
 import com.akobusinska.letsplay.data.xml.BoardGame
@@ -45,13 +44,6 @@ class GameRepository(
     private fun getGameByBggId(bggId: Int) = localDataSource.getGameWithSpecificBggId(bggId)
 
     fun getExpansionsListById(id: Long) = localDataSource.getExpansions(id)
-
-    fun getFilteredGames(filter: Filter) = localDataSource.getFilteredGamesCollection(
-        filter.numberOfPlayers,
-        filter.maxPlaytime,
-        filter.age,
-        filter.excludeRecommendedForMore
-    )
 
     @Insert
     suspend fun insertGame(game: MyGame) = localDataSource.insertGame(game)
@@ -130,7 +122,6 @@ class GameRepository(
             )
 
             listOfGames.add(newGame)
-            println(newGame.name)
         }
 
 //        listOfGames.forEach { game ->

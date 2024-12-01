@@ -49,6 +49,7 @@ class GamesListFragment : Fragment() {
     private var selectedUserPosition = 0
     private var list = mutableListOf<CollectionOwnerWithGames>()
     private var newUserCreationProcess = false
+    private var init = true
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -134,11 +135,13 @@ class GamesListFragment : Fragment() {
         }
 
         viewModel.getLastCollectionOwner().observe(viewLifecycleOwner) {
-            if (it != null) {
+            if (it != null && !init) {
                 selectedUser = it
                 if (newUserCreationProcess) {
                     viewModel.updateGamesList(it)
                 }
+            } else if (init) {
+                init = false
             }
         }
 
@@ -245,7 +248,11 @@ class GamesListFragment : Fragment() {
         }
 
         binding.selectGameButton.setOnClickListener {
-            findNavController().navigate(GamesListFragmentDirections.navigateToGameSelectionFragment())
+            findNavController().navigate(
+                GamesListFragmentDirections.navigateToGameSelectionFragment(
+                    selectedUser
+                )
+            )
         }
 
         binding.searchBar.doOnTextChanged { _, _, _, _ ->

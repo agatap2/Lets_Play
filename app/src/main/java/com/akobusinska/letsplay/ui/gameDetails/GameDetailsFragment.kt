@@ -51,7 +51,7 @@ class GameDetailsFragment : Fragment() {
             binding.game = it
 
             if (game?.gameType == GameType.GAME)
-                viewModel.getOwnedExpansions(it.gameId ?: 0)
+                viewModel.getOwnedExpansions(it.gameId)
             else
                 viewModel.getParentGame(it.parentGame)
 

@@ -2,12 +2,18 @@ package com.akobusinska.letsplay.ui.gameSelection
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import androidx.core.view.MenuProvider
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
+import androidx.navigation.fragment.navArgs
 import com.akobusinska.letsplay.R
 import com.akobusinska.letsplay.databinding.FragmentSelectGameBinding
 import com.akobusinska.letsplay.utils.bindDetailedRecyclerView
@@ -18,11 +24,14 @@ import dagger.hilt.android.AndroidEntryPoint
 class SelectGameFragment : Fragment() {
 
     val viewModel: SelectGameViewModel by activityViewModels()
+    private val args: SelectGameFragmentArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+
+        viewModel.setCollectionOwner(args.collectionOwner)
 
         val binding: FragmentSelectGameBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_select_game, container, false)

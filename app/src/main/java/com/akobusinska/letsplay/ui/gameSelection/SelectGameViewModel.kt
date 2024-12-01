@@ -6,6 +6,7 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.akobusinska.letsplay.R
+import com.akobusinska.letsplay.data.entities.CollectionOwner
 import com.akobusinska.letsplay.data.entities.GameType
 import com.akobusinska.letsplay.data.entities.MyGame
 import com.akobusinska.letsplay.data.local.Filter
@@ -31,13 +32,19 @@ class SelectGameViewModel @Inject constructor(private val repository: GameReposi
 
     var currentFilter = Filter()
     var randomGame = MyGame()
+    private var collectionOwner: CollectionOwner? = null
 
     init {
-        _selectedGamesCollection.addSource(repository.getOnlyGames()) {
-            _selectedGamesCollection.value = it
-        }
-
         _unselectedGamesCollection.value = mutableListOf()
+    }
+
+    fun setCollectionOwner(collectionOwner: CollectionOwner?) {
+        this.collectionOwner = collectionOwner
+
+        _selectedGamesCollection.addSource(repository.getFullCrossRefCollection()) {
+            _selectedGamesCollection.value =
+                it.filter { ownerWithGames -> ownerWithGames.collectionOwner.collectionOwnerId == collectionOwner?.collectionOwnerId }[0].games
+        }
     }
 
     fun selectRandomGame() {
@@ -46,11 +53,17 @@ class SelectGameViewModel @Inject constructor(private val repository: GameReposi
 
     fun filterGamesCollection(filter: Filter) {
 
-        _selectedGamesCollection.addSource(repository.getFilteredGames(filter)) { gamesList ->
+        _selectedGamesCollection.addSource(repository.getFullCrossRefCollection()) { list ->
+            val gamesList =
+                list.filter { ownerWithGames -> ownerWithGames.collectionOwner.collectionOwnerId == collectionOwner?.collectionOwnerId }[0].games.filter { game ->
+                    game.maxPlayers >= filter.numberOfPlayers &&
+                            game.minPlayers <= filter.numberOfPlayers &&
+                            game.minAge <= filter.age &&
+                            (!filter.excludeRecommendedForMore || !game.recommendedForMorePlayers) &&
+                            game.minPlaytime <= filter.maxPlaytime
+                }
+
             _selectedGamesCollection.value = gamesList
-                //.filter { ownersWithGames -> ownersWithGames.collectionOwner.collectionOwnerId == ownerId }
-
-
 
             for (filterMatchingGame in gamesList) {
 
@@ -120,7 +133,10 @@ class SelectGameViewModel @Inject constructor(private val repository: GameReposi
         if (gamesList.isNotEmpty()) {
             for (gameName: String in gamesList)
                 namesList += "\n$gameName, "
-            namesList = context.getString(R.string.games_we_can_play) + namesList.substring(0, namesList.length - 2)
+            namesList = context.getString(R.string.games_we_can_play) + namesList.substring(
+                0,
+                namesList.length - 2
+            )
         }
 
         return namesList

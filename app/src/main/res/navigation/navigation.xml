@@ -86,5 +86,10 @@
     <fragment
         android:id="@+id/selectGameFragment"
         android:name="com.akobusinska.letsplay.ui.gameSelection.SelectGameFragment"
-        android:label="SelectGameFragment" />
+        android:label="SelectGameFragment">
+        <argument
+            android:name="collectionOwner"
+            app:argType="com.akobusinska.letsplay.data.entities.CollectionOwner"
+            app:nullable="true"/>
+    </fragment>
 </navigation>
