@@ -11,7 +11,7 @@ import com.akobusinska.letsplay.data.entities.CollectionOwner
 import com.akobusinska.letsplay.databinding.SelectUserListBinding
 
 class DialogUsersListAdapter(
-    private val clickListener: UsersListListener
+    private val clickListener: UsersListListener, startPosition: Int
 ) :
     ListAdapter<CollectionOwner, DialogUsersListAdapter.ViewHolder>(DiffCallback) {
 
@@ -28,7 +28,7 @@ class DialogUsersListAdapter(
         }
     }
 
-    private var lastCheckedPosition = -1
+    private var lastCheckedPosition = startPosition
 
     inner class ViewHolder constructor(private val binding: SelectUserListBinding) :
         RecyclerView.ViewHolder(binding.root) {

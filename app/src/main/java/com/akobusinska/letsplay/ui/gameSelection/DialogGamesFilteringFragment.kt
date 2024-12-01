@@ -3,7 +3,6 @@ package com.akobusinska.letsplay.ui.gameSelection
 
 import android.app.Dialog
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.widget.TextView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
@@ -24,9 +23,8 @@ class DialogGamesFilteringFragment : DialogFragment() {
         val filter = viewModel.currentFilter
 
         val builder = MaterialAlertDialogBuilder(requireContext())
-        val inflater = LayoutInflater.from(context)
         val binding: DialogGameFiltersBinding =
-            DataBindingUtil.inflate(inflater, R.layout.dialog_game_filters, null, false)
+            DataBindingUtil.inflate(layoutInflater, R.layout.dialog_game_filters, null, false)
 
         val numberOfPlayersText = binding.numOfPlayersValue
         val numberOfPlayersSlider = binding.numOfPlayersSlider

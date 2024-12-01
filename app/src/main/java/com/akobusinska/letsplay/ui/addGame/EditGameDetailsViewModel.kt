@@ -4,7 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import androidx.lifecycle.*
 import com.akobusinska.letsplay.R
-import com.akobusinska.letsplay.data.entities.CollectionOwnerWithGames
+import com.akobusinska.letsplay.data.entities.CollectionOwnerGameCrossRef
 import com.akobusinska.letsplay.data.entities.GameType
 import com.akobusinska.letsplay.data.entities.MyGame
 import com.akobusinska.letsplay.data.repository.CollectionOwnerRepository
@@ -28,6 +28,12 @@ class EditGameDetailsViewModel @SuppressLint("StaticFieldLeak")
     val newGame: LiveData<MyGame>
         get() = _newGame
 
+    var game = MyGame()
+
+    private val _newGameId = MutableLiveData<Long>()
+    val newGameId: LiveData<Long>
+        get() = _newGameId
+
     private val _parentGame = MediatorLiveData<MyGame>()
     val parentGame: LiveData<MyGame>
         get() = _parentGame
@@ -42,6 +48,7 @@ class EditGameDetailsViewModel @SuppressLint("StaticFieldLeak")
 
     init {
         _newGame.value = state.get<MyGame>("game")
+        game = state["game"]!!
 
         _allGamesList.addSource(repository.getFullCollection()) {
             _allGamesList.value = it
@@ -95,48 +102,45 @@ class EditGameDetailsViewModel @SuppressLint("StaticFieldLeak")
         value = if (newGame.value?.maxPlaytime!! > 120)
             listOf(newGame.value!!.minPlaytime.toFloat(), 120F)
         else {
-            println("LIST: " + newGame.value?.minPlaytime!!.toString())
             listOf(newGame.value?.minPlaytime!!.toFloat(), newGame.value?.maxPlaytime!!.toFloat())
         }
     }
 
-    fun getParentGame(id: Int) {
+    fun getParentGame(id: Long) {
         _parentGame.addSource(repository.getGameById(id)) {
             if (it != null)
                 _parentGame.value = it
         }
     }
 
-    fun insertGameIntoDatabase() {
+    fun insertGameIntoDatabase(game: MyGame) {
         viewModelScope.launch {
-            newGame.value?.let {
-                repository.insertGame(it)
-            }
+            _newGameId.value = repository.insertGame(game)
         }
     }
 
-    fun insertGameWithOwnerIntoDatabase() {
+    fun insertGameWithOwnerIntoDatabase(id: Long) {
         viewModelScope.launch {
-            newGame.value?.let {
-                userRepository.insertUserWithGames(CollectionOwnerWithGames(1, it.gameId))
-            }
+            userRepository.insertUserWithGame(CollectionOwnerGameCrossRef(1, id))
         }
     }
 
     fun updateGameInDatabase() {
         viewModelScope.launch {
-            newGame.value?.let { repository.updateGame(it) }
+            repository.updateGame(game)
+            //newGame.value?.let { repository.updateGame(it) }
         }
     }
 
-    fun getSearchResult() {
-        _foundGamesList.addSource(repository.getOnlyGames()) {
-            _foundGamesList.value = it
+    fun getSearchResult(ownerName: String) {
+
+        _foundGamesList.addSource(userRepository.getGamesUserCollection(ownerName)) {
+            _foundGamesList.value = it.sortedBy { game -> game.name }
+                //.filter { game -> game.gameId != newGame.value?.gameId }
         }
     }
 
     fun updateGameFields(
-        id: Int,
         name: String,
         minPlayers: Int,
         maxPlayers: Int,
@@ -146,23 +150,22 @@ class EditGameDetailsViewModel @SuppressLint("StaticFieldLeak")
         minAge: Int,
         thumbUrl: String,
         gameType: GameType,
-        parent: Int
+        parent: Long
     ) {
-        _newGame.value.let { game ->
-            if (game != null) {
-                if (id != -1) game.gameId = id
-                game.name = name
-                game.minPlayers = minPlayers
-                game.maxPlayers = maxPlayers
-                game.recommendedForMorePlayers = recommendedForMore
-                game.minPlaytime = minPlaytime
-                game.maxPlaytime = maxPlaytime
-                game.minAge = minAge
-                game.thumbURL = thumbUrl
-                game.gameType = gameType
-                game.parentGame = parent
-            }
-        }
+//        _newGame.value.let { game ->
+//            if (game != null) {
+        game.name = name
+        game.minPlayers = minPlayers
+        game.maxPlayers = maxPlayers
+        game.recommendedForMorePlayers = recommendedForMore
+        game.minPlaytime = minPlaytime
+        game.maxPlaytime = maxPlaytime
+        game.minAge = minAge
+        game.thumbURL = thumbUrl
+        game.gameType = gameType
+        game.parentGame = parent
+        // }
+        //}
     }
 
     fun updateParentGame(parent: MyGame) {

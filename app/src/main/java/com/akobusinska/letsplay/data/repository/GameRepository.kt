@@ -1,7 +1,13 @@
 package com.akobusinska.letsplay.data.repository
 
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.Update
+import com.akobusinska.letsplay.data.entities.CollectionOwnerGameCrossRef
 import com.akobusinska.letsplay.data.entities.GameType
 import com.akobusinska.letsplay.data.entities.MyGame
+import com.akobusinska.letsplay.data.local.CollectionOwnerDao
+import com.akobusinska.letsplay.data.local.CollectionOwnerWithGamesDao
 import com.akobusinska.letsplay.data.local.Filter
 import com.akobusinska.letsplay.data.local.GameDao
 import com.akobusinska.letsplay.data.remote.GameRemoteDataSource
@@ -14,7 +20,9 @@ import kotlinx.coroutines.withContext
 
 class GameRepository(
     private val remoteDataSource: GameRemoteDataSource,
-    private val localDataSource: GameDao
+    private val localDataSource: GameDao,
+    private val collectionOwnerDao: CollectionOwnerDao,
+    private val collectionOwnerWithGamesDao: CollectionOwnerWithGamesDao
 ) {
 
     enum class RequestStatus { LOADING, ERROR, DONE }
@@ -25,16 +33,18 @@ class GameRepository(
 
     fun getOnlyExpansions() = localDataSource.getFilteredCollection(GameType.EXPANSION)
 
-    fun getFullCollectionOfUser(userName: String) = localDataSource.getCollection()
+    fun getFullCrossRefCollection() = collectionOwnerWithGamesDao.getCollectionOwnersWithGames()
 
     fun getOnlyGamesOfUser(userName: String) = localDataSource.getFilteredCollection(GameType.GAME)
 
     fun getOnlyExpansionOfUsers(userName: String) =
         localDataSource.getFilteredCollection(GameType.EXPANSION)
 
-    fun getGameById(id: Int) = localDataSource.getGame(id)
+    fun getGameById(id: Long) = localDataSource.getGame(id)
 
-    fun getExpansionsListById(id: Int) = localDataSource.getExpansions(id)
+    private fun getGameByBggId(bggId: Int) = localDataSource.getGameWithSpecificBggId(bggId)
+
+    fun getExpansionsListById(id: Long) = localDataSource.getExpansions(id)
 
     fun getFilteredGames(filter: Filter) = localDataSource.getFilteredGamesCollection(
         filter.numberOfPlayers,
@@ -43,10 +53,13 @@ class GameRepository(
         filter.excludeRecommendedForMore
     )
 
+    @Insert
     suspend fun insertGame(game: MyGame) = localDataSource.insertGame(game)
 
+    @Update
     suspend fun updateGame(game: MyGame) = localDataSource.updateGame(game)
 
+    @Delete
     suspend fun deleteGame(game: MyGame) = localDataSource.deleteGame(game)
 
     suspend fun downloadGamesList(name: String): List<*> {
@@ -55,10 +68,35 @@ class GameRepository(
         }
     }
 
-    suspend fun downloadGamesWithDetailsList(gamesIDs: List<BoardGamesSearchResult>): List<MyGame> {
-        return withContext(Dispatchers.IO) {
-            formatData(remoteDataSource.searchForGameDetails(gamesIDs.map { game -> game.objectId }) as List<BoardGame>)
+    suspend fun downloadGamesWithDetailsList(
+        userId: Long,
+        gamesIDs: List<BoardGamesSearchResult>,
+        saveAll: Boolean
+    ): List<MyGame> {
+        val chunkedListOfGameIds = gamesIDs.chunked(5)
+        val finalList = mutableListOf<MyGame>()
+
+        for (list in chunkedListOfGameIds) {
+            finalList.addAll(formatData(remoteDataSource.searchForGameDetails(list.map { game -> game.objectId }) as List<BoardGame>))
         }
+
+        if (saveAll) {
+            for (game in finalList) {
+                game.let {
+                    withContext(Dispatchers.IO) {
+                        val gameId = getGameByBggId(it.bggId) ?: insertGame(it)
+                        collectionOwnerWithGamesDao.insertCollectionOwnerWithGames(
+                            CollectionOwnerGameCrossRef(
+                                userId,
+                                gameId
+                            )
+                        )
+                    }
+                }
+            }
+        }
+
+        return finalList
     }
 
     private fun formatData(games: List<BoardGame>): List<MyGame> {
@@ -67,7 +105,7 @@ class GameRepository(
 
         games.forEach { game ->
             val newGame = MyGame(
-                gameId = game.id,
+                bggId = game.id,
                 name = game.name ?: "",
                 minPlayers = if (game.minPlayers == null || game.minPlayers < 1) 1
                 else game.minPlayers,
@@ -88,12 +126,28 @@ class GameRepository(
                         true
                     ) == true
                 ) GameType.EXPANSION else GameType.GAME,
-                expansions = (game.expansions as MutableList<Int>)
+                expansions = (game.expansions as MutableList<Long>)
             )
 
             listOfGames.add(newGame)
-            println(newGame.maxPlaytime)
+            println(newGame.name)
         }
+
+//        listOfGames.forEach { game ->
+//            if (game.gameType == GameType.GAME && game.expansions.isNotEmpty()) {
+//                val iterator = game.expansions.iterator()
+//                while (iterator.hasNext()) {
+//                    val expansionId = iterator.next()
+//                    val expansion =
+//                        listOfGames.find { it.gameId == expansionId }
+//                    if (expansion == null || expansion.gameType == GameType.GAME) {
+//                        iterator.remove()
+//                    } else {
+//                        expansion.parentGame = game.parentGame
+//                    }
+//                }
+//            } else if (game.gameType == GameType.EXPANSION) game.expansions.clear()
+//        }
 
         return listOfGames
     }

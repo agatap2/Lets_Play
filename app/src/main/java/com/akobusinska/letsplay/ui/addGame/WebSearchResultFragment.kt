@@ -8,6 +8,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.akobusinska.letsplay.R
 import com.akobusinska.letsplay.data.entities.MyGame
@@ -22,8 +23,10 @@ import dagger.hilt.android.AndroidEntryPoint
 class WebSearchResultFragment : Fragment() {
 
     private val viewModel: WebSearchResultViewModel by viewModels()
+    private val args: WebSearchResultFragmentArgs by navArgs()
     private lateinit var binding: FragmentWebSearchResultBinding
     private lateinit var gameName: String
+    private lateinit var currentUser: String
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,7 +36,8 @@ class WebSearchResultFragment : Fragment() {
         binding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_web_search_result, container, false)
 
-        gameName = WebSearchResultFragmentArgs.fromBundle(requireArguments()).gameName
+        gameName = args.gameName
+        currentUser = args.currentUser ?: "Default"
 
         val adapter = BasicGamesListAdapter(GamesListListener { game ->
             viewModel.navigateToNewGameForm(game)
@@ -75,7 +79,7 @@ class WebSearchResultFragment : Fragment() {
     private fun navigateToNewGameForm(game: MyGame?) {
         this.findNavController()
             .navigate(
-                WebSearchResultFragmentDirections.navigateToNewGameForm(game, true)
+                WebSearchResultFragmentDirections.navigateToNewGameForm(game, true, currentUser)
             )
     }
 

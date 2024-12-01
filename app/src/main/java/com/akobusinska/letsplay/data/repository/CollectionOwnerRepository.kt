@@ -2,65 +2,82 @@ package com.akobusinska.letsplay.data.repository
 
 import androidx.lifecycle.map
 import com.akobusinska.letsplay.data.entities.CollectionOwner
-import com.akobusinska.letsplay.data.entities.CollectionOwnerWithGames
+import com.akobusinska.letsplay.data.entities.CollectionOwnerGameCrossRef
 import com.akobusinska.letsplay.data.entities.GameType
+import com.akobusinska.letsplay.data.local.CollectionOwnerDao
 import com.akobusinska.letsplay.data.local.CollectionOwnerWithGamesDao
 import com.akobusinska.letsplay.data.remote.GameRemoteDataSource
 import com.akobusinska.letsplay.data.xml.BoardGamesSearchResult
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
 class CollectionOwnerRepository(
     private val remoteDataSource: GameRemoteDataSource,
-    private val localDataSource: CollectionOwnerWithGamesDao
+    private val collectionOwnerDao: CollectionOwnerDao,
+    private val collectionOwnerWithGamesDao: CollectionOwnerWithGamesDao
 ) {
 
-    suspend fun insertUser(user: CollectionOwner) = localDataSource.insertCollectionOwner(user)
+    private suspend fun insertUser(user: CollectionOwner) = collectionOwnerDao.insertCollectionOwner(user)
 
-    suspend fun insertUserWithGames(userWithGames: CollectionOwnerWithGames) =
-        localDataSource.insertCollectionOwnerWithGames(userWithGames)
+    suspend fun insertUserWithGame(userWithGames: CollectionOwnerGameCrossRef) =
+        collectionOwnerWithGamesDao.insertCollectionOwnerWithGames(userWithGames)
 
-    suspend fun updateUser(user: CollectionOwner) = localDataSource.updateCollectionOwner(user)
+    suspend fun updateUser(user: CollectionOwner) = collectionOwnerDao.updateCollectionOwner(user)
 
-    suspend fun deleteUser(user: CollectionOwner) = localDataSource.deleteCollectionOwner(user)
+    suspend fun deleteUser(user: CollectionOwner) = collectionOwnerDao.deleteCollectionOwner(user)
 
-    suspend fun downloadCollectionOwner(userName: String): CollectionOwner {
-        return withContext(Dispatchers.IO) {
-            formatData(
-                userName,
-                remoteDataSource.searchForUserCollection(userName) as List<BoardGamesSearchResult>
-            )
+    suspend fun downloadCollectionOwner(userName: String): CollectionOwner? {
+        val user = formatData(
+            userName,
+            remoteDataSource.searchForUserCollection(userName) as List<BoardGamesSearchResult>
+        )
+
+        if (user != null) {
+            user.collectionOwnerId = insertUser(user)
         }
+
+        return user
     }
 
-    fun getAllUsers() = localDataSource.getCollectionOwners()
+    fun getAllUsers() = collectionOwnerDao.getCollectionOwners()
+
+    fun getLastUser() = collectionOwnerDao.getLastCollectionOrder()
+
+    fun getUserByName(name: String) = collectionOwnerDao.getCollectionOwner(name)
 
     fun getFullUserCollection(userName: String) =
-        localDataSource.getCollectionOwnerWithGames(userName).map { users -> users.map { it.games } }
+        collectionOwnerWithGamesDao.getCollectionOwnersWithGames()
+            .map { it.filter { data -> data.collectionOwner.name == userName } }
+            .map { users -> users.map { it.games } }
             .map { games -> games.flatten() }
 
     fun getGamesUserCollection(userName: String) =
-        localDataSource.getCollectionOwnerWithGames(userName).map { users -> users.map { it.games } }
-            .map { games -> games.flatten() }.map { it.filter { myGame -> myGame.gameType == GameType.GAME } }
+        collectionOwnerWithGamesDao.getCollectionOwnersWithGames()
+            .map { it.filter { data -> data.collectionOwner.name == userName } }
+            .map { users -> users.map { it.games } }
+            .map { games -> games.flatten() }
+            .map { it.filter { myGame -> myGame.gameType == GameType.GAME } }
 
     fun getExpansionsUserCollection(userName: String) =
-        localDataSource.getCollectionOwnerWithGames(userName).map { users -> users.map { it.games } }
-            .map { games -> games.flatten() }.map { it.filter { myGame -> myGame.gameType == GameType.EXPANSION } }
+        collectionOwnerWithGamesDao.getCollectionOwnersWithGames()
+            .map { it.filter { data -> data.collectionOwner.name == userName } }
+            .map { users -> users.map { it.games } }
+            .map { games -> games.flatten() }
+            .map { it.filter { myGame -> myGame.gameType == GameType.EXPANSION } }
 
     private fun formatData(
         userName: String,
-        userCollection: List<BoardGamesSearchResult>
-    ): CollectionOwner {
+        userCollection: List<BoardGamesSearchResult>?
+    ): CollectionOwner? {
 
         val gameIds: MutableList<String> = mutableListOf()
 
-        userCollection.forEach { gameId ->
-            gameIds.add(gameId.objectId)
+        return if (userCollection != null) {
+            userCollection.forEach { gameId ->
+                gameIds.add(gameId.objectId)
+            }
+
+            CollectionOwner(name = userName, games = gameIds, customName = userName)
+        } else {
+            null
         }
-
-        val user = CollectionOwner(name = userName, games = gameIds)
-        println("ID: " + user.collectionOwnerId)
-
-        return user
     }
 }

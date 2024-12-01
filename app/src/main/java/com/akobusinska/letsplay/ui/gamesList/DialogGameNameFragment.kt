@@ -3,7 +3,6 @@ package com.akobusinska.letsplay.ui.gamesList
 
 import android.app.Dialog
 import android.os.Bundle
-import android.view.LayoutInflater
 import androidx.appcompat.app.AlertDialog
 import androidx.core.widget.doOnTextChanged
 import androidx.databinding.DataBindingUtil
@@ -18,9 +17,8 @@ class DialogGameNameFragment : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
 
         val builder = MaterialAlertDialogBuilder(requireContext())
-        val inflater = LayoutInflater.from(context)
         val binding: DialogTextFieldBinding =
-            DataBindingUtil.inflate(inflater, R.layout.dialog_text_field, null, false)
+            DataBindingUtil.inflate(layoutInflater, R.layout.dialog_text_field, null, false)
 
         val alertDialog = builder
             .setView(binding.root)
@@ -28,7 +26,7 @@ class DialogGameNameFragment : DialogFragment() {
             .setPositiveButton(R.string.ok) { _, _ ->
                 this.findNavController().navigate(
                     GamesListFragmentDirections.searchForGame(
-                        binding.dialogTextInputLayout.editText?.text.toString()
+                        binding.dialogTextInputLayout.editText?.text.toString(), "Default"
                     )
                 )
             }

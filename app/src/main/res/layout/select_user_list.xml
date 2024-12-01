@@ -34,7 +34,7 @@
             android:layout_gravity="center_vertical"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="8dp"
-            android:text="@{user.name}"
+            android:text="@{user.customName}"
             android:textColor="@color/primaryTextColor"
             tools:text="Default" />
 

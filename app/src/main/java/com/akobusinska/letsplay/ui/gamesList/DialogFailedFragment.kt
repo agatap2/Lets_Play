@@ -3,7 +3,6 @@ package com.akobusinska.letsplay.ui.gamesList
 
 import android.app.Dialog
 import android.os.Bundle
-import android.view.LayoutInflater
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import com.akobusinska.letsplay.R
@@ -18,8 +17,7 @@ class DialogFailedFragment : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
 
         val builder = MaterialAlertDialogBuilder(requireContext())
-        val inflater = LayoutInflater.from(context)
-        val binding: DialogFailedBinding = DataBindingUtil.inflate(inflater, R.layout.dialog_failed, null, false)
+        val binding: DialogFailedBinding = DataBindingUtil.inflate(layoutInflater, R.layout.dialog_failed, null, false)
 
         val alertDialog = builder
             .setView(binding.root)
@@ -27,7 +25,7 @@ class DialogFailedFragment : DialogFragment() {
             }
             .create()
 
-        binding.failedInformation.text = "User not found"
+        binding.failedInformation.text = resources.getString(R.string.user_not_found)
         binding.executePendingBindings()
 
         return alertDialog

@@ -30,12 +30,12 @@
                 android:layout_margin="8dp"
                 app:boxBackgroundMode="outline"
                 app:boxStrokeColor="@color/medium_green"
+                app:endIconMode="clear_text"
                 app:errorEnabled="false"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/appBarLayout"
-                app:startIconDrawable="@drawable/ic_search_24"
-                app:endIconMode="clear_text">
+                app:startIconDrawable="@drawable/ic_search_24">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/search_bar"
@@ -81,15 +81,36 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/expansions" />
+
         </com.google.android.material.button.MaterialButtonToggleGroup>
 
         <View
-            android:id="@+id/view"
+            android:id="@+id/spaceBeforeTextView"
             android:layout_width="match_parent"
-            android:layout_height="1dp"
+            android:layout_height="2dp"
             android:layout_marginTop="16dp"
             android:background="@color/medium_green"
-            app:layout_constraintTop_toBottomOf="@+id/toggleButton" />
+            app:layout_constraintBottom_toTopOf="@+id/collection"
+            app:layout_constraintTop_toBottomOf="@id/toggleButton" />
+
+        <TextView
+            android:id="@+id/collection"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/local_collection"
+            app:layout_constraintBottom_toTopOf="@+id/spaceAfterTextView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/spaceBeforeTextView" />
+
+        <View
+            android:id="@+id/spaceAfterTextView"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_marginTop="8dp"
+            android:background="@color/medium_green"
+            app:layout_constraintTop_toBottomOf="@+id/collection" />
 
         <com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView
             android:id="@+id/full_games_list"
@@ -102,30 +123,30 @@
             app:fastScrollThumbEnabled="true"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/view" />
+            app:layout_constraintTop_toBottomOf="@+id/spaceAfterTextView" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/add_game_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="24dp"
-            android:layout_marginBottom="24dp"
+            android:layout_marginBottom="16dp"
             android:clickable="true"
             android:contentDescription="@string/add_game"
             android:focusable="true"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/select_game_button"
+            app:layout_constraintEnd_toEndOf="@+id/select_game_button"
             app:srcCompat="@drawable/ic_baseline_add_24" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/select_game_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginBottom="24dp"
             android:clickable="true"
             android:focusable="true"
-            app:layout_constraintBottom_toTopOf="@+id/add_game_button"
-            app:layout_constraintEnd_toEndOf="@+id/add_game_button"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:srcCompat="@drawable/ic_filter_check" />
 
         <ImageView
@@ -136,7 +157,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:searchingSimpleStatus="@{viewModel.status}" />
+            app:layout_constraintVertical_bias="0.0"
+            app:searchingSimpleStatus="@{viewModel.statusOfNewUser}" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -49,7 +49,7 @@ fun ImageView.setGameCover(imgUrl: String?) {
 
 @BindingAdapter("minNumberOfPlayers", "maxNumberOfPlayers")
 fun TextView.setNumberOfPlayers(minPlayers: Int, maxPlayers: Int) {
-    if (maxPlayers < 20)
+    if (maxPlayers != minPlayers)
         this.text = HtmlCompat.fromHtml(
             context.getString(
                 R.string.number_of_players_value,
@@ -60,30 +60,47 @@ fun TextView.setNumberOfPlayers(minPlayers: Int, maxPlayers: Int) {
     else
         this.text = HtmlCompat.fromHtml(
             context.applicationContext.getString(
-                R.string.number_of_players_value,
-                minPlayers,
-                maxPlayers
+                R.string.equal_number_of_players_value,
+                minPlayers
             ), HtmlCompat.FROM_HTML_MODE_LEGACY
         )
 }
 
 @BindingAdapter("minPlaytime", "maxPlaytime")
 fun TextView.setPlaytime(minPlaytime: Int, maxPlaytime: Int) {
-    this.text = if (maxPlaytime <= 120)
-        HtmlCompat.fromHtml(
-            context.applicationContext.getString(
-                R.string.playtime_value,
-                minPlaytime,
-                maxPlaytime
-            ), HtmlCompat.FROM_HTML_MODE_LEGACY
-        )
-    else
-        HtmlCompat.fromHtml(
-            context.applicationContext.getString(
-                R.string.long_playtime,
-                minPlaytime
-            ), HtmlCompat.FROM_HTML_MODE_LEGACY
-        )
+    this.text = if (maxPlaytime <= 120) {
+        if (minPlaytime != maxPlaytime) {
+            HtmlCompat.fromHtml(
+                context.applicationContext.getString(
+                    R.string.playtime_value,
+                    minPlaytime,
+                    maxPlaytime
+                ), HtmlCompat.FROM_HTML_MODE_LEGACY
+            )
+        } else {
+            HtmlCompat.fromHtml(
+                context.applicationContext.getString(
+                    R.string.equal_playtime_value,
+                    minPlaytime
+                ), HtmlCompat.FROM_HTML_MODE_LEGACY
+            )
+        }
+    } else {
+        if (minPlaytime != maxPlaytime) {
+            HtmlCompat.fromHtml(
+                context.applicationContext.getString(
+                    R.string.long_playtime,
+                    minPlaytime
+                ), HtmlCompat.FROM_HTML_MODE_LEGACY
+            )
+        } else {
+            HtmlCompat.fromHtml(
+                context.applicationContext.getString(
+                    R.string.equal_long_playtime
+                ), HtmlCompat.FROM_HTML_MODE_LEGACY
+            )
+        }
+    }
 }
 
 @BindingAdapter("minAge")

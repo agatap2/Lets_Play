@@ -27,10 +27,13 @@
     <string name="owned_expansions_value"><![CDATA[<b>Owned expansions:</b> %s]]></string>
     <string name="parent_game_value"><![CDATA[<b>Parent game:</b> %s]]></string>
     <string name="number_of_players_value"><![CDATA[<b>Number of players:</b> %d - %d]]></string>
+    <string name="equal_number_of_players_value"><![CDATA[<b>Number of players:</b> %d]]></string>
     <string name="recommended_for_more_players_value">Game is recommended for more players</string>
     <string name="large_number_of_players_value"><![CDATA[<b>Number of players:</b> %d - 20 or more]]></string>
     <string name="playtime_value"><![CDATA[<b>Game time:</b> %d min - %d min]]></string>
     <string name="long_playtime"><![CDATA[<b>Game time:</b>  %d min - 120 min or more]]></string>
+    <string name="equal_playtime_value"><![CDATA[<b>Game time:</b> %d min]]></string>
+    <string name="equal_long_playtime"><![CDATA[<b>Game time:</b>  120 min or more]]></string>
     <string name="min_age_value"><![CDATA[<b>Minimal age:</b> %d]]></string>
 
     <string name="game_cover">Game cover</string>
@@ -61,7 +64,15 @@
     <string name="share_list">Share</string>
     <string name="games_we_can_play">"We can play one of these games: "</string>
 
+    <string name="local_username">Default</string>
     <string name="user_name">Username</string>
     <string name="select_collection_owner">Select collection</string>
+    <string name="default_collection">Local collection</string>
+    <string name="user_already_exists">User has been already added to collection</string>
+    <string name="custom_name_hint">Custom name</string>
+    <string name="set_as_default_collection">Set as default collection</string>
+    <string name="local_collection">Local collection</string>
+    <string name="new_user_success">"User %s added to friends list"</string>
+    <string name="user_not_found">User not found</string>
 
 </resources>

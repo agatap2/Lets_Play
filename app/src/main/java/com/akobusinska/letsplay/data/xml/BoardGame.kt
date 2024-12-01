@@ -1,7 +1,6 @@
 package com.akobusinska.letsplay.data.xml
 
-interface IBoardGames {
-}
+interface IBoardGames
 
 data class BoardGamesSearchResult(
     val objectId: String,

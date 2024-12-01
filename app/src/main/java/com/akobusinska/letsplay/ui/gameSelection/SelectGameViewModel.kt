@@ -48,6 +48,9 @@ class SelectGameViewModel @Inject constructor(private val repository: GameReposi
 
         _selectedGamesCollection.addSource(repository.getFilteredGames(filter)) { gamesList ->
             _selectedGamesCollection.value = gamesList
+                //.filter { ownersWithGames -> ownersWithGames.collectionOwner.collectionOwnerId == ownerId }
+
+
 
             for (filterMatchingGame in gamesList) {
 

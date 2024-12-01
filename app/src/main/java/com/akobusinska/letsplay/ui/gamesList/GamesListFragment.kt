@@ -8,7 +8,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.core.view.MenuProvider
 import androidx.core.widget.doOnTextChanged
 import androidx.databinding.DataBindingUtil
@@ -21,11 +21,16 @@ import androidx.recyclerview.widget.RecyclerView
 import com.akobusinska.letsplay.R
 import com.akobusinska.letsplay.data.entities.CollectionOwner
 import com.akobusinska.letsplay.data.entities.GameType
+import com.akobusinska.letsplay.data.local.CollectionOwnerWithGames
 import com.akobusinska.letsplay.data.repository.GameRepository
 import com.akobusinska.letsplay.databinding.FragmentGamesListBinding
 import com.akobusinska.letsplay.ui.gamesList.BasicGamesListAdapter.GamesListListener
+import com.akobusinska.letsplay.ui.gamesList.DialogUsersListAdapter.UsersListListener
+import com.akobusinska.letsplay.utils.Keys
+import com.akobusinska.letsplay.utils.Storage
 import com.akobusinska.letsplay.utils.bindRecyclerView
 import com.akobusinska.letsplay.utils.bindUsersDialogRecyclerView
+import com.akobusinska.letsplay.utils.observeOnce
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -33,89 +38,136 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class GamesListFragment : Fragment() {
 
-    private val FIND_USER_KEY = "find_user"
     private val viewModel: GamesListViewModel by viewModels()
     private lateinit var binding: FragmentGamesListBinding
+
     private var allSelected = true
     private var gamesSelected = false
     private var expansionsSelected = false
-    private var refresh = true
-    private var showStatus = true
-    private var currentUser = "Default"
+    private var newUser = "Default"
+    private var selectedUser: CollectionOwner? = null
+    private var selectedUserPosition = 0
+    private var list = mutableListOf<CollectionOwnerWithGames>()
+    private var newUserCreationProcess = false
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
 
         binding = DataBindingUtil.inflate(
             inflater, R.layout.fragment_games_list, container, false
         )
 
-        val adapter = BasicGamesListAdapter(GamesListListener { game ->
-            viewModel.navigateToGameDetails(game)
-        })
+        checkIfCollectionIsEditable(
+            Storage().restoreStringData(
+                requireContext(), Keys.SHARED_PREFERENCES.key
+            ) ?: "Default"
+        )
 
-        viewModel.status.observe(viewLifecycleOwner) { status ->
-            if (status.equals(GameRepository.RequestStatus.DONE) && showStatus) {
-                DialogSuccessFragment().show(
-                    requireActivity().supportFragmentManager,
-                    "success"
+        val userExistsDialogBuilder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
+            .setMessage(resources.getString(R.string.user_already_exists))
+            .setPositiveButton(resources.getString(R.string.ok)) { _, _ ->
+            }
+
+        val userExistsDialog: AlertDialog = userExistsDialogBuilder.create()
+
+        requireActivity().supportFragmentManager.setFragmentResultListener(
+            Keys.FIND_USER_KEY.key, viewLifecycleOwner
+        ) { _, bundle ->
+            val result = bundle.getString(Keys.FIND_USER_KEY.key)
+            if (result != null) {
+                if (!viewModel.checkIfUserExists(result)) {
+                    newUser = result
+                    newUserCreationProcess = true
+                    viewModel.getUserCollection(result)
+                } else {
+                    userExistsDialog.show()
+                }
+            }
+        }
+
+        requireActivity().supportFragmentManager.setFragmentResultListener(
+            Keys.NEW_USER_KEY.key, viewLifecycleOwner
+        ) { _, bundle ->
+            val result = bundle.getBoolean(Keys.NEW_USER_KEY.key)
+            if (result) {
+                Storage().saveStringData(requireContext(), Keys.SHARED_PREFERENCES.key, newUser)
+            }
+        }
+
+        requireActivity().supportFragmentManager.setFragmentResultListener(
+            Keys.CUSTOM_USER_NAME_KEY.key, viewLifecycleOwner
+        ) { _, bundle ->
+            val result = bundle.getString(Keys.CUSTOM_USER_NAME_KEY.key)
+            if (result != null) {
+                viewModel.updateUserCustomName(selectedUser, result)
+                newUserCreationProcess = false
+            }
+        }
+
+        viewModel.statusOfNewUser.observe(viewLifecycleOwner) { status ->
+            if (status.equals(GameRepository.RequestStatus.DONE) && newUserCreationProcess) {
+                DialogSuccessFragment.newInstance(newUser).show(
+                    requireActivity().supportFragmentManager, "success"
                 )
-                showStatus = false
-            } else if (status.equals(GameRepository.RequestStatus.ERROR) && showStatus) {
+            } else if (status.equals(GameRepository.RequestStatus.ERROR)) {
                 object : CountDownTimer(3000, 1000) {
                     override fun onTick(millisUntilFinished: Long) {
                     }
 
                     override fun onFinish() {
                         DialogFailedFragment().show(
-                            requireActivity().supportFragmentManager,
-                            "failed"
+                            requireActivity().supportFragmentManager, "failed"
                         )
                     }
                 }.start()
-                showStatus = false
             }
         }
 
-        requireActivity().supportFragmentManager.setFragmentResultListener(
-            FIND_USER_KEY, viewLifecycleOwner
-        ) { requestKey, bundle ->
-            if (requestKey == FIND_USER_KEY) {
-                val result = bundle.getString("bundleKey")
-                if (result != null) {
-                    viewModel.getUserCollection(result)
+        viewModel.getInitUser(
+            Storage().restoreStringData(
+                requireContext(),
+                Keys.SHARED_PREFERENCES.key
+            ) ?: "Default"
+        ).observeOnce(viewLifecycleOwner) {
+            selectedUser = it
+        }
+
+        viewModel.getLastCollectionOwner().observe(viewLifecycleOwner) {
+            if (it != null) {
+                selectedUser = it
+                if (newUserCreationProcess) {
+                    viewModel.updateGamesList(it)
                 }
+            }
+        }
+
+        viewModel.getCollectionOwnersWithGames().observe(viewLifecycleOwner) {
+            if (!it.isNullOrEmpty()) {
+                list.clear()
+                list.addAll(it)
+                refreshCollection()
+                viewModel.stopLoadIcon(it.last().games.size == selectedUser!!.games.size && it.size > 1)
             }
         }
 
         val changeCollectionDialogView =
             LayoutInflater.from(requireContext()).inflate(R.layout.dialog_users_list, null)
-
-        var selectedUser: CollectionOwner? = null
-
-        val usersListAdapter = DialogUsersListAdapter(DialogUsersListAdapter.UsersListListener {
-            selectedUser = it
-            currentUser = it.name
-        })
-
         val listOfUsers = changeCollectionDialogView.findViewById<RecyclerView>(R.id.users_list)
-        listOfUsers.apply {
-            this.adapter = usersListAdapter
-            addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
-        }
+        listOfUsers.addItemDecoration(
+            DividerItemDecoration(
+                this.context, DividerItemDecoration.VERTICAL
+            )
+        )
 
         viewModel.users.observe(viewLifecycleOwner) { users ->
-            var usersList = ""
-            var ids = ""
-            users.toSet()
+            selectedUserPosition =
+                users.indexOfFirst { it.name == (selectedUser?.name ?: "Default") }
+            val usersListAdapter = DialogUsersListAdapter(UsersListListener {
+                selectedUser = it
+            }, selectedUserPosition)
 
-            for (u in users) {
-                usersList = usersList + u.name + ", "
-                ids = ids + u.collectionOwnerId + ", "
-            }
-
+            listOfUsers.adapter = usersListAdapter
             listOfUsers.bindUsersDialogRecyclerView(users)
         }
 
@@ -132,43 +184,17 @@ class GamesListFragment : Fragment() {
                             changeCollectionDialogView
                         )
 
-                        MaterialAlertDialogBuilder(requireContext())
-                            .setView(changeCollectionDialogView)
-                            .setTitle(R.string.select_collection_owner)
+                        MaterialAlertDialogBuilder(requireContext()).setView(
+                            changeCollectionDialogView
+                        ).setTitle(R.string.select_collection_owner)
                             .setPositiveButton(R.string.ok) { _, _ ->
                                 if (selectedUser != null) {
-                                    refresh = true
-                                    if (expansionsSelected)
-                                        viewModel.getGamesCollection(
-                                            filtered = true,
-                                            gameType = GameType.EXPANSION,
-                                            ownerName = selectedUser!!.name
-                                        )
-                                    else if (gamesSelected)
-                                        viewModel.getGamesCollection(
-                                            filtered = true,
-                                            gameType = GameType.GAME,
-                                            ownerName = selectedUser!!.name
-                                        )
-                                    else
-                                        viewModel.getGamesCollection(
-                                            filtered = false,
-                                            ownerName = selectedUser!!.name
-                                        )
+                                    refreshCollection()
                                 }
-                            }
-                            .setNegativeButton(R.string.cancel, null)
-                            .show()
-
+                            }.setNegativeButton(R.string.cancel, null).show()
                     }
 
-                    R.id.login -> {
-                        val toast = Toast.makeText(requireContext(), "login", Toast.LENGTH_SHORT)
-                        toast.show()
-                    }
-
-                    R.id.find_friend -> {
-                        showStatus = true
+                    R.id.bgg -> {
                         DialogUserNameFragment().show(
                             requireActivity().supportFragmentManager,
                             DialogUserNameFragment::class.java.simpleName
@@ -179,6 +205,10 @@ class GamesListFragment : Fragment() {
             }
         }, viewLifecycleOwner, Lifecycle.State.CREATED)
 
+        val adapter = BasicGamesListAdapter(GamesListListener { game ->
+            viewModel.navigateToGameDetails(game)
+        })
+
         binding.lifecycleOwner = this
         binding.viewModel = viewModel
 
@@ -188,41 +218,29 @@ class GamesListFragment : Fragment() {
         }
 
         binding.all.setOnClickListener {
-            if (!allSelected)
-                viewModel.getGamesCollection(false, name = getFilter(), ownerName = currentUser)
-
-            allDisplayed()
+            if (!allSelected) {
+                allDisplayed()
+                refreshCollection()
+            }
         }
 
         binding.gameFilterButton.setOnClickListener {
-            if (!gamesSelected)
-                viewModel.getGamesCollection(
-                    true,
-                    GameType.GAME,
-                    getFilter(),
-                    ownerName = currentUser
-                )
-
-            onlyGamesDisplayed()
+            if (!gamesSelected) {
+                onlyGamesDisplayed()
+                refreshCollection()
+            }
         }
 
         binding.expansionFilterButton.setOnClickListener {
-            if (!expansionsSelected)
-                viewModel.getGamesCollection(
-                    true,
-                    GameType.EXPANSION,
-                    getFilter(),
-                    ownerName = currentUser
-                )
-
-            onlyExpansionsDisplayed()
+            if (!expansionsSelected) {
+                onlyExpansionsDisplayed()
+                refreshCollection()
+            }
         }
 
         binding.addGameButton.setOnClickListener {
-
             DialogGameNameFragment().show(
-                requireActivity().supportFragmentManager,
-                "game_name"
+                requireActivity().supportFragmentManager, "game_name"
             )
         }
 
@@ -230,27 +248,21 @@ class GamesListFragment : Fragment() {
             findNavController().navigate(GamesListFragmentDirections.navigateToGameSelectionFragment())
         }
 
-        binding.searchBar.doOnTextChanged { text, _, _, _ ->
-            viewModel.filterGames(text.toString())
-            refresh = true
+        binding.searchBar.doOnTextChanged { _, _, _, _ ->
+            refreshCollection()
         }
-
-        binding.searchBar
 
         viewModel.navigateToGameDetails.observe(viewLifecycleOwner) { game ->
             if (findNavController().currentDestination?.id == R.id.gamesListFragment) {
                 this.findNavController().navigate(
-                    GamesListFragmentDirections.navigateToGameDetails(game)
+                    GamesListFragmentDirections.navigateToGameDetails(game, selectedUser?.name)
                 )
                 viewModel.doneNavigating()
             }
         }
 
         viewModel.gamesCollection.observe(viewLifecycleOwner) { gamesList ->
-            if (refresh) {
-                binding.fullGamesList.bindRecyclerView(gamesList.sortedBy { it.name })
-                refresh = false
-            }
+            binding.fullGamesList.bindRecyclerView(gamesList.sortedBy { it.name })
         }
 
         return binding.root
@@ -258,24 +270,46 @@ class GamesListFragment : Fragment() {
 
     private fun getFilter() = binding.searchBar.editableText.toString()
 
+    private fun refreshCollection() {
+
+        binding.collection.text = selectedUser?.customName
+
+        if (expansionsSelected) viewModel.updateGamesCollection(
+            GameType.EXPANSION, getFilter(), selectedUser?.collectionOwnerId ?: 1, list
+        )
+        else if (gamesSelected) viewModel.updateGamesCollection(
+            GameType.GAME, getFilter(), selectedUser?.collectionOwnerId ?: 1, list
+        )
+        else viewModel.updateGamesCollection(
+            null, getFilter(), selectedUser?.collectionOwnerId ?: 1, list
+        )
+
+        checkIfCollectionIsEditable(selectedUser?.name ?: "Default")
+    }
+
     private fun allDisplayed() {
         allSelected = true
         gamesSelected = false
         expansionsSelected = false
-        refresh = true
     }
 
     private fun onlyGamesDisplayed() {
         allSelected = false
         gamesSelected = true
         expansionsSelected = false
-        refresh = true
     }
 
     private fun onlyExpansionsDisplayed() {
         allSelected = false
         gamesSelected = false
         expansionsSelected = true
-        refresh = true
+    }
+
+    private fun checkIfCollectionIsEditable(userName: String) {
+        if (userName != "Default") {
+            binding.addGameButton.visibility = View.GONE
+        } else {
+            binding.addGameButton.visibility = View.VISIBLE
+        }
     }
 }

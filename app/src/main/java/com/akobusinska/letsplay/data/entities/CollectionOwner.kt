@@ -10,7 +10,8 @@ import kotlinx.parcelize.Parcelize
 @Entity(tableName = "collection_owner_table")
 data class CollectionOwner(
     @PrimaryKey(autoGenerate = true)
-    var collectionOwnerId: Int = 0,
+    var collectionOwnerId: Long = 0L,
     var name: String = "",
+    var customName: String = "",
     @Ignore var games: MutableList<String> = mutableListOf()
 ) : Parcelable

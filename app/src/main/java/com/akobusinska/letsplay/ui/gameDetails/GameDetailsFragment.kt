@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.akobusinska.letsplay.R
 import com.akobusinska.letsplay.data.entities.GameType
 import com.akobusinska.letsplay.data.entities.MyGame
@@ -27,6 +28,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class GameDetailsFragment : Fragment() {
 
     val viewModel: GameDetailsViewModel by viewModels()
+    private val args: GameDetailsFragmentArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -36,6 +38,7 @@ class GameDetailsFragment : Fragment() {
         val binding: FragmentGameDetailsBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_game_details, container, false)
         var game: MyGame? = null
+        val currentUser = args.currentUser
         val parentAndChildren: TextView = binding.parentAndChildren
         val recommendedForMorePlayers = binding.recommendedForMore
         val recommendedForMorePlayersIcon = binding.recommendedForMoreIcon
@@ -48,7 +51,7 @@ class GameDetailsFragment : Fragment() {
             binding.game = it
 
             if (game?.gameType == GameType.GAME)
-                viewModel.getOwnedExpansions(it.gameId)
+                viewModel.getOwnedExpansions(it.gameId ?: 0)
             else
                 viewModel.getParentGame(it.parentGame)
 
@@ -92,6 +95,7 @@ class GameDetailsFragment : Fragment() {
                     R.id.edit -> {
                         viewModel.navigateToGameEditionForm(game)
                     }
+
                     R.id.delete -> {
                         MaterialAlertDialogBuilder(requireContext())
                             .setMessage(resources.getString(R.string.confirm_delete_message))
@@ -114,7 +118,7 @@ class GameDetailsFragment : Fragment() {
                 findNavController().navigate(
                     GameDetailsFragmentDirections.navigateToGamesEditionForm(
                         it,
-                        false
+                        false, currentUser
                     )
                 )
                 viewModel.doneNavigating()

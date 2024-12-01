@@ -24,10 +24,6 @@ class WebSearchResultViewModel @Inject constructor(private val repository: GameR
     val foundGamesList: LiveData<List<MyGame>>
         get() = _foundGamesList
 
-    private var _userCollection = MutableLiveData<List<MyGame>>()
-    val userCollection: LiveData<List<MyGame>>
-        get() = _userCollection
-
     private val _navigateToNewGameForm = MutableLiveData<MyGame?>()
     val navigateToNewGameForm: LiveData<MyGame?>
         get() = _navigateToNewGameForm
@@ -48,12 +44,11 @@ class WebSearchResultViewModel @Inject constructor(private val repository: GameR
                 _status.value = RequestStatus.LOADING
                 searchResultList =
                     repository.downloadGamesList(name).take(20) as List<BoardGamesSearchResult>
-                _foundGamesList.value = repository.downloadGamesWithDetailsList(searchResultList)
+                _foundGamesList.value = repository.downloadGamesWithDetailsList(1, searchResultList, false)
 
                 _status.value = RequestStatus.DONE
             } catch (e: Exception) {
                 _status.value = RequestStatus.ERROR
-                println("ERROR: ${e.message}")
             }
         }
     }

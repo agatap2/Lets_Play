@@ -10,8 +10,20 @@ import com.akobusinska.letsplay.data.entities.MyGame
 @Dao
 interface GameDao {
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertGame(game: MyGame): Long
+
+    @Update
+    suspend fun updateGame(game: MyGame)
+
+    @Delete
+    suspend fun deleteGame(game: MyGame)
+
     @Query("SELECT * FROM my_game_table ORDER BY name ASC")
     fun getCollection(): LiveData<List<MyGame>>
+
+    @Query("SELECT gameId FROM my_game_table WHERE bggId = :bggId")
+    fun getGameWithSpecificBggId(bggId: Int): Long?
 
     @Query("SELECT * FROM my_game_table WHERE gameType = :gameType ORDER BY name ASC")
     fun getFilteredCollection(gameType: GameType): LiveData<List<MyGame>>
@@ -33,10 +45,10 @@ interface GameDao {
     ): LiveData<List<MyGame>>
 
     @Query("SELECT * FROM my_game_table WHERE gameId = :id")
-    fun getGame(id: Int): LiveData<MyGame>
+    fun getGame(id: Long): LiveData<MyGame>
 
     @Query("SELECT * FROM my_game_table WHERE parentGame = :id")
-    fun getExpansions(id: Int): LiveData<List<MyGame>>
+    fun getExpansions(id: Long): LiveData<List<MyGame>>
 
     @Transaction
     @Query("SELECT * FROM my_game_table")
@@ -45,13 +57,4 @@ interface GameDao {
     @Transaction
     @Query("SELECT * FROM my_game_table")
     fun getGameWithPlaysAndPlayers(): List<GameStatistics>
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertGame(game: MyGame): Long
-
-    @Update
-    suspend fun updateGame(game: MyGame)
-
-    @Delete
-    suspend fun deleteGame(game: MyGame)
 }

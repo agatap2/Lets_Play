@@ -4,9 +4,9 @@ class GameRemoteDataSource {
 
     private val gameService = GameService()
 
-    fun searchForGames(name: String) = gameService.loadGamesListXmlFromNetwork(name)
+    suspend fun searchForGames(name: String) = gameService.loadGamesListXmlFromNetwork(name)
 
-    fun searchForGameDetails(ids: List<String>) = gameService.loadGameDetailsXmlFromNetwork(ids)
+    suspend fun searchForGameDetails(ids: List<String>) = gameService.loadGameDetailsXmlFromNetwork(ids)
 
-    fun searchForUserCollection(userName: String) = gameService.loadCollectionXmlFromNetwork(userName)
+    suspend fun searchForUserCollection(userName: String) = gameService.loadCollectionXmlFromNetwork(userName)
 }

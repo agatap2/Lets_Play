@@ -32,7 +32,6 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="4dp"
                 android:layout_marginBottom="16dp"
-                android:text="2"
                 app:layout_constraintBottom_toBottomOf="@+id/num_of_players"
                 app:layout_constraintEnd_toStartOf="@+id/num_of_players_slider"
                 app:layout_constraintStart_toStartOf="parent"
@@ -143,7 +142,6 @@
             <TextView
                 android:id="@+id/min_age_value"
                 style="@style/SmallTextViewBox"
-                android:text="18"
                 app:layout_constraintBottom_toBottomOf="@id/minus_button"
                 app:layout_constraintEnd_toStartOf="@id/plus_button"
                 app:layout_constraintStart_toEndOf="@+id/minus_button"

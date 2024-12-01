@@ -40,7 +40,7 @@ class GameDetailsViewModel @Inject constructor(
         }
     }
 
-    fun getParentGame(id: Int) {
+    fun getParentGame(id: Long) {
         _parentAndChildren.addSource(repository.getGameById(id)) {
             if (it != null)
                 _parentAndChildren.value = it.name
@@ -49,7 +49,7 @@ class GameDetailsViewModel @Inject constructor(
         }
     }
 
-    fun getOwnedExpansions(parentId: Int) {
+    fun getOwnedExpansions(parentId: Long) {
         _parentAndChildren.addSource(repository.getExpansionsListById(parentId)) { expansionsList ->
             _parentAndChildren.value = ""
             if (expansionsList != null)

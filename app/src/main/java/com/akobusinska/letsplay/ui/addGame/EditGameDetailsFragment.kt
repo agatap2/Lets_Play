@@ -49,7 +49,8 @@ class EditGameDetailsFragment : Fragment() {
     private lateinit var pictureUrl: String
     private lateinit var moreThan20: CheckBox
     private lateinit var over2Hours: CheckBox
-    private var parent: Int = -1
+    private lateinit var currentUser: String
+    private var parent: Long = -1
     private var isGameNew: Boolean = true
     private var checked: Boolean = true
     private lateinit var game: MyGame
@@ -68,11 +69,12 @@ class EditGameDetailsFragment : Fragment() {
 
         game = args.game!!
         isGameNew = args.isGameNew
+        currentUser = args.currentUser ?: "Default"
 
         binding.lifecycleOwner = this
         binding.viewModel = viewModel
 
-        viewModel.getSearchResult()
+        viewModel.getSearchResult(currentUser)
 
         application = requireNotNull(activity).application
         pictureUrl = game.thumbURL
@@ -110,11 +112,6 @@ class EditGameDetailsFragment : Fragment() {
                 )
         }
 
-//        numberOfPlayersSlider.setLabelFormatter { value ->
-//            if (value == 20.0F && moreThan20.isChecked) application.resources.getString(R.string.over_20) else value.toInt()
-//                .toString()
-//        }
-
         numberOfPlayersSlider.addOnChangeListener { slider, _, _ ->
             binding.minNumOfPlayers.text = slider.values[0].toInt().toString()
 
@@ -145,11 +142,6 @@ class EditGameDetailsFragment : Fragment() {
                     playtimeSlider.values[1]
                 )
         }
-
-//        playtimeSlider.setLabelFormatter { value ->
-//            if (value == 120.0F && over2Hours.isChecked) application.resources.getString(R.string.over_2h) else value.toInt()
-//                .toString() + "min"
-//        }
 
         playtimeSlider.addOnChangeListener { slider, _, _ ->
             binding.minPlaytime.text = slider.values[0].toInt().toString()
@@ -207,8 +199,6 @@ class EditGameDetailsFragment : Fragment() {
                     R.string.parent_game,
                     it.name
                 )
-//            if (!it.expansions.contains(game.gameId))
-//                it.expansions.add(game.gameId)
         }
 
         binding.editParentGame.setOnClickListener {
@@ -221,8 +211,8 @@ class EditGameDetailsFragment : Fragment() {
                 .setTitle(R.string.select_parent_game)
                 .setPositiveButton(R.string.ok) { _, _ ->
                     if (selectedGame != null) {
-                        parent = selectedGame!!.gameId
-                        viewModel.getParentGame(selectedGame!!.gameId)
+                        parent = selectedGame!!.gameId ?: 0
+                        viewModel.getParentGame(selectedGame!!.gameId ?: 0)
                         binding.parentGame.text = application.resources.getString(
                             R.string.parent_game,
                             selectedGame!!.name
@@ -327,37 +317,30 @@ class EditGameDetailsFragment : Fragment() {
         binding.save.setOnClickListener {
             saveGame()
             checked = false
-            viewModel.refresh()
+            //viewModel.refresh()
 
             viewModel.allGamesList.observe(viewLifecycleOwner) { list ->
                 if (!checked) {
-                    if (list.any { it.name == binding.title.text.toString() && isGameNew }) {
+                    if (list.any { it.name == binding.title.text.toString()}) {
                         MaterialAlertDialogBuilder(requireContext())
                             .setMessage(resources.getString(R.string.confirm_adding_dublicate))
                             .setNegativeButton(resources.getString(R.string.rename)) { dialog, _ ->
                                 dialog.cancel()
                             }
                             .setPositiveButton(resources.getString(R.string.yes)) { _, _ ->
-                                navigateToPreviousScreen()
+                                //navigateToPreviousScreen()
                                 if (isGameNew) {
-                                    viewModel.insertGameIntoDatabase()
-                                    viewModel.insertGameWithOwnerIntoDatabase()
-                                }
-                                else
+                                    viewModel.insertGameIntoDatabase(viewModel.game)
+                                    //viewModel.insertGameWithOwnerIntoDatabase(id)
+                                } else
                                     viewModel.updateGameInDatabase()
                             }
                             .show()
                     } else {
-                        try {
-                            navigateToPreviousScreen()
-                        } catch (e: IllegalArgumentException) {
-                            println("Navigation was already performed.")
-                        }
                         if (isGameNew) {
-                            viewModel.insertGameIntoDatabase()
-                            viewModel.insertGameWithOwnerIntoDatabase()
-                        }
-                        else
+                            viewModel.insertGameIntoDatabase(viewModel.game)
+                            //viewModel.insertGameWithOwnerIntoDatabase()
+                        } else
                             viewModel.updateGameInDatabase()
                     }
                     checked = true
@@ -369,6 +352,11 @@ class EditGameDetailsFragment : Fragment() {
             navigateToPreviousScreen()
         }
 
+        viewModel.newGameId.observe(viewLifecycleOwner) { id ->
+            viewModel.insertGameWithOwnerIntoDatabase(id)
+            navigateToPreviousScreen()
+        }
+
         return binding.root
     }
 
@@ -377,7 +365,7 @@ class EditGameDetailsFragment : Fragment() {
             findNavController().navigate(EditGameDetailsFragmentDirections.navigateToCollectionList())
         else
             findNavController().navigate(
-                EditGameDetailsFragmentDirections.navigateToGameDetails(game)
+                EditGameDetailsFragmentDirections.navigateToGameDetails(game, currentUser)
             )
     }
 
@@ -396,9 +384,7 @@ class EditGameDetailsFragment : Fragment() {
 
     private fun saveGame() {
 
-        val id = if (isGameNew) -1 else game.gameId
-
-        val parentGame = if (type == GameType.GAME) id else parent
+        val parentGame = if (type == GameType.GAME) -1 else parent
 
         val maxNumberOfPlayers =
             if (game.maxPlayers > 20 && moreThan20.isChecked)
@@ -417,7 +403,6 @@ class EditGameDetailsFragment : Fragment() {
         val name = title.editText?.text.toString()
 
         viewModel.updateGameFields(
-            id,
             name,
             numberOfPlayersSlider.values[0].toInt(),
             maxNumberOfPlayers,

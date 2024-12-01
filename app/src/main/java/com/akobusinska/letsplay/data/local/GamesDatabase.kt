@@ -6,8 +6,9 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.sqlite.db.SupportSQLiteDatabase
+import com.akobusinska.letsplay.R
 import com.akobusinska.letsplay.data.entities.CollectionOwner
-import com.akobusinska.letsplay.data.entities.CollectionOwnerWithGames
+import com.akobusinska.letsplay.data.entities.CollectionOwnerGameCrossRef
 import com.akobusinska.letsplay.data.entities.MyGame
 import com.akobusinska.letsplay.data.entities.Play
 import com.akobusinska.letsplay.data.entities.PlayWithPlaysCrossRef
@@ -18,13 +19,14 @@ import kotlinx.coroutines.launch
 
 @TypeConverters(Converters::class)
 @Database(
-    entities = [MyGame::class, Play::class, Player::class, PlayWithPlaysCrossRef::class, CollectionOwner::class, CollectionOwnerWithGames::class],
-    version = 9,
+    entities = [MyGame::class, Play::class, Player::class, PlayWithPlaysCrossRef::class, CollectionOwner::class, CollectionOwnerGameCrossRef::class],
+    version = 20,
     exportSchema = false
 )
 abstract class GamesDatabase : RoomDatabase() {
 
     abstract val gameDao: GameDao
+    abstract val collectionOwnerDao: CollectionOwnerDao
     abstract val collectionOwnerWithGamesDao: CollectionOwnerWithGamesDao
 
     companion object {
@@ -43,12 +45,13 @@ abstract class GamesDatabase : RoomDatabase() {
                         .addCallback(object : Callback() {
                             override fun onCreate(db: SupportSQLiteDatabase) {
                                 super.onCreate(db)
-                                val collectionOwnerDao = instance?.collectionOwnerWithGamesDao
+                                val collectionOwnerDao = instance?.collectionOwnerDao
                                 CoroutineScope(Dispatchers.IO).launch {
                                     collectionOwnerDao?.insertCollectionOwner(
                                         CollectionOwner(
-                                            1,
-                                            "Default"
+                                            0,
+                                            "Default",
+                                            context.resources.getString(R.string.default_collection)
                                         )
                                     )
                                 }
