@@ -27,10 +27,6 @@
         <argument
             android:name="gameName"
             app:argType="string" />
-        <argument
-            android:name="currentUser"
-            app:argType="string"
-            app:nullable="true" />
         <action
             android:id="@+id/navigateToNewGameForm"
             app:destination="@id/addNewGameFragment" />
@@ -47,10 +43,6 @@
         <argument
             android:name="isGameNew"
             app:argType="boolean" />
-        <argument
-            android:name="currentUser"
-            app:argType="string"
-            app:nullable="true" />
         <action
             android:id="@+id/navigateToCollectionList"
             app:destination="@id/gamesListFragment"
@@ -69,10 +61,6 @@
             android:name="game"
             app:argType="com.akobusinska.letsplay.data.entities.MyGame"
             app:nullable="true" />
-        <argument
-            android:name="currentUser"
-            app:argType="string"
-            app:nullable="true" />
         <action
             android:id="@+id/navigateToCollectionList"
             app:destination="@id/gamesListFragment"
@@ -86,10 +74,5 @@
     <fragment
         android:id="@+id/selectGameFragment"
         android:name="com.akobusinska.letsplay.ui.gameSelection.SelectGameFragment"
-        android:label="SelectGameFragment">
-        <argument
-            android:name="collectionOwner"
-            app:argType="com.akobusinska.letsplay.data.entities.CollectionOwner"
-            app:nullable="true"/>
-    </fragment>
+        android:label="SelectGameFragment"/>
 </navigation>

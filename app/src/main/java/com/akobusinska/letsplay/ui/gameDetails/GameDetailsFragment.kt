@@ -18,9 +18,11 @@ import androidx.lifecycle.Lifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.akobusinska.letsplay.R
+import com.akobusinska.letsplay.data.entities.CollectionOwner
 import com.akobusinska.letsplay.data.entities.GameType
 import com.akobusinska.letsplay.data.entities.MyGame
 import com.akobusinska.letsplay.databinding.FragmentGameDetailsBinding
+import com.akobusinska.letsplay.utils.Storage
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -29,6 +31,7 @@ class GameDetailsFragment : Fragment() {
 
     val viewModel: GameDetailsViewModel by viewModels()
     private val args: GameDetailsFragmentArgs by navArgs()
+    private var currentUser: CollectionOwner? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -38,7 +41,6 @@ class GameDetailsFragment : Fragment() {
         val binding: FragmentGameDetailsBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_game_details, container, false)
         var game: MyGame? = null
-        val currentUser = args.currentUser
         val parentAndChildren: TextView = binding.parentAndChildren
         val recommendedForMorePlayers = binding.recommendedForMore
         val recommendedForMorePlayersIcon = binding.recommendedForMoreIcon
@@ -51,9 +53,9 @@ class GameDetailsFragment : Fragment() {
             binding.game = it
 
             if (game?.gameType == GameType.GAME)
-                viewModel.getOwnedExpansions(it.gameId)
+                viewModel.getOwnedExpansions(it.bggId.toLong(), Storage().restoreCurrentUserId(requireContext()))
             else
-                viewModel.getParentGame(it.parentGame)
+                viewModel.getParentGame(it.parentGame.toInt())
 
             if (game?.recommendedForMorePlayers == true) {
                 recommendedForMorePlayers.visibility = View.VISIBLE
@@ -118,7 +120,7 @@ class GameDetailsFragment : Fragment() {
                 findNavController().navigate(
                     GameDetailsFragmentDirections.navigateToGamesEditionForm(
                         it,
-                        false, currentUser
+                        false
                     )
                 )
                 viewModel.doneNavigating()

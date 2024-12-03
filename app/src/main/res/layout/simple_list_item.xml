@@ -75,7 +75,7 @@
                 app:layout_constraintEnd_toStartOf="@+id/thumb"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/thumb"
-                card_view:srcCompat="@drawable/ic_baseline_list_add_check_24" />
+                card_view:srcCompat="@drawable/baseline_thumb_up_off_alt_24" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

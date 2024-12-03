@@ -9,6 +9,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import com.akobusinska.letsplay.R
 import com.akobusinska.letsplay.databinding.DialogGameFiltersBinding
+import com.akobusinska.letsplay.utils.Storage
 import com.akobusinska.letsplay.utils.changeButtonColor
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.slider.Slider
@@ -44,7 +45,7 @@ class DialogGamesFilteringFragment : DialogFragment() {
             .setView(binding.root)
             .setTitle(R.string.filter_games)
             .setPositiveButton(R.string.filter) { _, _ ->
-                viewModel.filterGamesCollection(filter)
+                viewModel.filterGamesCollection(filter, Storage().restoreCurrentUserId(requireContext()))
             }
             .setNegativeButton(R.string.cancel, null)
             .create()

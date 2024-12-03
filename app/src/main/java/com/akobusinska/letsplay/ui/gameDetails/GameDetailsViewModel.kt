@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.akobusinska.letsplay.data.entities.GameType
 import com.akobusinska.letsplay.data.entities.MyGame
 import com.akobusinska.letsplay.data.repository.GameRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -40,7 +41,7 @@ class GameDetailsViewModel @Inject constructor(
         }
     }
 
-    fun getParentGame(id: Long) {
+    fun getParentGame(id: Int) {
         _parentAndChildren.addSource(repository.getGameById(id)) {
             if (it != null)
                 _parentAndChildren.value = it.name
@@ -49,14 +50,20 @@ class GameDetailsViewModel @Inject constructor(
         }
     }
 
-    fun getOwnedExpansions(parentId: Long) {
-        _parentAndChildren.addSource(repository.getExpansionsListById(parentId)) { expansionsList ->
+    fun getOwnedExpansions(parentId: Long, collectionOwnerId: Long) {
+        _parentAndChildren.addSource(repository.getFullCrossRefCollection()) { list ->
             _parentAndChildren.value = ""
-            if (expansionsList != null)
+            try {
+                val expansionsList =
+                    list.filter { ownerWithGames -> ownerWithGames.collectionOwner.collectionOwnerId == collectionOwnerId }[0].games
+                        .filter { game -> game.gameType == GameType.EXPANSION && game.parentGame == parentId}
                 for (game in expansionsList) {
                     if (game.gameId != parentId)
                         _parentAndChildren.value = _parentAndChildren.value + "<br>" + game.name
                 }
+            } catch (e: Exception) {
+
+            }
         }
     }
 

@@ -26,7 +26,7 @@ class DialogGameNameFragment : DialogFragment() {
             .setPositiveButton(R.string.ok) { _, _ ->
                 this.findNavController().navigate(
                     GamesListFragmentDirections.searchForGame(
-                        binding.dialogTextInputLayout.editText?.text.toString(), "Default"
+                        binding.dialogTextInputLayout.editText?.text.toString()
                     )
                 )
             }

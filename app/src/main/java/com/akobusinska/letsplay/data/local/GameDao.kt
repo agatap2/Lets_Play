@@ -47,6 +47,9 @@ interface GameDao {
     @Query("SELECT * FROM my_game_table WHERE gameId = :id")
     fun getGame(id: Long): LiveData<MyGame>
 
+    @Query("SELECT * FROM my_game_table WHERE bggId = :id")
+    fun getGame(id: Int): LiveData<MyGame>
+
     @Query("SELECT * FROM my_game_table WHERE parentGame = :id")
     fun getExpansions(id: Long): LiveData<List<MyGame>>
 

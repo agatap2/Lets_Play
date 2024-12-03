@@ -40,8 +40,9 @@ class GameRepository(
         localDataSource.getFilteredCollection(GameType.EXPANSION)
 
     fun getGameById(id: Long) = localDataSource.getGame(id)
+    fun getGameById(id: Int) = localDataSource.getGame(id)
 
-    private fun getGameByBggId(bggId: Int) = localDataSource.getGameWithSpecificBggId(bggId)
+    fun getGameByBggId(bggId: Int) = localDataSource.getGameWithSpecificBggId(bggId)
 
     fun getExpansionsListById(id: Long) = localDataSource.getExpansions(id)
 
@@ -91,6 +92,18 @@ class GameRepository(
         return finalList
     }
 
+    suspend fun addGameToUserCollection(userId: Long, game: MyGame) {
+        withContext(Dispatchers.IO) {
+            val gameId = getGameByBggId(game.bggId) ?: insertGame(game)
+            collectionOwnerWithGamesDao.insertCollectionOwnerWithGames(
+                CollectionOwnerGameCrossRef(
+                    userId,
+                    gameId
+                )
+            )
+        }
+    }
+
     private fun formatData(games: List<BoardGame>): List<MyGame> {
 
         val listOfGames = mutableListOf<MyGame>()
@@ -124,21 +137,21 @@ class GameRepository(
             listOfGames.add(newGame)
         }
 
-//        listOfGames.forEach { game ->
-//            if (game.gameType == GameType.GAME && game.expansions.isNotEmpty()) {
-//                val iterator = game.expansions.iterator()
-//                while (iterator.hasNext()) {
-//                    val expansionId = iterator.next()
-//                    val expansion =
-//                        listOfGames.find { it.gameId == expansionId }
-//                    if (expansion == null || expansion.gameType == GameType.GAME) {
-//                        iterator.remove()
-//                    } else {
-//                        expansion.parentGame = game.parentGame
-//                    }
-//                }
-//            } else if (game.gameType == GameType.EXPANSION) game.expansions.clear()
-//        }
+        listOfGames.forEach { game ->
+            if (game.gameType == GameType.GAME && game.expansions.isNotEmpty()) {
+                val iterator = game.expansions.iterator()
+                while (iterator.hasNext()) {
+                    val expansionId = iterator.next()
+                    val expansion =
+                        listOfGames.find { it.bggId.toLong() == expansionId }
+                    if (expansion == null || expansion.gameType == GameType.GAME) {
+                        iterator.remove()
+                    } else {
+                        listOfGames.filter { it.bggId.toLong() == expansionId }[0].parentGame = game.bggId.toLong()
+                    }
+                }
+            } else if (game.gameType == GameType.EXPANSION) game.expansions.clear()
+        }
 
         return listOfGames
     }

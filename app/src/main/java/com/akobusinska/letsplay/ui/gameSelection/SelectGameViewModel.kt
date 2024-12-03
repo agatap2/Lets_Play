@@ -6,7 +6,6 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.akobusinska.letsplay.R
-import com.akobusinska.letsplay.data.entities.CollectionOwner
 import com.akobusinska.letsplay.data.entities.GameType
 import com.akobusinska.letsplay.data.entities.MyGame
 import com.akobusinska.letsplay.data.local.Filter
@@ -18,7 +17,7 @@ import javax.inject.Inject
 class SelectGameViewModel @Inject constructor(private val repository: GameRepository) :
     ViewModel() {
 
-    private val _allGames = repository.getOnlyGames()
+    private val _allGames = MediatorLiveData<List<MyGame>>()
     val allGames: LiveData<List<MyGame>>
         get() = _allGames
 
@@ -32,18 +31,20 @@ class SelectGameViewModel @Inject constructor(private val repository: GameReposi
 
     var currentFilter = Filter()
     var randomGame = MyGame()
-    private var collectionOwner: CollectionOwner? = null
 
     init {
+        _selectedGamesCollection.value = mutableListOf()
         _unselectedGamesCollection.value = mutableListOf()
     }
 
-    fun setCollectionOwner(collectionOwner: CollectionOwner?) {
-        this.collectionOwner = collectionOwner
-
+    fun setCollectionOwner(collectionOwnerId: Long) {
+        _allGames.addSource(repository.getFullCrossRefCollection()) {
+            _allGames.value =
+                it.filter { ownerWithGames -> ownerWithGames.collectionOwner.collectionOwnerId == collectionOwnerId }[0].games
+        }
         _selectedGamesCollection.addSource(repository.getFullCrossRefCollection()) {
             _selectedGamesCollection.value =
-                it.filter { ownerWithGames -> ownerWithGames.collectionOwner.collectionOwnerId == collectionOwner?.collectionOwnerId }[0].games
+                it.filter { ownerWithGames -> ownerWithGames.collectionOwner.collectionOwnerId == collectionOwnerId }[0].games.filter { game -> game.gameType == GameType.GAME }
         }
     }
 
@@ -51,11 +52,11 @@ class SelectGameViewModel @Inject constructor(private val repository: GameReposi
         randomGame = selectedGamesCollection.value?.random()!!
     }
 
-    fun filterGamesCollection(filter: Filter) {
+    fun filterGamesCollection(filter: Filter, collectionOwnerId: Long) {
 
         _selectedGamesCollection.addSource(repository.getFullCrossRefCollection()) { list ->
             val gamesList =
-                list.filter { ownerWithGames -> ownerWithGames.collectionOwner.collectionOwnerId == collectionOwner?.collectionOwnerId }[0].games.filter { game ->
+                list.filter { ownerWithGames -> ownerWithGames.collectionOwner.collectionOwnerId == collectionOwnerId }[0].games.filter { game ->
                     game.maxPlayers >= filter.numberOfPlayers &&
                             game.minPlayers <= filter.numberOfPlayers &&
                             game.minAge <= filter.age &&
@@ -71,7 +72,7 @@ class SelectGameViewModel @Inject constructor(private val repository: GameReposi
 
                     if (allGames.value != null) {
                         val parentGames =
-                            allGames.value!!.filter { it.gameId == filterMatchingGame.parentGame }
+                            allGames.value!!.filter { it.bggId.toLong() == filterMatchingGame.parentGame }
 
                         if (parentGames.isNotEmpty())
                             _selectedGamesCollection.value =

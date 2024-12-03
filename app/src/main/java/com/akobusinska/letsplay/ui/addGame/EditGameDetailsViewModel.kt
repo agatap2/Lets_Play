@@ -60,8 +60,8 @@ class EditGameDetailsViewModel @SuppressLint("StaticFieldLeak")
     }
 
     var parentGameName = newGame.map {
-        if (it.gameType == GameType.EXPANSION && it.gameId != it.parentGame)
-            getParentGame(it.parentGame)
+        if (it.gameType == GameType.EXPANSION && it.bggId.toLong() != it.parentGame)
+            getParentGame(it.parentGame.toInt())
         context.getString(R.string.parent_game, "?")
     }
 
@@ -106,16 +106,17 @@ class EditGameDetailsViewModel @SuppressLint("StaticFieldLeak")
         }
     }
 
-    fun getParentGame(id: Long) {
+    fun getParentGame(id: Int) {
         _parentGame.addSource(repository.getGameById(id)) {
             if (it != null)
                 _parentGame.value = it
         }
     }
 
-    fun insertGameIntoDatabase(game: MyGame) {
+    fun insertGameIntoDatabase(currentUser: Long) {
         viewModelScope.launch {
-            _newGameId.value = repository.insertGame(game)
+            repository.addGameToUserCollection(currentUser, game)
+            //_newGameId.value = repository.insertGame(game)
         }
     }
 
@@ -128,7 +129,6 @@ class EditGameDetailsViewModel @SuppressLint("StaticFieldLeak")
     fun updateGameInDatabase() {
         viewModelScope.launch {
             repository.updateGame(game)
-            //newGame.value?.let { repository.updateGame(it) }
         }
     }
 
@@ -136,7 +136,6 @@ class EditGameDetailsViewModel @SuppressLint("StaticFieldLeak")
 
         _foundGamesList.addSource(userRepository.getGamesUserCollection(ownerName)) {
             _foundGamesList.value = it.sortedBy { game -> game.name }
-                //.filter { game -> game.gameId != newGame.value?.gameId }
         }
     }
 
@@ -152,26 +151,17 @@ class EditGameDetailsViewModel @SuppressLint("StaticFieldLeak")
         gameType: GameType,
         parent: Long
     ) {
-//        _newGame.value.let { game ->
-//            if (game != null) {
-        game.name = name
-        game.minPlayers = minPlayers
-        game.maxPlayers = maxPlayers
-        game.recommendedForMorePlayers = recommendedForMore
-        game.minPlaytime = minPlaytime
-        game.maxPlaytime = maxPlaytime
-        game.minAge = minAge
-        game.thumbURL = thumbUrl
-        game.gameType = gameType
-        game.parentGame = parent
-        // }
-        //}
-    }
-
-    fun updateParentGame(parent: MyGame) {
         viewModelScope.launch {
-            repository.updateGame(parent)
+            game.name = name
+            game.minPlayers = minPlayers
+            game.maxPlayers = maxPlayers
+            game.recommendedForMorePlayers = recommendedForMore
+            game.minPlaytime = minPlaytime
+            game.maxPlaytime = maxPlaytime
+            game.minAge = minAge
+            game.thumbURL = thumbUrl
+            game.gameType = gameType
+            game.parentGame = parent
         }
     }
-
 }

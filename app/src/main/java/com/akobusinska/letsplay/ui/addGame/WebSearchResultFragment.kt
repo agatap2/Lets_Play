@@ -26,7 +26,6 @@ class WebSearchResultFragment : Fragment() {
     private val args: WebSearchResultFragmentArgs by navArgs()
     private lateinit var binding: FragmentWebSearchResultBinding
     private lateinit var gameName: String
-    private lateinit var currentUser: String
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -37,7 +36,6 @@ class WebSearchResultFragment : Fragment() {
             DataBindingUtil.inflate(inflater, R.layout.fragment_web_search_result, container, false)
 
         gameName = args.gameName
-        currentUser = args.currentUser ?: "Default"
 
         val adapter = BasicGamesListAdapter(GamesListListener { game ->
             viewModel.navigateToNewGameForm(game)
@@ -79,7 +77,7 @@ class WebSearchResultFragment : Fragment() {
     private fun navigateToNewGameForm(game: MyGame?) {
         this.findNavController()
             .navigate(
-                WebSearchResultFragmentDirections.navigateToNewGameForm(game, true, currentUser)
+                WebSearchResultFragmentDirections.navigateToNewGameForm(game, true)
             )
     }
 

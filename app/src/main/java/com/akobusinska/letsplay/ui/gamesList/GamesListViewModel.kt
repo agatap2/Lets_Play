@@ -77,7 +77,7 @@ class GamesListViewModel @Inject constructor(
         }
     }
 
-    fun getInitUser(name: String): LiveData<CollectionOwner> {
+    fun getUserByName(name: String): LiveData<CollectionOwner> {
         return userRepository.getUserByName(name)
     }
 

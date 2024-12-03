@@ -30,7 +30,6 @@ import com.akobusinska.letsplay.utils.Keys
 import com.akobusinska.letsplay.utils.Storage
 import com.akobusinska.letsplay.utils.bindRecyclerView
 import com.akobusinska.letsplay.utils.bindUsersDialogRecyclerView
-import com.akobusinska.letsplay.utils.observeOnce
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -49,7 +48,6 @@ class GamesListFragment : Fragment() {
     private var selectedUserPosition = 0
     private var list = mutableListOf<CollectionOwnerWithGames>()
     private var newUserCreationProcess = false
-    private var init = true
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -60,9 +58,7 @@ class GamesListFragment : Fragment() {
         )
 
         checkIfCollectionIsEditable(
-            Storage().restoreStringData(
-                requireContext(), Keys.SHARED_PREFERENCES.key
-            ) ?: "Default"
+            Storage().restoreDefaultUser(requireContext())
         )
 
         val userExistsDialogBuilder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
@@ -92,7 +88,7 @@ class GamesListFragment : Fragment() {
         ) { _, bundle ->
             val result = bundle.getBoolean(Keys.NEW_USER_KEY.key)
             if (result) {
-                Storage().saveStringData(requireContext(), Keys.SHARED_PREFERENCES.key, newUser)
+                Storage().saveDefaultUser(requireContext(), newUser)
             }
         }
 
@@ -102,7 +98,6 @@ class GamesListFragment : Fragment() {
             val result = bundle.getString(Keys.CUSTOM_USER_NAME_KEY.key)
             if (result != null) {
                 viewModel.updateUserCustomName(selectedUser, result)
-                newUserCreationProcess = false
             }
         }
 
@@ -111,6 +106,7 @@ class GamesListFragment : Fragment() {
                 DialogSuccessFragment.newInstance(newUser).show(
                     requireActivity().supportFragmentManager, "success"
                 )
+                newUserCreationProcess = false
             } else if (status.equals(GameRepository.RequestStatus.ERROR)) {
                 object : CountDownTimer(3000, 1000) {
                     override fun onTick(millisUntilFinished: Long) {
@@ -125,23 +121,27 @@ class GamesListFragment : Fragment() {
             }
         }
 
-        viewModel.getInitUser(
-            Storage().restoreStringData(
-                requireContext(),
-                Keys.SHARED_PREFERENCES.key
-            ) ?: "Default"
-        ).observeOnce(viewLifecycleOwner) {
-            selectedUser = it
-        }
+        viewModel.getUserByName(Storage().restoreCurrentUserName(requireContext()))
+            .observe(viewLifecycleOwner) {
+                updateCurrentUser(it)
+            }
+
+//        viewModel.getUserByName(Storage().restoreCurrentUserName(requireContext()))
+//            .observe(viewLifecycleOwner) {
+//                if (Storage().restoreCurrentUserName(requireContext()).isNotBlank()) {
+//                    selectedUser = it
+//                }
+//            }
 
         viewModel.getLastCollectionOwner().observe(viewLifecycleOwner) {
-            if (it != null && !init) {
-                selectedUser = it
-                if (newUserCreationProcess) {
+            if (it != null) {
+                if(newUserCreationProcess) {
+                    updateCurrentUser(it)
                     viewModel.updateGamesList(it)
                 }
-            } else if (init) {
-                init = false
+                if(selectedUser?.name == it.name) {
+                    selectedUser = it
+                }
             }
         }
 
@@ -150,7 +150,9 @@ class GamesListFragment : Fragment() {
                 list.clear()
                 list.addAll(it)
                 refreshCollection()
-                viewModel.stopLoadIcon(it.last().games.size == selectedUser!!.games.size && it.size > 1)
+                try {
+                    viewModel.stopLoadIcon(it.last().games.size == selectedUser!!.games.size && it.size > 1)
+                } catch (e: Exception) {}
             }
         }
 
@@ -167,7 +169,7 @@ class GamesListFragment : Fragment() {
             selectedUserPosition =
                 users.indexOfFirst { it.name == (selectedUser?.name ?: "Default") }
             val usersListAdapter = DialogUsersListAdapter(UsersListListener {
-                selectedUser = it
+                updateCurrentUser(it)
             }, selectedUserPosition)
 
             listOfUsers.adapter = usersListAdapter
@@ -249,9 +251,7 @@ class GamesListFragment : Fragment() {
 
         binding.selectGameButton.setOnClickListener {
             findNavController().navigate(
-                GamesListFragmentDirections.navigateToGameSelectionFragment(
-                    selectedUser
-                )
+                GamesListFragmentDirections.navigateToGameSelectionFragment()
             )
         }
 
@@ -262,7 +262,7 @@ class GamesListFragment : Fragment() {
         viewModel.navigateToGameDetails.observe(viewLifecycleOwner) { game ->
             if (findNavController().currentDestination?.id == R.id.gamesListFragment) {
                 this.findNavController().navigate(
-                    GamesListFragmentDirections.navigateToGameDetails(game, selectedUser?.name)
+                    GamesListFragmentDirections.navigateToGameDetails(game)
                 )
                 viewModel.doneNavigating()
             }
@@ -318,5 +318,11 @@ class GamesListFragment : Fragment() {
         } else {
             binding.addGameButton.visibility = View.VISIBLE
         }
+    }
+
+    private fun updateCurrentUser(currentUser: CollectionOwner) {
+        selectedUser = currentUser
+        Storage().saveCurrentUserName(requireContext(), currentUser.name)
+        Storage().saveCurrentUserId(requireContext(), currentUser.collectionOwnerId)
     }
 }

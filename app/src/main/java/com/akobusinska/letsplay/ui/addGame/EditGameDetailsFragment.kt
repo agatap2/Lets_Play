@@ -22,6 +22,7 @@ import com.akobusinska.letsplay.data.entities.GameType
 import com.akobusinska.letsplay.data.entities.MyGame
 import com.akobusinska.letsplay.databinding.FragmentEditGameDetailsBinding
 import com.akobusinska.letsplay.ui.addGame.DialogGamesListAdapter.GamesListListener
+import com.akobusinska.letsplay.utils.Storage
 import com.akobusinska.letsplay.utils.bindDialogRecyclerView
 import com.akobusinska.letsplay.utils.changeButtonColor
 import com.akobusinska.letsplay.utils.setGameCover
@@ -49,7 +50,6 @@ class EditGameDetailsFragment : Fragment() {
     private lateinit var pictureUrl: String
     private lateinit var moreThan20: CheckBox
     private lateinit var over2Hours: CheckBox
-    private lateinit var currentUser: String
     private var parent: Long = -1
     private var isGameNew: Boolean = true
     private var checked: Boolean = true
@@ -69,12 +69,11 @@ class EditGameDetailsFragment : Fragment() {
 
         game = args.game!!
         isGameNew = args.isGameNew
-        currentUser = args.currentUser ?: "Default"
 
         binding.lifecycleOwner = this
         binding.viewModel = viewModel
 
-        viewModel.getSearchResult(currentUser)
+        viewModel.getSearchResult(Storage().restoreCurrentUserName(requireContext()))
 
         application = requireNotNull(activity).application
         pictureUrl = game.thumbURL
@@ -211,8 +210,8 @@ class EditGameDetailsFragment : Fragment() {
                 .setTitle(R.string.select_parent_game)
                 .setPositiveButton(R.string.ok) { _, _ ->
                     if (selectedGame != null) {
-                        parent = selectedGame!!.gameId
-                        viewModel.getParentGame(selectedGame!!.gameId)
+                        parent = selectedGame!!.bggId.toLong()
+                        viewModel.getParentGame(selectedGame!!.bggId)
                         binding.parentGame.text = application.resources.getString(
                             R.string.parent_game,
                             selectedGame!!.name
@@ -316,46 +315,49 @@ class EditGameDetailsFragment : Fragment() {
 
         binding.save.setOnClickListener {
             saveGame()
-            checked = false
-            //viewModel.refresh()
+            //checked = false
+            if (isGameNew) {
+                viewModel.insertGameIntoDatabase(Storage().restoreCurrentUserId(requireContext()))
+            } else
+                viewModel.updateGameInDatabase()
 
-            viewModel.allGamesList.observe(viewLifecycleOwner) { list ->
-                if (!checked) {
-                    if (list.any { it.name == binding.title.text.toString()}) {
-                        MaterialAlertDialogBuilder(requireContext())
-                            .setMessage(resources.getString(R.string.confirm_adding_dublicate))
-                            .setNegativeButton(resources.getString(R.string.rename)) { dialog, _ ->
-                                dialog.cancel()
-                            }
-                            .setPositiveButton(resources.getString(R.string.yes)) { _, _ ->
-                                //navigateToPreviousScreen()
-                                if (isGameNew) {
-                                    viewModel.insertGameIntoDatabase(viewModel.game)
-                                    //viewModel.insertGameWithOwnerIntoDatabase(id)
-                                } else
-                                    viewModel.updateGameInDatabase()
-                            }
-                            .show()
-                    } else {
-                        if (isGameNew) {
-                            viewModel.insertGameIntoDatabase(viewModel.game)
-                            //viewModel.insertGameWithOwnerIntoDatabase()
-                        } else
-                            viewModel.updateGameInDatabase()
-                    }
-                    checked = true
-                }
-            }
+//            viewModel.allGamesList.observe(viewLifecycleOwner) { list ->
+//                if (!checked) {
+//                    if (list.any { it.name == binding.title.text.toString()}) {
+//                        MaterialAlertDialogBuilder(requireContext())
+//                            .setMessage(resources.getString(R.string.confirm_adding_dublicate))
+//                            .setNegativeButton(resources.getString(R.string.rename)) { dialog, _ ->
+//                                dialog.cancel()
+//                            }
+//                            .setPositiveButton(resources.getString(R.string.yes)) { _, _ ->
+//                                //navigateToPreviousScreen()
+//                                if (isGameNew) {
+//                                    viewModel.insertGameIntoDatabase()
+//                                    //viewModel.insertGameWithOwnerIntoDatabase(id)
+//                                } else
+//                                    viewModel.updateGameInDatabase()
+//                            }
+//                            .show()
+//                    } else {
+//                        if (isGameNew) {
+//                            viewModel.insertGameIntoDatabase()
+//                            //viewModel.insertGameWithOwnerIntoDatabase()
+//                        } else
+//                            viewModel.updateGameInDatabase()
+//                    }
+//                    checked = true
+//                }
+            navigateToPreviousScreen()
         }
 
         binding.cancel.setOnClickListener {
             navigateToPreviousScreen()
         }
 
-        viewModel.newGameId.observe(viewLifecycleOwner) { id ->
-            viewModel.insertGameWithOwnerIntoDatabase(id)
-            navigateToPreviousScreen()
-        }
+//        viewModel.newGameId.observe(viewLifecycleOwner) { id ->
+//            viewModel.insertGameWithOwnerIntoDatabase(id)
+//            navigateToPreviousScreen()
+//        }
 
         return binding.root
     }
@@ -365,7 +367,7 @@ class EditGameDetailsFragment : Fragment() {
             findNavController().navigate(EditGameDetailsFragmentDirections.navigateToCollectionList())
         else
             findNavController().navigate(
-                EditGameDetailsFragmentDirections.navigateToGameDetails(game, currentUser)
+                EditGameDetailsFragmentDirections.navigateToGameDetails(game)
             )
     }
 
