@@ -16,9 +16,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import com.akobusinska.letsplay.R
-import com.akobusinska.letsplay.data.entities.CollectionOwner
 import com.akobusinska.letsplay.data.entities.GameType
 import com.akobusinska.letsplay.data.entities.MyGame
 import com.akobusinska.letsplay.databinding.FragmentGameDetailsBinding
@@ -30,8 +28,6 @@ import dagger.hilt.android.AndroidEntryPoint
 class GameDetailsFragment : Fragment() {
 
     val viewModel: GameDetailsViewModel by viewModels()
-    private val args: GameDetailsFragmentArgs by navArgs()
-    private var currentUser: CollectionOwner? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -90,6 +86,7 @@ class GameDetailsFragment : Fragment() {
         requireActivity().addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
                 menuInflater.inflate(R.menu.details_menu, menu)
+                menu.findItem(R.id.delete).isVisible = Storage().restoreCurrentUserName(requireContext()) == "Default"
             }
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
@@ -105,7 +102,7 @@ class GameDetailsFragment : Fragment() {
                                 dialog.cancel()
                             }
                             .setPositiveButton(resources.getString(R.string.yes)) { _, _ ->
-                                game?.let { viewModel.deleteGameFromDatabase(it) }
+                                game?.let { viewModel.deleteGameFromUserCollection(it) }
                                 navigateToGamesList()
                             }
                             .show()

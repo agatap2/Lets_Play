@@ -24,6 +24,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class SelectGameFragment : Fragment() {
 
     val viewModel: SelectGameViewModel by activityViewModels()
+    var showFilterDialog = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -66,6 +67,7 @@ class SelectGameFragment : Fragment() {
                         if (gamesList.isNotBlank())
                             startActivity(shareIntent)
                     }
+
                     R.id.select_random -> {
                         viewModel.selectRandomGame()
                         if (!viewModel.selectedGamesCollection.value.isNullOrEmpty())
@@ -74,13 +76,17 @@ class SelectGameFragment : Fragment() {
                                 "random"
                             )
                     }
+
                     R.id.filter -> {
+                        showFilterDialog = true
                         viewModel.allGames.observe(viewLifecycleOwner) {
-                            if (!viewModel.allGames.value.isNullOrEmpty())
+                            if (!viewModel.allGames.value.isNullOrEmpty() && showFilterDialog) {
                                 DialogGamesFilteringFragment().show(
                                     requireActivity().supportFragmentManager,
                                     "filter"
                                 )
+                                showFilterDialog = false
+                            }
                         }
                     }
                 }
@@ -104,9 +110,14 @@ class SelectGameFragment : Fragment() {
     }
 
     private fun changeGuidelinePosition(emptyList: Boolean, binding: FragmentSelectGameBinding) {
-        if(emptyList)
+        if (emptyList)
             binding.guideline.setGuidelinePercent(1.0F)
         else
             binding.guideline.setGuidelinePercent(0.65F)
+    }
+
+    override fun onStop() {
+        viewModel.clearLists()
+        super.onStop()
     }
 }

@@ -4,22 +4,9 @@ import android.app.Activity
 import android.content.Context
 import com.akobusinska.letsplay.utils.Keys.CURRENT_USER_ID
 import com.akobusinska.letsplay.utils.Keys.CURRENT_USER_NAME
-import com.akobusinska.letsplay.utils.Keys.DEFAULT_USER_NAME
 import com.akobusinska.letsplay.utils.Keys.SHARED_PREFERENCES
 
 class Storage {
-
-    fun saveDefaultUser(context: Context, text: String?) {
-        val preferencesEditor =
-            context.getSharedPreferences(SHARED_PREFERENCES.key, Activity.MODE_PRIVATE).edit()
-        preferencesEditor.putString(DEFAULT_USER_NAME.key, text)
-        preferencesEditor.apply()
-    }
-
-    fun restoreDefaultUser(context: Context): String {
-        return context.getSharedPreferences(SHARED_PREFERENCES.key, Activity.MODE_PRIVATE)
-            .getString(DEFAULT_USER_NAME.key, "Default") ?: "Default"
-    }
 
     fun saveCurrentUserName(context: Context, text: String?) {
         val preferencesEditor =

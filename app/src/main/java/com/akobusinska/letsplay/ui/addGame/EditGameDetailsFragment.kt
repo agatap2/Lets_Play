@@ -52,7 +52,6 @@ class EditGameDetailsFragment : Fragment() {
     private lateinit var over2Hours: CheckBox
     private var parent: Long = -1
     private var isGameNew: Boolean = true
-    private var checked: Boolean = true
     private lateinit var game: MyGame
 
     val viewModel: EditGameDetailsViewModel by viewModels()
@@ -315,49 +314,16 @@ class EditGameDetailsFragment : Fragment() {
 
         binding.save.setOnClickListener {
             saveGame()
-            //checked = false
             if (isGameNew) {
                 viewModel.insertGameIntoDatabase(Storage().restoreCurrentUserId(requireContext()))
             } else
                 viewModel.updateGameInDatabase()
-
-//            viewModel.allGamesList.observe(viewLifecycleOwner) { list ->
-//                if (!checked) {
-//                    if (list.any { it.name == binding.title.text.toString()}) {
-//                        MaterialAlertDialogBuilder(requireContext())
-//                            .setMessage(resources.getString(R.string.confirm_adding_dublicate))
-//                            .setNegativeButton(resources.getString(R.string.rename)) { dialog, _ ->
-//                                dialog.cancel()
-//                            }
-//                            .setPositiveButton(resources.getString(R.string.yes)) { _, _ ->
-//                                //navigateToPreviousScreen()
-//                                if (isGameNew) {
-//                                    viewModel.insertGameIntoDatabase()
-//                                    //viewModel.insertGameWithOwnerIntoDatabase(id)
-//                                } else
-//                                    viewModel.updateGameInDatabase()
-//                            }
-//                            .show()
-//                    } else {
-//                        if (isGameNew) {
-//                            viewModel.insertGameIntoDatabase()
-//                            //viewModel.insertGameWithOwnerIntoDatabase()
-//                        } else
-//                            viewModel.updateGameInDatabase()
-//                    }
-//                    checked = true
-//                }
             navigateToPreviousScreen()
         }
 
         binding.cancel.setOnClickListener {
             navigateToPreviousScreen()
         }
-
-//        viewModel.newGameId.observe(viewLifecycleOwner) { id ->
-//            viewModel.insertGameWithOwnerIntoDatabase(id)
-//            navigateToPreviousScreen()
-//        }
 
         return binding.root
     }

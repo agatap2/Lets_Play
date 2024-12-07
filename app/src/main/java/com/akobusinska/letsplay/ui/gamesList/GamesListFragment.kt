@@ -58,7 +58,7 @@ class GamesListFragment : Fragment() {
         )
 
         checkIfCollectionIsEditable(
-            Storage().restoreDefaultUser(requireContext())
+            Storage().restoreCurrentUserName(requireContext())
         )
 
         val userExistsDialogBuilder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
@@ -80,15 +80,6 @@ class GamesListFragment : Fragment() {
                 } else {
                     userExistsDialog.show()
                 }
-            }
-        }
-
-        requireActivity().supportFragmentManager.setFragmentResultListener(
-            Keys.NEW_USER_KEY.key, viewLifecycleOwner
-        ) { _, bundle ->
-            val result = bundle.getBoolean(Keys.NEW_USER_KEY.key)
-            if (result) {
-                Storage().saveDefaultUser(requireContext(), newUser)
             }
         }
 
@@ -124,22 +115,17 @@ class GamesListFragment : Fragment() {
         viewModel.getUserByName(Storage().restoreCurrentUserName(requireContext()))
             .observe(viewLifecycleOwner) {
                 updateCurrentUser(it)
+                binding.refresh.visibility =
+                    if (it.name == "Default") View.INVISIBLE else View.VISIBLE
             }
-
-//        viewModel.getUserByName(Storage().restoreCurrentUserName(requireContext()))
-//            .observe(viewLifecycleOwner) {
-//                if (Storage().restoreCurrentUserName(requireContext()).isNotBlank()) {
-//                    selectedUser = it
-//                }
-//            }
 
         viewModel.getLastCollectionOwner().observe(viewLifecycleOwner) {
             if (it != null) {
-                if(newUserCreationProcess) {
+                if (newUserCreationProcess) {
                     updateCurrentUser(it)
                     viewModel.updateGamesList(it)
                 }
-                if(selectedUser?.name == it.name) {
+                if (selectedUser?.name == it.name) {
                     selectedUser = it
                 }
             }
@@ -152,7 +138,14 @@ class GamesListFragment : Fragment() {
                 refreshCollection()
                 try {
                     viewModel.stopLoadIcon(it.last().games.size == selectedUser!!.games.size && it.size > 1)
-                } catch (e: Exception) {}
+                } catch (e: Exception) {
+                }
+            }
+        }
+
+        viewModel.statusOfRefresh.observe(viewLifecycleOwner) {
+            if (it == GameRepository.RequestStatus.DONE) {
+                selectedUser?.let { it1 -> viewModel.updateGamesList(it1, true) }
             }
         }
 
@@ -195,6 +188,8 @@ class GamesListFragment : Fragment() {
                             .setPositiveButton(R.string.ok) { _, _ ->
                                 if (selectedUser != null) {
                                     refreshCollection()
+                                    binding.refresh.visibility =
+                                        if (selectedUser?.name == "Default") View.INVISIBLE else View.VISIBLE
                                 }
                             }.setNegativeButton(R.string.cancel, null).show()
                     }
@@ -216,6 +211,10 @@ class GamesListFragment : Fragment() {
 
         binding.lifecycleOwner = this
         binding.viewModel = viewModel
+
+        binding.refresh.setOnClickListener {
+            viewModel.reDownloadUserCollection(selectedUser?.name ?: "Default")
+        }
 
         binding.fullGamesList.apply {
             this.adapter = adapter

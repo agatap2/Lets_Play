@@ -37,6 +37,12 @@ class SelectGameViewModel @Inject constructor(private val repository: GameReposi
         _unselectedGamesCollection.value = mutableListOf()
     }
 
+    fun clearLists() {
+        _selectedGamesCollection.value = mutableListOf()
+        _unselectedGamesCollection.value = mutableListOf()
+        currentFilter = Filter()
+    }
+
     fun setCollectionOwner(collectionOwnerId: Long) {
         _allGames.addSource(repository.getFullCrossRefCollection()) {
             _allGames.value =

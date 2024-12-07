@@ -35,9 +35,9 @@ class GameDetailsViewModel @Inject constructor(
         _game.value = state.get<MyGame>("game")
     }
 
-    fun deleteGameFromDatabase(game: MyGame) {
+    fun deleteGameFromUserCollection(game: MyGame) {
         viewModelScope.launch {
-            repository.deleteGame(game)
+            repository.deleteGameFromDefaultCollection(game.gameId)
         }
     }
 

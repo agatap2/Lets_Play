@@ -23,7 +23,7 @@ interface GameDao {
     fun getCollection(): LiveData<List<MyGame>>
 
     @Query("SELECT gameId FROM my_game_table WHERE bggId = :bggId")
-    fun getGameWithSpecificBggId(bggId: Int): Long?
+    fun getGameIdByBggId(bggId: Int): Long?
 
     @Query("SELECT * FROM my_game_table WHERE gameType = :gameType ORDER BY name ASC")
     fun getFilteredCollection(gameType: GameType): LiveData<List<MyGame>>

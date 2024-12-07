@@ -9,7 +9,6 @@ import androidx.fragment.app.DialogFragment
 import com.akobusinska.letsplay.R
 import com.akobusinska.letsplay.databinding.DialogSuccessBinding
 import com.akobusinska.letsplay.utils.Keys.CUSTOM_USER_NAME_KEY
-import com.akobusinska.letsplay.utils.Keys.NEW_USER_KEY
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -28,10 +27,6 @@ class DialogSuccessFragment : DialogFragment() {
                 requireActivity().supportFragmentManager.setFragmentResult(
                     CUSTOM_USER_NAME_KEY.key,
                     bundleOf(CUSTOM_USER_NAME_KEY.key to binding.userName.editText?.text.toString())
-                )
-                requireActivity().supportFragmentManager.setFragmentResult(
-                    NEW_USER_KEY.key,
-                    bundleOf(NEW_USER_KEY.key to binding.defaultUserCheckbox.isChecked)
                 )
             }
             .create()

@@ -4,12 +4,10 @@ import android.annotation.SuppressLint
 import android.content.Context
 import androidx.lifecycle.*
 import com.akobusinska.letsplay.R
-import com.akobusinska.letsplay.data.entities.CollectionOwnerGameCrossRef
 import com.akobusinska.letsplay.data.entities.GameType
 import com.akobusinska.letsplay.data.entities.MyGame
 import com.akobusinska.letsplay.data.repository.CollectionOwnerRepository
 import com.akobusinska.letsplay.data.repository.GameRepository
-import com.akobusinska.letsplay.utils.RefreshableLiveData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
@@ -24,15 +22,8 @@ class EditGameDetailsViewModel @SuppressLint("StaticFieldLeak")
     @ApplicationContext private val context: Context
 ) : ViewModel() {
 
-    private val _newGame = MutableLiveData<MyGame>()
-    val newGame: LiveData<MyGame>
-        get() = _newGame
-
+    val newGame = MutableLiveData<MyGame>()
     var game = MyGame()
-
-    private val _newGameId = MutableLiveData<Long>()
-    val newGameId: LiveData<Long>
-        get() = _newGameId
 
     private val _parentGame = MediatorLiveData<MyGame>()
     val parentGame: LiveData<MyGame>
@@ -42,21 +33,9 @@ class EditGameDetailsViewModel @SuppressLint("StaticFieldLeak")
     val foundGamesList: LiveData<List<MyGame>>
         get() = _foundGamesList
 
-    private val _allGamesList = RefreshableLiveData { repository.getFullCollection() }
-    val allGamesList: LiveData<List<MyGame>>
-        get() = _allGamesList
-
     init {
-        _newGame.value = state.get<MyGame>("game")
+        newGame.value = state.get<MyGame>("game")
         game = state["game"]!!
-
-        _allGamesList.addSource(repository.getFullCollection()) {
-            _allGamesList.value = it
-        }
-    }
-
-    fun refresh() {
-        _allGamesList.refresh()
     }
 
     var parentGameName = newGame.map {
@@ -116,13 +95,6 @@ class EditGameDetailsViewModel @SuppressLint("StaticFieldLeak")
     fun insertGameIntoDatabase(currentUser: Long) {
         viewModelScope.launch {
             repository.addGameToUserCollection(currentUser, game)
-            //_newGameId.value = repository.insertGame(game)
-        }
-    }
-
-    fun insertGameWithOwnerIntoDatabase(id: Long) {
-        viewModelScope.launch {
-            userRepository.insertUserWithGame(CollectionOwnerGameCrossRef(1, id))
         }
     }
 
@@ -133,7 +105,6 @@ class EditGameDetailsViewModel @SuppressLint("StaticFieldLeak")
     }
 
     fun getSearchResult(ownerName: String) {
-
         _foundGamesList.addSource(userRepository.getGamesUserCollection(ownerName)) {
             _foundGamesList.value = it.sortedBy { game -> game.name }
         }

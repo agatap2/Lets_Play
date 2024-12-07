@@ -22,6 +22,12 @@ interface CollectionOwnerWithGamesDao {
     @Delete
     suspend fun deleteCollectionOwnerWithGames(join: CollectionOwnerGameCrossRef)
 
+    @Query("DELETE FROM CollectionOwnerGameCrossRef WHERE collectionOwnerId=:userId")
+    fun deleteUsersCollection(userId: Long)
+
+    @Query("DELETE FROM CollectionOwnerGameCrossRef WHERE gameId=:gameId and collectionOwnerId=:userId")
+    fun deleteGameFromUsersCollection(gameId: Long, userId: Long)
+
     @Transaction
     @Query("SELECT * FROM collection_owner_table")
     fun getCollectionOwnersWithGames(): LiveData<List<CollectionOwnerWithGames>>

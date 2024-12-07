@@ -43,12 +43,10 @@ object DatabaseModule {
     fun provideRepository(
         gameRemoteDataSource: GameRemoteDataSource,
         gameLocalDataSource: GameDao,
-        collectionOwnerDao: CollectionOwnerDao,
         collectionOwnerWithGamesDao: CollectionOwnerWithGamesDao
     ): GameRepository = GameRepository(
         gameRemoteDataSource,
         gameLocalDataSource,
-        collectionOwnerDao,
         collectionOwnerWithGamesDao
     )
 

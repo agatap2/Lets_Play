@@ -31,6 +31,10 @@ class GamesListViewModel @Inject constructor(
     val statusOfNewUser: LiveData<GameRepository.RequestStatus>
         get() = _statusOfNewUser
 
+    private val _statusOfRefresh = MutableLiveData<GameRepository.RequestStatus>()
+    val statusOfRefresh: LiveData<GameRepository.RequestStatus>
+        get() = _statusOfRefresh
+
     private var _users = MediatorLiveData<List<CollectionOwner>>()
     val users: LiveData<List<CollectionOwner>>
         get() = _users
@@ -98,6 +102,24 @@ class GamesListViewModel @Inject constructor(
         }
     }
 
+    fun reDownloadUserCollection(name: String) {
+        viewModelScope.launch {
+            try {
+                _statusOfNewUser.value = GameRepository.RequestStatus.LOADING
+                _statusOfRefresh.value = GameRepository.RequestStatus.LOADING
+                newestCollection.clear()
+                userRepository.refreshUsersCollection(name).let {
+                    newestCollection.addAll(
+                        it
+                    )
+                }
+                _statusOfRefresh.value = GameRepository.RequestStatus.DONE
+            } catch (e: Exception) {
+                _statusOfNewUser.value = GameRepository.RequestStatus.ERROR
+            }
+        }
+    }
+
     fun stopLoadIcon(reload: Boolean = false) {
         if (_statusOfNewUser.value == GameRepository.RequestStatus.LOADING) {
             _statusOfNewUser.value = GameRepository.RequestStatus.DONE
@@ -111,7 +133,7 @@ class GamesListViewModel @Inject constructor(
 
     fun getCollectionOwnersWithGames() = repository.getFullCrossRefCollection()
 
-    fun updateGamesList(user: CollectionOwner) {
+    fun updateGamesList(user: CollectionOwner, update: Boolean = false) {
 
         viewModelScope.launch {
             newestCollection.map {
@@ -120,7 +142,7 @@ class GamesListViewModel @Inject constructor(
                 )
             }.let {
                 repository.downloadGamesWithDetailsList(
-                    user.collectionOwnerId, it, true
+                    user.collectionOwnerId, it, true, update
                 )
             }
         }

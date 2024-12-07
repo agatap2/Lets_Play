@@ -2,7 +2,6 @@ package com.akobusinska.letsplay.data.repository
 
 import androidx.lifecycle.map
 import com.akobusinska.letsplay.data.entities.CollectionOwner
-import com.akobusinska.letsplay.data.entities.CollectionOwnerGameCrossRef
 import com.akobusinska.letsplay.data.entities.GameType
 import com.akobusinska.letsplay.data.local.CollectionOwnerDao
 import com.akobusinska.letsplay.data.local.CollectionOwnerWithGamesDao
@@ -15,10 +14,8 @@ class CollectionOwnerRepository(
     private val collectionOwnerWithGamesDao: CollectionOwnerWithGamesDao
 ) {
 
-    private suspend fun insertUser(user: CollectionOwner) = collectionOwnerDao.insertCollectionOwner(user)
-
-    suspend fun insertUserWithGame(userWithGames: CollectionOwnerGameCrossRef) =
-        collectionOwnerWithGamesDao.insertCollectionOwnerWithGames(userWithGames)
+    private suspend fun insertUser(user: CollectionOwner) =
+        collectionOwnerDao.insertCollectionOwner(user)
 
     suspend fun updateUser(user: CollectionOwner) = collectionOwnerDao.updateCollectionOwner(user)
 
@@ -37,17 +34,19 @@ class CollectionOwnerRepository(
         return user
     }
 
+    suspend fun refreshUsersCollection(userName: String): List<String> {
+        val user = formatData(
+            userName,
+            remoteDataSource.searchForUserCollection(userName) as List<BoardGamesSearchResult>
+        )
+        return user?.games ?: emptyList()
+    }
+
     fun getAllUsers() = collectionOwnerDao.getCollectionOwners()
 
     fun getLastUser() = collectionOwnerDao.getLastCollectionOrder()
 
     fun getUserByName(name: String) = collectionOwnerDao.getCollectionOwner(name)
-
-    fun getFullUserCollection(userName: String) =
-        collectionOwnerWithGamesDao.getCollectionOwnersWithGames()
-            .map { it.filter { data -> data.collectionOwner.name == userName } }
-            .map { users -> users.map { it.games } }
-            .map { games -> games.flatten() }
 
     fun getGamesUserCollection(userName: String) =
         collectionOwnerWithGamesDao.getCollectionOwnersWithGames()
@@ -55,13 +54,6 @@ class CollectionOwnerRepository(
             .map { users -> users.map { it.games } }
             .map { games -> games.flatten() }
             .map { it.filter { myGame -> myGame.gameType == GameType.GAME } }
-
-    fun getExpansionsUserCollection(userName: String) =
-        collectionOwnerWithGamesDao.getCollectionOwnersWithGames()
-            .map { it.filter { data -> data.collectionOwner.name == userName } }
-            .map { users -> users.map { it.games } }
-            .map { games -> games.flatten() }
-            .map { it.filter { myGame -> myGame.gameType == GameType.EXPANSION } }
 
     private fun formatData(
         userName: String,

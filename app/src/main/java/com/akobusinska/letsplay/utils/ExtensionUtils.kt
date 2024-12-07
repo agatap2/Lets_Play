@@ -4,9 +4,6 @@ import android.app.AlertDialog
 import android.app.Dialog
 import android.widget.ImageButton
 import androidx.core.widget.doOnTextChanged
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
 import com.akobusinska.letsplay.R
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputLayout
@@ -49,16 +46,4 @@ fun Int.roundDown(): Int {
     val modulo = this.mod(5)
     return if (modulo != 0) (this - modulo)
     else this
-}
-
-fun <T> LiveData<T>.observeOnce(lifecycleOwner: LifecycleOwner, observer: Observer<T>) {
-    observe(lifecycleOwner, object : Observer<T> {
-        override fun onChanged(value: T) {
-            try {
-                observer.onChanged(value)
-                removeObserver(this)
-            } catch (e: Exception) {
-            }
-        }
-    })
 }
