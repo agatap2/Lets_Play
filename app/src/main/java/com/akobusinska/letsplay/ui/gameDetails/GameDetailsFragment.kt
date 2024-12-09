@@ -1,6 +1,7 @@
 package com.akobusinska.letsplay.ui.gameDetails
 
 import android.os.Bundle
+import android.text.method.LinkMovementMethod
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -47,9 +48,23 @@ class GameDetailsFragment : Fragment() {
         viewModel.game.observe(viewLifecycleOwner) {
             game = it
             binding.game = it
+            if (it.bggId == -1) {
+                binding.bggIcon.visibility = View.INVISIBLE
+            } else {
+                binding.bgg.movementMethod = LinkMovementMethod.getInstance()
+                binding.bgg.text = HtmlCompat.fromHtml(
+                    requireContext().applicationContext.getString(
+                        R.string.bgg_hyperlink,
+                        it.bggId.toString(), it.name
+                    ), HtmlCompat.FROM_HTML_MODE_COMPACT
+                )
+            }
 
             if (game?.gameType == GameType.GAME)
-                viewModel.getOwnedExpansions(it.bggId.toLong(), Storage().restoreCurrentUserId(requireContext()))
+                viewModel.getOwnedExpansions(
+                    it.bggId.toLong(),
+                    Storage().restoreCurrentUserId(requireContext())
+                )
             else
                 viewModel.getParentGame(it.parentGame.toInt())
 
@@ -86,7 +101,8 @@ class GameDetailsFragment : Fragment() {
         requireActivity().addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
                 menuInflater.inflate(R.menu.details_menu, menu)
-                menu.findItem(R.id.delete).isVisible = Storage().restoreCurrentUserName(requireContext()) == "Default"
+                menu.findItem(R.id.delete).isVisible =
+                    Storage().restoreCurrentUserName(requireContext()) == "Default"
             }
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {

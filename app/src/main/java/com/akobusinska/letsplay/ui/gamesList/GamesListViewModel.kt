@@ -150,11 +150,13 @@ class GamesListViewModel @Inject constructor(
 
     fun updateUserCustomName(user: CollectionOwner?, customName: String) {
 
+        val name = customName.ifBlank { user?.name } ?: ""
+
         viewModelScope.launch {
             val updatedUser = user.let {
                 it?.collectionOwnerId?.let { id ->
                     CollectionOwner(
-                        id, it.name, customName, it.games
+                        id, it.name, name, it.games
                     )
                 }
             }

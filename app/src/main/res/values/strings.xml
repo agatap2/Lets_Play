@@ -35,6 +35,7 @@
     <string name="equal_playtime_value"><![CDATA[<b>Game time:</b> %d min]]></string>
     <string name="equal_long_playtime"><![CDATA[<b>Game time:</b>  120 min or more]]></string>
     <string name="min_age_value"><![CDATA[<b>Minimal age:</b> %d]]></string>
+    <string name="bgg_hyperlink" translatable="false"><![CDATA[<a href="https://boardgamegeek.com/boardgame/%s">%s | Board Game | BoardGameGeek</a>]]></string>
 
     <string name="game_cover">Game cover</string>
     <string name="game_name">Name</string>

@@ -116,7 +116,7 @@ class GamesListFragment : Fragment() {
             .observe(viewLifecycleOwner) {
                 updateCurrentUser(it)
                 binding.refresh.visibility =
-                    if (it.name == "Default") View.INVISIBLE else View.VISIBLE
+                    if (it == null || it.name == "Default") View.INVISIBLE else View.VISIBLE
             }
 
         viewModel.getLastCollectionOwner().observe(viewLifecycleOwner) {
@@ -319,9 +319,9 @@ class GamesListFragment : Fragment() {
         }
     }
 
-    private fun updateCurrentUser(currentUser: CollectionOwner) {
+    private fun updateCurrentUser(currentUser: CollectionOwner?) {
         selectedUser = currentUser
-        Storage().saveCurrentUserName(requireContext(), currentUser.name)
-        Storage().saveCurrentUserId(requireContext(), currentUser.collectionOwnerId)
+        Storage().saveCurrentUserName(requireContext(), currentUser?.name ?: "Default")
+        Storage().saveCurrentUserId(requireContext(), currentUser?.collectionOwnerId ?: 1)
     }
 }

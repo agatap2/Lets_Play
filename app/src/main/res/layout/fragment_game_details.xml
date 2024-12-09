@@ -175,13 +175,32 @@
             <TextView
                 android:id="@+id/recommended_for_more"
                 style="@style/GameDetailsText"
-                android:layout_marginBottom="16dp"
                 android:text="@string/recommended_for_more_players_value"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/recommended_for_more_icon"
+                app:layout_constraintTop_toBottomOf="@+id/min_age" />
+
+            <ImageView
+                android:id="@+id/bgg_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                app:layout_constraintBottom_toBottomOf="@+id/bgg"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/bgg"
+                app:srcCompat="@drawable/ic_bgg_icon" />
+
+            <TextView
+                android:id="@+id/bgg"
+                style="@style/GameDetailsText"
+                android:layout_width="0dp"
+                android:layout_marginBottom="16dp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/recommended_for_more_icon"
-                app:layout_constraintTop_toBottomOf="@+id/min_age"
+                app:layout_constraintStart_toEndOf="@+id/bgg_icon"
+                app:layout_constraintTop_toBottomOf="@+id/recommended_for_more"
                 app:layout_constraintVertical_bias="0.0" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
