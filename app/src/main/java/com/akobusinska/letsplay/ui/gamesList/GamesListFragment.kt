@@ -123,9 +123,11 @@ class GamesListFragment : Fragment() {
 
         viewModel.getUserByName(Storage().restoreCurrentUserName(requireContext()))
             .observe(viewLifecycleOwner) {
-                updateCurrentUser(it)
-                binding.refresh.visibility =
-                    if (it == null || it.name == "Default") View.INVISIBLE else View.VISIBLE
+                if (selectedUser == null) {
+                    updateCurrentUser(it)
+                    binding.refresh.visibility =
+                        if (it == null || it.name == "Default") View.INVISIBLE else View.VISIBLE
+                }
             }
 
         viewModel.getLastCollectionOwner().observe(viewLifecycleOwner) {
@@ -221,14 +223,16 @@ class GamesListFragment : Fragment() {
 
                     R.id.user -> {
                         usersListAlertDialog.show()
+                        closeSearchBar()
                     }
 
                     R.id.info -> {
                         MaterialAlertDialogBuilder(requireContext())
                             .setTitle(resources.getString(R.string.info))
-                            .setMessage(resources.getString(R.string.version_number, "2.5.2"))
+                            .setMessage(resources.getString(R.string.version_number, "2.5.3"))
                             .setPositiveButton(resources.getString(R.string.ok)) { _, _ -> }
                             .show()
+                        closeSearchBar()
                     }
                 }
                 return false
@@ -312,6 +316,7 @@ class GamesListFragment : Fragment() {
         }
 
         viewModel.gamesCollection.observe(viewLifecycleOwner) { gamesList ->
+            binding.fullGamesList.layoutManager?.scrollToPosition(0)
             binding.fullGamesList.bindRecyclerView(gamesList.sortedBy { it.name })
         }
 
@@ -342,11 +347,13 @@ class GamesListFragment : Fragment() {
     }
 
     private fun closeSearchBar() {
-        searchBarItem.visibility = View.GONE
-        (requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager).hideSoftInputFromWindow(
-            binding.searchBar.windowToken,
-            0
-        )
+        if (searchBarItem.visibility == View.VISIBLE) {
+            searchBarItem.visibility = View.GONE
+            (requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager).hideSoftInputFromWindow(
+                binding.searchBar.windowToken,
+                0
+            )
+        }
     }
 
     private fun allDisplayed() {

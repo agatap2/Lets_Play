@@ -51,41 +51,6 @@
             </com.google.android.material.textfield.TextInputLayout>
         </com.google.android.material.appbar.AppBarLayout>
 
-        <!--        <com.google.android.material.button.MaterialButtonToggleGroup-->
-        <!--            android:id="@+id/toggleButton"-->
-        <!--            android:layout_width="wrap_content"-->
-        <!--            android:layout_height="wrap_content"-->
-        <!--            android:layout_marginTop="16dp"-->
-        <!--            app:checkedButton="@id/all"-->
-        <!--            app:layout_constraintEnd_toEndOf="parent"-->
-        <!--            app:layout_constraintStart_toStartOf="parent"-->
-        <!--            app:layout_constraintTop_toBottomOf="@+id/appBarLayout"-->
-        <!--            app:selectionRequired="true"-->
-        <!--            app:singleSelection="true">-->
-
-        <!--            <Button-->
-        <!--                android:id="@+id/all"-->
-        <!--                style="?attr/materialButtonOutlinedStyle"-->
-        <!--                android:layout_width="wrap_content"-->
-        <!--                android:layout_height="wrap_content"-->
-        <!--                android:text="@string/all" />-->
-
-        <!--            <Button-->
-        <!--                android:id="@+id/gameFilterButton"-->
-        <!--                style="?attr/materialButtonOutlinedStyle"-->
-        <!--                android:layout_width="wrap_content"-->
-        <!--                android:layout_height="wrap_content"-->
-        <!--                android:text="@string/games" />-->
-
-        <!--            <Button-->
-        <!--                android:id="@+id/expansionFilterButton"-->
-        <!--                style="?attr/materialButtonOutlinedStyle"-->
-        <!--                android:layout_width="wrap_content"-->
-        <!--                android:layout_height="wrap_content"-->
-        <!--                android:text="@string/expansions" />-->
-
-        <!--        </com.google.android.material.button.MaterialButtonToggleGroup>-->
-
         <TextView
             android:id="@+id/collection"
             android:layout_width="wrap_content"
