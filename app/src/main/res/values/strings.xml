@@ -6,7 +6,7 @@
     <string name="game">Game</string>
     <string name="expansion">Expansion</string>
     <string name="all">All</string>
-    <string name="collection">Collection</string>
+    <string name="collection">Collection: %s</string>
     <string name="game_time">Game time (in minutes):</string>
     <string name="max_game_time">Maximum game time (in minutes):</string>
     <string name="number_of_players">Number of players:</string>
@@ -67,6 +67,7 @@
 
     <string name="local_username">Default</string>
     <string name="user_name">Username</string>
+    <string name="add_new">Add new BGG collection</string>
     <string name="select_collection_owner">Select collection</string>
     <string name="default_collection">Local collection</string>
     <string name="user_already_exists">User has been already added to collection</string>
@@ -75,5 +76,8 @@
     <string name="local_collection">Local collection</string>
     <string name="new_user_success">"User %s added to friends list"</string>
     <string name="user_not_found">User not found</string>
+
+    <string name="info">Information</string>
+    <string name="version_number">Version number: %s</string>
 
 </resources>

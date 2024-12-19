@@ -6,7 +6,7 @@
     <string name="game">Gra</string>
     <string name="expansion">Dodatek</string>
     <string name="all">Wszystkie</string>
-    <string name="collection">Kolekcja</string>
+    <string name="collection">Kolekcja: %s</string>
     <string name="game_time">Długość rozgrywki (w minutach):</string>
     <string name="max_game_time">Maksymalna długość rozgrywki (w minutach):</string>
     <string name="number_of_players">Liczba graczy:</string>
@@ -67,6 +67,7 @@
     <string name="local_username">Default</string>
     <string name="user_name">Podaj nazwę użytkownika</string>
     <string name="select_collection_owner">Wybierz kolekcje</string>
+    <string name="add_new">Dodaj nową kolekcję BGG</string>
     <string name="default_collection">Lokalna kolekcja</string>
     <string name="user_already_exists">Użytkownik został już dodany</string>
     <string name="custom_name_hint">Nazwa własna</string>
@@ -74,5 +75,7 @@
     <string name="local_collection">Lokalna kolekcja</string>
     <string name="new_user_success">"Użytkownik %s został dodany do listy znajomych"</string>
     <string name="user_not_found">Użytkownik nie został znaleziony</string>
+    <string name="info">Informacje</string>
+    <string name="version_number">Wersja numer: %s</string>
 
 </resources>

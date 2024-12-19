@@ -23,11 +23,13 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/search_bar_layout"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_margin="8dp"
+                android:visibility="gone"
                 app:boxBackgroundMode="outline"
                 app:boxStrokeColor="@color/medium_green"
                 app:endIconMode="clear_text"
@@ -49,61 +51,55 @@
             </com.google.android.material.textfield.TextInputLayout>
         </com.google.android.material.appbar.AppBarLayout>
 
-        <com.google.android.material.button.MaterialButtonToggleGroup
-            android:id="@+id/toggleButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            app:checkedButton="@id/all"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/appBarLayout"
-            app:selectionRequired="true"
-            app:singleSelection="true">
+        <!--        <com.google.android.material.button.MaterialButtonToggleGroup-->
+        <!--            android:id="@+id/toggleButton"-->
+        <!--            android:layout_width="wrap_content"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:layout_marginTop="16dp"-->
+        <!--            app:checkedButton="@id/all"-->
+        <!--            app:layout_constraintEnd_toEndOf="parent"-->
+        <!--            app:layout_constraintStart_toStartOf="parent"-->
+        <!--            app:layout_constraintTop_toBottomOf="@+id/appBarLayout"-->
+        <!--            app:selectionRequired="true"-->
+        <!--            app:singleSelection="true">-->
 
-            <Button
-                android:id="@+id/all"
-                style="?attr/materialButtonOutlinedStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/all" />
+        <!--            <Button-->
+        <!--                android:id="@+id/all"-->
+        <!--                style="?attr/materialButtonOutlinedStyle"-->
+        <!--                android:layout_width="wrap_content"-->
+        <!--                android:layout_height="wrap_content"-->
+        <!--                android:text="@string/all" />-->
 
-            <Button
-                android:id="@+id/gameFilterButton"
-                style="?attr/materialButtonOutlinedStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/games" />
+        <!--            <Button-->
+        <!--                android:id="@+id/gameFilterButton"-->
+        <!--                style="?attr/materialButtonOutlinedStyle"-->
+        <!--                android:layout_width="wrap_content"-->
+        <!--                android:layout_height="wrap_content"-->
+        <!--                android:text="@string/games" />-->
 
-            <Button
-                android:id="@+id/expansionFilterButton"
-                style="?attr/materialButtonOutlinedStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/expansions" />
+        <!--            <Button-->
+        <!--                android:id="@+id/expansionFilterButton"-->
+        <!--                style="?attr/materialButtonOutlinedStyle"-->
+        <!--                android:layout_width="wrap_content"-->
+        <!--                android:layout_height="wrap_content"-->
+        <!--                android:text="@string/expansions" />-->
 
-        </com.google.android.material.button.MaterialButtonToggleGroup>
-
-        <View
-            android:id="@+id/spaceBeforeTextView"
-            android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:layout_marginTop="16dp"
-            android:background="@color/medium_green"
-            app:layout_constraintBottom_toTopOf="@+id/collection"
-            app:layout_constraintTop_toBottomOf="@id/toggleButton" />
+        <!--        </com.google.android.material.button.MaterialButtonToggleGroup>-->
 
         <TextView
             android:id="@+id/collection"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="40dp"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
+            android:fontFamily="sans-serif"
             android:text="@string/local_collection"
+            android:textAllCaps="true"
+            android:textColor="@color/primaryDarkColor"
+            android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@+id/spaceAfterTextView"
-            app:layout_constraintEnd_toStartOf="@id/refresh"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/spaceBeforeTextView" />
+            app:layout_constraintTop_toBottomOf="@+id/appBarLayout" />
 
         <ImageView
             android:id="@+id/refresh"
@@ -113,7 +109,7 @@
             android:src="@drawable/baseline_refresh_24"
             app:layout_constraintBottom_toTopOf="@+id/spaceAfterTextView"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/spaceBeforeTextView" />
+            app:layout_constraintTop_toBottomOf="@+id/appBarLayout" />
 
         <View
             android:id="@+id/spaceAfterTextView"
@@ -122,6 +118,36 @@
             android:layout_marginTop="8dp"
             android:background="@color/medium_green"
             app:layout_constraintTop_toBottomOf="@+id/collection" />
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/filteringTabs"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:elevation="2dp"
+            app:layout_constraintBottom_toTopOf="@id/full_games_list"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/spaceAfterTextView">
+
+            <com.google.android.material.tabs.TabItem
+                android:id="@+id/all"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/all" />
+
+            <com.google.android.material.tabs.TabItem
+                android:id="@+id/gameFilterButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/games" />
+
+            <com.google.android.material.tabs.TabItem
+                android:id="@+id/expansionFilterButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/expansions" />
+
+        </com.google.android.material.tabs.TabLayout>
 
         <com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView
             android:id="@+id/full_games_list"
@@ -134,7 +160,7 @@
             app:fastScrollThumbEnabled="true"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/spaceAfterTextView" />
+            app:layout_constraintTop_toBottomOf="@+id/filteringTabs" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/add_game_button"

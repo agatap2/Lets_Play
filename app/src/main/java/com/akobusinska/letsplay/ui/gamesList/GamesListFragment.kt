@@ -1,5 +1,6 @@
 package com.akobusinska.letsplay.ui.gamesList
 
+import android.content.Context
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.LayoutInflater
@@ -8,7 +9,9 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AlertDialog
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.MenuProvider
 import androidx.core.widget.doOnTextChanged
 import androidx.databinding.DataBindingUtil
@@ -31,6 +34,9 @@ import com.akobusinska.letsplay.utils.Storage
 import com.akobusinska.letsplay.utils.bindRecyclerView
 import com.akobusinska.letsplay.utils.bindUsersDialogRecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.divider.MaterialDividerItemDecoration
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.textfield.TextInputLayout
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -48,6 +54,7 @@ class GamesListFragment : Fragment() {
     private var selectedUserPosition = 0
     private var list = mutableListOf<CollectionOwnerWithGames>()
     private var newUserCreationProcess = false
+    private lateinit var searchBarItem: TextInputLayout
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -56,6 +63,8 @@ class GamesListFragment : Fragment() {
         binding = DataBindingUtil.inflate(
             inflater, R.layout.fragment_games_list, container, false
         )
+
+        searchBarItem = binding.searchBarLayout
 
         checkIfCollectionIsEditable(
             Storage().restoreCurrentUserName(requireContext())
@@ -151,11 +160,37 @@ class GamesListFragment : Fragment() {
 
         val changeCollectionDialogView =
             LayoutInflater.from(requireContext()).inflate(R.layout.dialog_users_list, null)
+
+        val usersListDialog = MaterialAlertDialogBuilder(requireContext()).setView(
+            changeCollectionDialogView
+        ).setTitle(R.string.select_collection_owner)
+            .setPositiveButton(R.string.ok) { _, _ ->
+                if (selectedUser != null) {
+                    refreshCollection()
+                    binding.refresh.visibility =
+                        if (selectedUser?.name == "Default") View.INVISIBLE else View.VISIBLE
+                }
+            }.setNegativeButton(R.string.cancel, null)
+            .setCancelable(true)
+
+        val usersListAlertDialog = usersListDialog.create()
+
+        changeCollectionDialogView.findViewById<ConstraintLayout>(R.id.add_new_user)
+            .setOnClickListener {
+                usersListAlertDialog.cancel()
+                DialogUserNameFragment().show(
+                    requireActivity().supportFragmentManager,
+                    DialogUserNameFragment::class.java.simpleName
+                )
+            }
         val listOfUsers = changeCollectionDialogView.findViewById<RecyclerView>(R.id.users_list)
         listOfUsers.addItemDecoration(
-            DividerItemDecoration(
-                this.context, DividerItemDecoration.VERTICAL
-            )
+            MaterialDividerItemDecoration(
+                requireContext(),
+                DividerItemDecoration.VERTICAL
+            ).apply {
+                isLastItemDecorated = false
+            }
         )
 
         viewModel.users.observe(viewLifecycleOwner) { users ->
@@ -176,29 +211,24 @@ class GamesListFragment : Fragment() {
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 when (menuItem.itemId) {
-                    R.id.user -> {
-
-                        if (changeCollectionDialogView.parent != null) (changeCollectionDialogView.parent as ViewGroup).removeView(
-                            changeCollectionDialogView
-                        )
-
-                        MaterialAlertDialogBuilder(requireContext()).setView(
-                            changeCollectionDialogView
-                        ).setTitle(R.string.select_collection_owner)
-                            .setPositiveButton(R.string.ok) { _, _ ->
-                                if (selectedUser != null) {
-                                    refreshCollection()
-                                    binding.refresh.visibility =
-                                        if (selectedUser?.name == "Default") View.INVISIBLE else View.VISIBLE
-                                }
-                            }.setNegativeButton(R.string.cancel, null).show()
+                    R.id.search -> {
+                        if (binding.searchBarLayout.visibility == View.GONE) {
+                            binding.searchBarLayout.visibility = View.VISIBLE
+                        } else {
+                            closeSearchBar()
+                        }
                     }
 
-                    R.id.bgg -> {
-                        DialogUserNameFragment().show(
-                            requireActivity().supportFragmentManager,
-                            DialogUserNameFragment::class.java.simpleName
-                        )
+                    R.id.user -> {
+                        usersListAlertDialog.show()
+                    }
+
+                    R.id.info -> {
+                        MaterialAlertDialogBuilder(requireContext())
+                            .setTitle(resources.getString(R.string.info))
+                            .setMessage(resources.getString(R.string.version_number, "2.5.2"))
+                            .setPositiveButton(resources.getString(R.string.ok)) { _, _ -> }
+                            .show()
                     }
                 }
                 return false
@@ -221,26 +251,37 @@ class GamesListFragment : Fragment() {
             addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
         }
 
-        binding.all.setOnClickListener {
-            if (!allSelected) {
-                allDisplayed()
-                refreshCollection()
-            }
-        }
+        binding.filteringTabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
 
-        binding.gameFilterButton.setOnClickListener {
-            if (!gamesSelected) {
-                onlyGamesDisplayed()
-                refreshCollection()
-            }
-        }
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+                when (tab?.position) {
+                    0 -> {
+                        if (!allSelected) {
+                            allDisplayed()
+                            refreshCollection()
+                        }
+                    }
 
-        binding.expansionFilterButton.setOnClickListener {
-            if (!expansionsSelected) {
-                onlyExpansionsDisplayed()
-                refreshCollection()
+                    1 -> {
+                        if (!gamesSelected) {
+                            onlyGamesDisplayed()
+                            refreshCollection()
+                        }
+                    }
+
+                    2 -> {
+                        if (!expansionsSelected) {
+                            onlyExpansionsDisplayed()
+                            refreshCollection()
+                        }
+                    }
+                }
             }
-        }
+
+            override fun onTabUnselected(tab: TabLayout.Tab?) {}
+
+            override fun onTabReselected(tab: TabLayout.Tab?) {}
+        })
 
         binding.addGameButton.setOnClickListener {
             DialogGameNameFragment().show(
@@ -254,8 +295,11 @@ class GamesListFragment : Fragment() {
             )
         }
 
-        binding.searchBar.doOnTextChanged { _, _, _, _ ->
+        binding.searchBar.doOnTextChanged { _, _, _, count ->
             refreshCollection()
+            if (count == 0) {
+                closeSearchBar()
+            }
         }
 
         viewModel.navigateToGameDetails.observe(viewLifecycleOwner) { game ->
@@ -278,7 +322,11 @@ class GamesListFragment : Fragment() {
 
     private fun refreshCollection() {
 
-        binding.collection.text = selectedUser?.customName
+        binding.collection.text = if (selectedUser?.collectionOwnerId == 1L) {
+            selectedUser?.customName
+        } else {
+            getString(R.string.collection, selectedUser?.customName)
+        }
 
         if (expansionsSelected) viewModel.updateGamesCollection(
             GameType.EXPANSION, getFilter(), selectedUser?.collectionOwnerId ?: 1, list
@@ -291,6 +339,14 @@ class GamesListFragment : Fragment() {
         )
 
         checkIfCollectionIsEditable(selectedUser?.name ?: "Default")
+    }
+
+    private fun closeSearchBar() {
+        searchBarItem.visibility = View.GONE
+        (requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager).hideSoftInputFromWindow(
+            binding.searchBar.windowToken,
+            0
+        )
     }
 
     private fun allDisplayed() {

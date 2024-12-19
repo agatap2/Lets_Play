@@ -2,6 +2,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/search"
+        android:enabled="true"
+        android:icon="@drawable/ic_search_24_white"
+        android:title="loop"
+        android:visible="true"
+        app:showAsAction="ifRoom" />
+    <item
         android:id="@+id/user"
         android:enabled="true"
         android:icon="@drawable/ic_user"
@@ -9,12 +16,21 @@
         android:visible="true"
         app:showAsAction="ifRoom" />
     <item
-        android:id="@+id/bgg"
+        android:id="@+id/info"
         android:enabled="true"
-        android:icon="@drawable/ic_bgg_logo"
-        android:title="bgg"
+        android:icon="@drawable/baseline_info_24"
         android:visible="true"
-        app:showAsAction="ifRoom">
+        app:showAsAction="ifRoom"
+        android:title="information">
+    </item>
+
+<!--    <item-->
+<!--        android:id="@+id/bgg"-->
+<!--        android:enabled="true"-->
+<!--        android:icon="@drawable/ic_bgg_logo"-->
+<!--        android:title="bgg"-->
+<!--        android:visible="true"-->
+<!--        app:showAsAction="ifRoom">-->
 <!--        <menu>-->
 <!--            <item-->
 <!--                android:id="@+id/login"-->
@@ -23,5 +39,5 @@
 <!--                android:id="@+id/find_friend"-->
 <!--                android:title="Find friend" />-->
 <!--        </menu>-->
-    </item>
+<!--    </item>-->
 </menu>
