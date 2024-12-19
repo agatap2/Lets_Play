@@ -13,7 +13,7 @@ import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.MenuProvider
-import androidx.core.widget.doOnTextChanged
+import androidx.core.widget.doAfterTextChanged
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -55,6 +55,7 @@ class GamesListFragment : Fragment() {
     private var list = mutableListOf<CollectionOwnerWithGames>()
     private var newUserCreationProcess = false
     private lateinit var searchBarItem: TextInputLayout
+    private var filter = ""
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -299,11 +300,11 @@ class GamesListFragment : Fragment() {
             )
         }
 
-        binding.searchBar.doOnTextChanged { _, _, _, count ->
+        binding.searchBar.doAfterTextChanged { text ->
+            filter = text.toString()
             refreshCollection()
-            if (count == 0) {
-                closeSearchBar()
-            }
+            closeSearchBar()
+
         }
 
         viewModel.navigateToGameDetails.observe(viewLifecycleOwner) { game ->
@@ -347,7 +348,7 @@ class GamesListFragment : Fragment() {
     }
 
     private fun closeSearchBar() {
-        if (searchBarItem.visibility == View.VISIBLE) {
+        if (searchBarItem.visibility == View.VISIBLE && filter.isBlank()) {
             searchBarItem.visibility = View.GONE
             (requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager).hideSoftInputFromWindow(
                 binding.searchBar.windowToken,
